@@ -1,9 +1,9 @@
 export default {
     logo: <span>CloudAgent Documentation</span>,
     project: {
-        link: 'https://github.com/your-repo/cloudagent',
+        link: 'https://github.com/asecurecloud/cloudagent_user_documentation',
     },
-    docsRepositoryBase: 'https://github.com/your-repo/cloudagent/blob/main/cloudagent_userdocs',
+    docsRepositoryBase: 'https://github.com/asecurecloud/cloudagent_user_documentation/blob/main',
     footer: {
         text: 'CloudAgent Documentation',
     },
