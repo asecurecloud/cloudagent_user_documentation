@@ -5,7 +5,7 @@ This repository contains the official user documentation for **CloudAgent**
 ## 📚 Overview
 
 The documentation is organized into two main sections:
-- **User Guide**: Comprehensive guides on how to use CloudAgent features (Dashboard, Blueprints, Onboarding, etc.).
+- **User Guide**: Comprehensive guides on how to use CloudAgent features (Dashboard, Blueprints, etc.).
 - **Cookbooks**: Practical tutorials and recipes for specific use cases.
 
 ## 🚀 Getting Started
