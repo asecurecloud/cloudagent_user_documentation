@@ -6,5 +6,17 @@
     "blueprints": "Blueprint Builder",
     "assistant": "AI Assistant",
     "workloads": "Managing Workloads",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "---": {
+        "type": "separator",
+        "title": "Cookbooks"
+    },
+    "remediation-cookbook": {
+        "title": "Automating Remediation",
+        "href": "/cookbooks/remediation"
+    },
+    "all-cookbooks": {
+        "title": "View All Cookbooks",
+        "href": "/cookbooks"
+    }
 }
