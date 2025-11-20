@@ -1,13 +1,13 @@
 import { Callout } from 'nextra/components'
 
-# 🧪 Full Circle Assessment & Remediation
+# Automating Security Remediation from Discovery to Fix
 
 This cookbook guides you through a complete workflow: identifying a security issue, fixing it with a blueprint, and verifying the resolution.
 
 ## Objective
 To secure a public S3 bucket using CloudAgent's recommendation engine and blueprint builder.
 
-## Step 1: Assessment 🕵️‍♂️
+## Step 1: Assessment
 
 Start by reviewing the **Dashboard** to identify critical security findings.
 
@@ -20,7 +20,7 @@ Start by reviewing the **Dashboard** to identify critical security findings.
   Public S3 buckets can expose sensitive data. It is critical to remediate this immediately unless public access is intentionally required.
 </Callout>
 
-## Step 2: Remediation 🛠️
+## Step 2: Remediation
 
 CloudAgent allows you to generate a remediation blueprint directly from the recommendation.
 
@@ -43,7 +43,7 @@ Properties:
     RestrictPublicBuckets: true
 ```
 
-## Step 3: Validation ✅
+## Step 3: Validation
 
 Once the deployment is complete, verify that the issue is resolved.
 
@@ -52,6 +52,6 @@ Once the deployment is complete, verify that the issue is resolved.
 3.  Refresh the **Smart Recommendations** list.
 4.  Verify that the "S3 Bucket has public access enabled" finding is **Gone**.
 
-<Callout type="success" emoji="🎉">
+<Callout type="info" emoji="✅">
   **Success!** You have successfully identified, remediated, and verified a security vulnerability using CloudAgent.
 </Callout>
