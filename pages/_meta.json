@@ -1,0 +1,15 @@
+{
+    "index": {
+        "title": "Home",
+        "type": "page",
+        "display": "hidden"
+    },
+    "guide": {
+        "title": "User Guide",
+        "type": "page"
+    },
+    "cookbooks": {
+        "title": "Cookbooks",
+        "type": "page"
+    }
+}
