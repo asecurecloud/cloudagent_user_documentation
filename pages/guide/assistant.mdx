@@ -1,0 +1,61 @@
+import { Callout } from 'nextra/components'
+
+# 🤖 CloudAgent Assistant
+
+The **CloudAgent Assistant** is an AI-powered companion designed to help you manage your cloud infrastructure using natural language. It lives in the bottom-right corner of the application and is always ready to assist.
+
+## Overview
+
+The Assistant is capable of performing complex operations by connecting directly to your cloud environment and the CloudAgent backend. It translates your English requests into specific actions, such as running AWS CLI commands, deploying CloudFormation stacks, or managing your workloads.
+
+<Callout type="info" emoji="💡">
+  **Tip**: You can ask the Assistant to "explain" resources or errors to get context-aware answers.
+</Callout>
+
+## Capabilities
+
+The Assistant is equipped with a powerful set of tools that allow it to:
+
+### 1. 🔍 AWS Discovery & Inspection
+You can ask the Assistant to inspect your live AWS environment. It uses read-only AWS CLI commands to fetch real-time data.
+
+*   **"List all EC2 instances in us-east-1."**
+*   **"Describe the security group 'sg-12345'."**
+*   **"Check if I have any S3 buckets with public access."**
+
+### 2. 📦 Workload Management
+The Assistant can view and update your CloudAgent workloads directly.
+
+*   **"List my workloads."**
+*   **"Update the 'payments' workload to use the 'prod' environment."**
+*   **"Add a rule to the 'portal' workload to prevent public S3 buckets."**
+
+### 3. 🏗️ Infrastructure Deployment
+You can deploy or update infrastructure using CloudFormation. The Assistant will always ask for your approval before making changes.
+
+*   **"Deploy a new S3 bucket named 'my-app-logs'."**
+*   **"Update the 'payments-stack' to enable versioning."**
+*   **"Create a standard VPC with 2 AZs."** (Uses built-in architecture templates)
+
+### 4. 🧠 Research & Validation
+The Assistant has access to the web to research best practices, validate syntax, and find solutions to errors.
+
+*   **"How do I configure an ALB for gRPC?"**
+*   **"Find the CloudFormation syntax for an ECS Fargate service."**
+*   **"What does this error message mean?"**
+
+## How to Use
+
+1.  Click the **CloudAgent** button in the bottom-right corner.
+2.  Type your request in plain English.
+3.  The Assistant will analyze your request and may:
+    *   Ask clarifying questions.
+    *   Run a read-only command to gather context.
+    *   Propose a plan of action (e.g., a CloudFormation template).
+4.  **Review and Approve**: For any action that modifies your infrastructure, the Assistant will present a plan. You must approve it before execution proceeds.
+
+## Safety & Security
+
+*   **Read-Only by Default**: The Assistant defaults to read-only actions for discovery.
+*   **Human-in-the-Loop**: All state-changing operations (Create, Update, Delete) require explicit user confirmation.
+*   **Guardrails**: Deployments are checked against your organization's security rules and policies.
