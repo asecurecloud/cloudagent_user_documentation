@@ -1,6 +1,6 @@
 # CloudAgent User Documentation
 
-This repository contains the official user documentation for **CloudAgent**, built with [Nextra](https://nextra.site).
+This repository contains the official user documentation for **CloudAgent**
 
 ## 📚 Overview
 
