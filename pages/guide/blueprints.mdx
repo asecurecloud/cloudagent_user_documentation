@@ -5,9 +5,29 @@ Design, visualize, and deploy standardized infrastructure templates across your 
 
 The **Blueprint Builder** allows you to design and deploy infrastructure templates.
 
+## AI-Assisted Builder
+
+The Blueprint Builder uses an AI agent to help you design infrastructure templates. Instead of writing complex code from scratch, you describe what you want in plain English.
+
+### How it Works
+
+1.  **Define Objective**: Start by describing your goal (e.g., "Create a highly available ECS cluster with an Application Load Balancer").
+2.  **Generate Skeleton**: The AI analyzes your request and proposes a "Skeleton Plan" broken down into phases:
+    *   **Assessment**: Checks prerequisites and current state.
+    *   **Configuration**: Defines the resources and settings.
+    *   **Validation**: Ensures the design meets best practices.
+3.  **Refine & Customize**: Use the **Plan Builder Assistant** chat to refine tasks, add notes, or change deployment methods (CloudFormation or CLI).
+4.  **Finalize**: Once satisfied, the builder generates the executable blueprint.
+
+### Key Capabilities
+
+-   **Chat Interface**: Interact with the AI to iterate on your design.
+-   **Phased Approach**: Structured plans ensure no steps are missed.
+-   **Permission Calculation**: Automatically identifies the IAM permissions required to deploy the blueprint.
+-   **Deployment Options**: Support for standard CloudFormation stacks or CLI-based deployments.
+
 To access it:
 1.  Click on **My Blueprints** in the left sidebar.
-2.  You will see a list of your existing blueprints (or a message if you haven't created any yet).
 3.  Click **Create Blueprint** to start a new design.
 
 ![Blueprint Builder](/images/blueprint_builder.png)
