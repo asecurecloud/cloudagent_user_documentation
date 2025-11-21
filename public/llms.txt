@@ -1,7 +1,7 @@
--- -
-    title: CloudAgent Documentation
+---
+title: CloudAgent Documentation
 description: Consolidated documentation for CloudAgent, optimized for LLM consumption.
-    generated_at: 2025-11-21T04:59:10.179Z
+generated_at: 2025-11-21T15:18:07.268Z
 ---
 
 # CloudAgent Documentation
@@ -11,9 +11,9 @@ It includes the User Guide, Cookbooks, and other resources.
 
 ---
 
-    
 
-# Home 
+
+# Home
 
 # CloudAgent Documentation
 
@@ -31,12 +31,12 @@ Welcome to the official CloudAgent documentation. This site is designed to help 
 </div>
 
 > **Note:** 
-  Start with the **User Guide** for a comprehensive tour, or jump to **Cookbooks** if you have a specific task in mind. 
+  Start with the **User Guide** for a comprehensive tour, or jump to **Cookbooks** if you have a specific task in mind.
 
-# User Guide 
+# User Guide
 
 
-# Introduction 
+# Introduction
 
 # CloudAgent User Guide
 
@@ -45,9 +45,9 @@ Welcome to the User Guide. Here you'll find screenshot-driven tours of the Cloud
 Select a topic from the sidebar to get started, or [return to the main documentation](/).
 
 > **Note:** 
-  Looking for specific recipes? Check out our [Cookbooks](/cookbooks). 
+  Looking for specific recipes? Check out our [Cookbooks](/cookbooks).
 
-# Getting Started 
+# Getting Started
 
 # 🚀 Getting Started
 
@@ -71,9 +71,9 @@ CloudAgent is your AI-powered partner for cloud operations. By the end of this g
 
 Now that you are logged in, the **most important first step** is to connect your cloud environment.
 
-👉 **[Go to Account Onboarding](/guide/onboarding)** to connect your AWS account and unlock the dashboard features. 
+👉 **[Go to Account Onboarding](/guide/onboarding)** to connect your AWS account and unlock the dashboard features.
 
-# Account Onboarding 
+# Account Onboarding
 
 # ☁️ Account Onboarding
 
@@ -99,9 +99,9 @@ CloudAgent makes it easy to connect your cloud environments and start managing y
 
 5.  **Step 3: Validate**: Once deployed, validate the IAM role connection and give your environment a name.
 
-![Onboarding Step 3](/images/onboarding_step3.png) 
+![Onboarding Step 3](/images/onboarding_step3.png)
 
-# Dashboard Overview 
+# Dashboard Overview
 
 # 📊 Dashboard Overview
 
@@ -161,9 +161,9 @@ CloudAgent creates detailed security reports for your cloud account, including *
 *   **My Workflows**: View and manage your automated workflows.
 *   **My Blueprints**: Create and manage infrastructure blueprints.
 *   **Activity**: A log of recent actions and events.
-*   **My Account**: Manage your profile and settings. 
+*   **My Account**: Manage your profile and settings.
 
-# Blueprint Builder 
+# Blueprint Builder
 
 # 🛠️ Blueprint Builder
 
@@ -197,9 +197,9 @@ To access it:
 1.  Click on **My Blueprints** in the left sidebar.
 3.  Click **Create Blueprint** to start a new design.
 
-![Blueprint Builder](/images/blueprint_builder.png) 
+![Blueprint Builder](/images/blueprint_builder.png)
 
-# AI Assistant 
+# AI Assistant
 
 # 🤖 CloudAgent Assistant
 
@@ -258,9 +258,9 @@ The Assistant has access to the web to research best practices, validate syntax,
 
 *   **Read-Only by Default**: The Assistant defaults to read-only actions for discovery.
 *   **Human-in-the-Loop**: All state-changing operations (Create, Update, Delete) require explicit user confirmation.
-*   **Guardrails**: Deployments are checked against your organization's security rules and policies. 
+*   **Guardrails**: Deployments are checked against your organization's security rules and policies.
 
-# Managing Workloads 
+# Managing Workloads
 
 # 📦 Managing Workloads
 
@@ -291,9 +291,9 @@ Click on any workload in the list to view its details. The details view provides
 *   **Governance**: Policies and rules applied to the workload.
 *   **Architecture Preferences**: Settings related to the architectural design of the workload.
 *   **Security Rules**: Security configurations and firewall rules.
-*   **Compliance & Reports**: Compliance status and generated reports. 
+*   **Compliance & Reports**: Compliance status and generated reports.
 
-# FAQ 
+# FAQ
 
 # ❓ FAQ
 
@@ -304,12 +304,15 @@ Find answers to common questions about account management and platform usage.
 A: On the login page, click the "Forgot password" link to initiate the password reset process.
 
 **Q: Where can I see my available credits?**
-A: Your available credits are displayed in the bottom left corner of the sidebar. 
+A: Your available credits are displayed in the bottom left corner of the sidebar.
 
-# Cookbooks 
+**Q: How do I access the LLM-friendly documentation?**
+A: The consolidated documentation for AI agents is available at `/public/llms.txt` in the repository.
+
+# Cookbooks
 
 
-# Overview 
+# Overview
 
 # 🍳 Cookbooks
 
@@ -318,9 +321,9 @@ Welcome to the CloudAgent Cookbooks! Here you will find step-by-step guides and 
 ## Available Cookbooks
 
 *   [**Automating Remediation**](/cookbooks/remediation)
-    *   Learn how to identify security issues, remediate them with blueprints, and verify the fix in a full-circle workflow. 
+    *   Learn how to identify security issues, remediate them with blueprints, and verify the fix in a full-circle workflow.
 
-# Automating Remediation 
+# Automating Remediation
 
 # Automating Security Remediation from Discovery to Fix
 
@@ -378,4 +381,4 @@ Once the deployment is complete, verify that the issue is resolved.
 4.  Verify that the "S3 Bucket has public access enabled" finding is **Gone**.
 
 > **Note:** 
-  **Success!** You have successfully identified, remediated, and verified a security vulnerability using CloudAgent. 
+  **Success!** You have successfully identified, remediated, and verified a security vulnerability using CloudAgent.
