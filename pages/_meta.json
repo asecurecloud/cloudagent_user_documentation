@@ -13,7 +13,7 @@
         "type": "page"
     },
     "llms": {
-        "title": "LLM Docs 🤖",
+        "title": "LLM Docs",
         "type": "page",
         "href": "/llms.txt",
         "newWindow": true
