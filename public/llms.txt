@@ -1,0 +1,381 @@
+-- -
+    title: CloudAgent Documentation
+description: Consolidated documentation for CloudAgent, optimized for LLM consumption.
+    generated_at: 2025-11-21T04:59:10.179Z
+---
+
+# CloudAgent Documentation
+
+This is a consolidated version of the CloudAgent documentation.
+It includes the User Guide, Cookbooks, and other resources.
+
+---
+
+    
+
+# Home 
+
+# CloudAgent Documentation
+
+Welcome to the official CloudAgent documentation. This site is designed to help you get the most out of the platform, whether you are a first-time user or an advanced operator.
+
+<div className="cards">
+  <div className="card">
+    ### [User Guide](/guide)
+    **Objective**: Explore the CloudAgent interface and learn how to manage your cloud workforce with our screenshot-driven guide.
+  </div>
+  <div className="card">
+    ### [Cookbooks](/cookbooks)
+    **Objective**: Find step-by-step recipes and how-to guides for specific tasks and configurations.
+  </div>
+</div>
+
+> **Note:** 
+  Start with the **User Guide** for a comprehensive tour, or jump to **Cookbooks** if you have a specific task in mind. 
+
+# User Guide 
+
+
+# Introduction 
+
+# CloudAgent User Guide
+
+Welcome to the User Guide. Here you'll find screenshot-driven tours of the CloudAgent interface.
+
+Select a topic from the sidebar to get started, or [return to the main documentation](/).
+
+> **Note:** 
+  Looking for specific recipes? Check out our [Cookbooks](/cookbooks). 
+
+# Getting Started 
+
+# 🚀 Getting Started
+
+## Objective
+Get up and running with CloudAgent to start managing and securing your cloud infrastructure.
+
+## Overview
+CloudAgent is your AI-powered partner for cloud operations. By the end of this guide, you will be able to access the platform and understand the core prerequisites for connecting your cloud environments.
+
+## Accessing the Platform
+
+1.  Navigate to [cloudagent.io/login](https://cloudagent.io/login).
+2.  Enter your **Username** and **Password**, or click **Sign in with Google** to use your Google credentials.
+3.  Click the **Log in** button (if using username/password).
+
+> **Note:** 
+  If you don't have an account, you can request an invitation by clicking "Sign up".
+
+## Next Steps
+## Next Steps
+
+Now that you are logged in, the **most important first step** is to connect your cloud environment.
+
+👉 **[Go to Account Onboarding](/guide/onboarding)** to connect your AWS account and unlock the dashboard features. 
+
+# Account Onboarding 
+
+# ☁️ Account Onboarding
+
+## Objective
+Connect your AWS accounts to CloudAgent to enable monitoring, management, and automated actions.
+
+> **Note:** 
+  **Critical Step**: You must onboard at least one cloud account to see any data in the Dashboard, receive recommendations, or use the Blueprint Builder.
+
+CloudAgent makes it easy to connect your cloud environments and start managing your workloads.
+
+## Adding a Cloud Environment
+
+1.  Navigate to **Cloud Setup & Workloads** in the sidebar.
+2.  Click on **Add Cloud Environment**.
+3.  **Step 1: Gather Details**: Enter your AWS Account ID and select the desired permission level (e.g., Read-Only, Limited Write, Full Admin).
+
+![Onboarding Step 1](/images/onboarding_step1.png)
+
+4.  **Step 2: Deploy**: Choose your preferred deployment method. You can launch the CloudFormation stack directly or download the template to deploy manually.
+
+![Onboarding Step 2](/images/onboarding_step2.png)
+
+5.  **Step 3: Validate**: Once deployed, validate the IAM role connection and give your environment a name.
+
+![Onboarding Step 3](/images/onboarding_step3.png) 
+
+# Dashboard Overview 
+
+# 📊 Dashboard Overview
+
+## Objective
+Gain a comprehensive view of your cloud resources, security posture, and agent activities.
+
+Once logged in, you will see the **Dashboard Overview**. This is your central hub for managing your cloud workforce.
+
+> **Note:** 
+  **Prerequisite**: The dashboard will appear empty until you connect a cloud account. Please complete the [Account Onboarding](/guide/onboarding) step first.
+
+![Dashboard Overview](/images/dashboard_overview.png)
+
+## Key Features
+
+### 1. Stats Overview
+At the top of the dashboard, you'll find a quick summary of your environment:
+- **Activity**: Total count of active agents, workflows, and generated reports.
+- **Environments & Workloads**: Number of connected AWS accounts and managed workloads.
+- **Recommendations**: Active recommendations categorized by priority (Critical, High, Medium, Low).
+
+### 2. Smart Recommendations
+The dashboard automatically categorizes findings into actionable groups:
+- **🔒 Critical Security**: High-priority security issues that need immediate attention.
+- **💰 Cost Savings**: Opportunities to reduce your cloud spend.
+- **🧹 Resource Cleanup**: Identification of unused or idle resources.
+- **📋 Compliance**: Audit items mapped to frameworks like SOC 2 and HIPAA.
+- **✨ Platform Insights**: Suggestions to maximize the value of CloudAgent.
+
+![Platform Insights Recommendation](/images/platform_insights.png)
+
+### 3. Scheduled Workflows
+View and manage your automated tasks:
+- **Active**: Workflows currently running on a schedule (e.g., daily backups).
+- **Paused**: Scheduled tasks that have been temporarily disabled.
+- **All Activities**: A complete list of all scheduled operations.
+
+### 4. Latest Activity
+A real-time feed of what your agents are doing:
+- **Agents**: Status updates from individual agents.
+- **Workflows**: Progress of complex, multi-step workflows.
+- **Waiting on User**: Tasks that require your approval to proceed.
+- **Done**: Completed actions and their results.
+
+### 5. Reports
+CloudAgent creates detailed security reports for your cloud account, including **cost** and **compliance** reports (such as **SOC 2** and **HIPAA**).
+
+> Get the full list of available reports at [cloudagent.io/libraries/all-reports](https://cloudagent.io/libraries/all-reports).
+
+![CloudAgent Report Example](/images/cloudagent-report.gif)
+
+## Key Sections
+
+*   **Overview**: A summary of your cloud resources and agent activity.
+*   **Cloud Setup & Workloads**: Manage your cloud infrastructure connections.
+*   **Recommendations**: AI-driven suggestions for optimizing your cloud environment.
+*   **My Workflows**: View and manage your automated workflows.
+*   **My Blueprints**: Create and manage infrastructure blueprints.
+*   **Activity**: A log of recent actions and events.
+*   **My Account**: Manage your profile and settings. 
+
+# Blueprint Builder 
+
+# 🛠️ Blueprint Builder
+
+## Objective
+Design, visualize, and deploy standardized infrastructure templates across your environments.
+
+The **Blueprint Builder** allows you to design and deploy infrastructure templates.
+
+## AI-Assisted Builder
+
+The Blueprint Builder uses an AI agent to help you design infrastructure templates. Instead of writing complex code from scratch, you describe what you want in plain English.
+
+### How it Works
+
+1.  **Define Objective**: Start by describing your goal (e.g., "Create a highly available ECS cluster with an Application Load Balancer").
+2.  **Generate Skeleton**: The AI analyzes your request and proposes a "Skeleton Plan" broken down into phases:
+    *   **Assessment**: Checks prerequisites and current state.
+    *   **Configuration**: Defines the resources and settings.
+    *   **Validation**: Ensures the design meets best practices.
+3.  **Refine & Customize**: Use the **Plan Builder Assistant** chat to refine tasks, add notes, or change deployment methods (CloudFormation or CLI).
+4.  **Finalize**: Once satisfied, the builder generates the executable blueprint.
+
+### Key Capabilities
+
+-   **Chat Interface**: Interact with the AI to iterate on your design.
+-   **Phased Approach**: Structured plans ensure no steps are missed.
+-   **Permission Calculation**: Automatically identifies the IAM permissions required to deploy the blueprint.
+-   **Deployment Options**: Support for standard CloudFormation stacks or CLI-based deployments.
+
+To access it:
+1.  Click on **My Blueprints** in the left sidebar.
+3.  Click **Create Blueprint** to start a new design.
+
+![Blueprint Builder](/images/blueprint_builder.png) 
+
+# AI Assistant 
+
+# 🤖 CloudAgent Assistant
+
+The **CloudAgent Assistant** is an AI-powered companion designed to help you manage your cloud infrastructure using natural language. It lives in the bottom-right corner of the application and is always ready to assist.
+
+## Overview
+
+The Assistant is capable of performing complex operations by connecting directly to your cloud environment and the CloudAgent backend. It translates your English requests into specific actions, such as running AWS CLI commands, deploying CloudFormation stacks, or managing your workloads.
+
+> **Note:** 
+  **Tip**: You can ask the Assistant to "explain" resources or errors to get context-aware answers.
+
+## Capabilities
+
+The Assistant is equipped with a powerful set of tools that allow it to:
+
+### 1. 🔍 AWS Discovery & Inspection
+You can ask the Assistant to inspect your live AWS environment. It uses read-only AWS CLI commands to fetch real-time data.
+
+*   **"List all EC2 instances in us-east-1."**
+*   **"Describe the security group 'sg-12345'."**
+*   **"Check if I have any S3 buckets with public access."**
+
+### 2. 📦 Workload Management
+The Assistant can view and update your CloudAgent workloads directly.
+
+*   **"List my workloads."**
+*   **"Update the 'payments' workload to use the 'prod' environment."**
+*   **"Add a rule to the 'portal' workload to prevent public S3 buckets."**
+
+### 3. 🏗️ Infrastructure Deployment
+You can deploy or update infrastructure using CloudFormation. The Assistant will always ask for your approval before making changes.
+
+*   **"Deploy a new S3 bucket named 'my-app-logs'."**
+*   **"Update the 'payments-stack' to enable versioning."**
+*   **"Create a standard VPC with 2 AZs."** (Uses built-in architecture templates)
+
+### 4. 🧠 Research & Validation
+The Assistant has access to the web to research best practices, validate syntax, and find solutions to errors.
+
+*   **"How do I configure an ALB for gRPC?"**
+*   **"Find the CloudFormation syntax for an ECS Fargate service."**
+*   **"What does this error message mean?"**
+
+## How to Use
+
+1.  Click the **CloudAgent** button in the bottom-right corner.
+2.  Type your request in plain English.
+3.  The Assistant will analyze your request and may:
+    *   Ask clarifying questions.
+    *   Run a read-only command to gather context.
+    *   Propose a plan of action (e.g., a CloudFormation template).
+4.  **Review and Approve**: For any action that modifies your infrastructure, the Assistant will present a plan. You must approve it before execution proceeds.
+
+## Safety & Security
+
+*   **Read-Only by Default**: The Assistant defaults to read-only actions for discovery.
+*   **Human-in-the-Loop**: All state-changing operations (Create, Update, Delete) require explicit user confirmation.
+*   **Guardrails**: Deployments are checked against your organization's security rules and policies. 
+
+# Managing Workloads 
+
+# 📦 Managing Workloads
+
+## Objective
+View, manage, and optimize your deployed applications and infrastructure stacks.
+
+The **Cloud Setup & Workloads** section allows you to view and manage your cloud infrastructure and applications.
+
+## Viewing Workloads
+
+To view your workloads:
+1.  Navigate to **Cloud Setup & Workloads** in the sidebar.
+2.  You will see a list of all connected cloud environments and deployed workloads.
+
+![Workload List](/images/workload_list.png)
+
+## Workload Details
+
+Click on any workload in the list to view its details. The details view provides comprehensive information about the workload's status, resources, and configuration.
+
+![Workload Details](/images/workload_details.png)
+
+### Key Tabs
+
+*   **Overview**: General information about the workload.
+*   **Tracked Resources**: A list of all cloud resources (e.g., S3 buckets, IAM roles, CloudFormation stacks) associated with this workload.
+*   **Deployment Settings**: Configuration options for how the workload is deployed.
+*   **Governance**: Policies and rules applied to the workload.
+*   **Architecture Preferences**: Settings related to the architectural design of the workload.
+*   **Security Rules**: Security configurations and firewall rules.
+*   **Compliance & Reports**: Compliance status and generated reports. 
+
+# FAQ 
+
+# ❓ FAQ
+
+## Objective
+Find answers to common questions about account management and platform usage.
+
+**Q: How do I reset my password?**
+A: On the login page, click the "Forgot password" link to initiate the password reset process.
+
+**Q: Where can I see my available credits?**
+A: Your available credits are displayed in the bottom left corner of the sidebar. 
+
+# Cookbooks 
+
+
+# Overview 
+
+# 🍳 Cookbooks
+
+Welcome to the CloudAgent Cookbooks! Here you will find step-by-step guides and recipes for common tasks and advanced configurations.
+
+## Available Cookbooks
+
+*   [**Automating Remediation**](/cookbooks/remediation)
+    *   Learn how to identify security issues, remediate them with blueprints, and verify the fix in a full-circle workflow. 
+
+# Automating Remediation 
+
+# Automating Security Remediation from Discovery to Fix
+
+This cookbook guides you through a complete workflow: identifying a security issue, fixing it with a blueprint, and verifying the resolution.
+
+## Objective
+To secure a public S3 bucket using CloudAgent's recommendation engine and blueprint builder.
+
+## Step 1: Assessment
+
+Start by reviewing the **Dashboard** to identify critical security findings.
+
+1.  Navigate to the **Dashboard**.
+2.  Look at the **Smart Recommendations** widget.
+3.  Click on **🔒 Critical Security**.
+4.  Locate the recommendation: **"S3 Bucket has public access enabled"**.
+
+> **Tip**: Click on the number of items (e.g., "3 Items") to see the specific resources affected by this recommendation.
+
+![Finding Recommendation Details](/images/recommendation_click_guide.png)
+
+> **Note:** 
+  Public S3 buckets can expose sensitive data. It is critical to remediate this immediately unless public access is intentionally required.
+
+## Step 2: Remediation
+
+CloudAgent allows you to generate a remediation blueprint directly from the recommendation.
+
+1.  Click the **Remediate** button next to the finding.
+2.  This opens the **Blueprint Builder** with a pre-configured template.
+3.  Review the generated CloudFormation template. It should include `PublicAccessBlockConfiguration` set to `true`.
+4.  Click **Deploy** to apply the fix.
+
+### Example Snippet
+The blueprint will automatically add this configuration to your bucket:
+
+```yaml
+Type: AWS::S3::Bucket
+Properties:
+  BucketName: my-sensitive-data-bucket
+  PublicAccessBlockConfiguration:
+    BlockPublicAcls: true
+    BlockPublicPolicy: true
+    IgnorePublicAcls: true
+    RestrictPublicBuckets: true
+```
+
+## Step 3: Validation
+
+Once the deployment is complete, verify that the issue is resolved.
+
+1.  Go back to the **Dashboard**.
+2.  Check the **Activity** feed for the "Remediation Deployment" success status.
+3.  Refresh the **Smart Recommendations** list.
+4.  Verify that the "S3 Bucket has public access enabled" finding is **Gone**.
+
+> **Note:** 
+  **Success!** You have successfully identified, remediated, and verified a security vulnerability using CloudAgent. 
