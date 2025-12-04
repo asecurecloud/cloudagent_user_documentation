@@ -1,0 +1,98 @@
+import { Callout } from 'nextra/components'
+
+# 📈 Reports
+
+## Objective
+Generate and review compliance reports to assess your cloud security posture against industry frameworks.
+
+CloudAgent provides detailed security and compliance reports that help you understand your environment's adherence to best practices and regulatory requirements.
+
+## Accessing Reports
+
+Reports can be accessed from multiple locations:
+
+1. **Dashboard**: Quick access via the Reports widget
+2. **Workload Details**: Reports specific to a workload in the Reports section
+3. **Reports Page**: Navigate to **Reports** in the sidebar for the full report library
+
+## Available Report Types
+
+### 🔐 PCI DSS 3.2.1 Compliance Report
+Assesses your environment against Payment Card Industry Data Security Standard requirements:
+- Network security controls
+- Access management
+- Data encryption
+- Vulnerability management
+
+### 🏛️ CIS AWS Foundations Benchmark v3.0
+Evaluates your AWS configuration against Center for Internet Security benchmarks:
+- Identity and Access Management
+- Logging and Monitoring
+- Networking
+- Storage security
+
+### 📋 SOC 2 Readiness Report
+Prepares you for SOC 2 audits by checking:
+- Security controls
+- Availability requirements
+- Processing integrity
+- Confidentiality measures
+
+### 💰 Cost Optimization Report
+Analyzes spending patterns and identifies savings:
+- Unused resources
+- Right-sizing opportunities
+- Reserved instance recommendations
+
+## Report Status
+
+Each report displays a status indicator:
+
+| Status | Meaning |
+|--------|---------|
+| ✅ **Passed** | All checks passed successfully |
+| ⚠️ **Warning** | Some non-critical findings require attention |
+| ❌ **Failed** | Critical findings that need immediate remediation |
+| 🔄 **Running** | Report generation in progress |
+
+## Running a New Report
+
+1. Navigate to the **Reports** page or workload details.
+2. Click **+ Run New Report**.
+3. Select the report type from the available options.
+4. Choose the target environment(s).
+5. Click **Generate** to start the report.
+
+<Callout type="info" emoji="⏱️">
+  **Processing Time**: Reports typically complete within 5-15 minutes depending on the size of your environment.
+</Callout>
+
+## Viewing Report Details
+
+Click **View Report** on any completed report to see:
+
+- **Executive Summary**: High-level overview of findings
+- **Detailed Findings**: Individual check results with pass/fail status
+- **Affected Resources**: Specific resources that need attention
+- **Remediation Steps**: Recommended actions to resolve issues
+- **Export Options**: Download as PDF for sharing with auditors
+
+## Scheduling Reports
+
+For continuous compliance monitoring:
+
+1. Click on a report type.
+2. Select **Schedule**.
+3. Choose frequency (Daily, Weekly, Monthly).
+4. Set notification preferences.
+
+<Callout type="warning" emoji="📧">
+  **Notifications**: Configure email alerts to receive reports automatically when they complete or when new critical findings are detected.
+</Callout>
+
+## Report History
+
+All generated reports are stored in your report history:
+- View past reports to track compliance trends
+- Compare results over time
+- Export historical data for audits

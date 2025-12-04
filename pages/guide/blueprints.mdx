@@ -1,4 +1,6 @@
-# 🛠️ Blueprint Builder
+import { Callout } from 'nextra/components'
+
+# 🛠️ Blueprints & Agents
 
 ## Objective
 Design, visualize, and deploy standardized infrastructure templates across your environments.
@@ -27,7 +29,69 @@ The Blueprint Builder uses an AI agent to help you design infrastructure templat
 -   **Deployment Options**: Support for standard CloudFormation stacks or CLI-based deployments.
 
 To access it:
-1.  Click on **My Blueprints** in the left sidebar.
-3.  Click **Create Blueprint** to start a new design.
+1.  Click on **Blueprints & Agents** in the left sidebar.
+2.  Click **Create Blueprint** to start a new design.
 
 ![Blueprint Builder](/images/blueprint_builder.png)
+
+## Running a Blueprint
+
+To execute an existing blueprint:
+
+1. Navigate to **Blueprints & Agents** > **My Blueprints**.
+2. Find the blueprint you want to run.
+3. Click **Run Blueprint**.
+4. Select the target environment.
+5. Review the execution plan.
+6. Click **Execute** to deploy.
+
+<Callout type="info" emoji="💡">
+  **Tip**: You can also run blueprints directly from recommendations by clicking the "Remediate" button.
+</Callout>
+
+## Agent History
+
+The **Agent History** tab shows the status and results of all blueprint executions and agent activities.
+
+### Viewing Agent History
+
+1. Navigate to **Blueprints & Agents**.
+2. Click on the **Agent History** tab.
+3. View all past and current agent executions.
+
+### Agent Status
+
+Each agent execution displays:
+
+| Status | Description |
+|--------|-------------|
+| 🟢 **Completed** | Successfully finished all steps |
+| 🔄 **Running** | Currently executing |
+| 🟡 **Waiting on user input** | Paused, awaiting your approval |
+| ❌ **Failed** | Encountered an error |
+
+### Agent Details
+
+Click on any agent entry to view:
+- **Execution Timeline**: Step-by-step progress
+- **Logs**: Detailed output from each action
+- **Resources Modified**: What was created, updated, or deleted
+- **Errors**: Any issues encountered
+
+### Managing Running Agents
+
+For agents that are running or waiting:
+- **Continue**: Resume execution after reviewing
+- **Mark As Complete**: Manually mark as finished
+- **View History**: See detailed execution logs
+
+<Callout type="warning" emoji="⚠️">
+  **Human-in-the-Loop**: Agents will pause and request your approval before making state-changing operations in your AWS environment.
+</Callout>
+
+### Searching Agent History
+
+Use the search bar to find specific executions:
+- Search by blueprint name
+- Filter by status
+- Filter by date range
