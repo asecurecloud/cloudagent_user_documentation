@@ -1,0 +1,111 @@
+import { Callout } from 'nextra/components'
+
+# MCP Integration
+
+## Objective
+Connect your IDE to CloudAgent using the Model Context Protocol (MCP) to build and deploy cloud infrastructure directly from your development environment.
+
+<Callout type="info">
+  **What is MCP?** The Model Context Protocol is an open standard that allows AI-powered IDEs like Cursor to connect to external tools and services. CloudAgent's MCP server lets your AI coding assistant deploy infrastructure on your behalf—with built-in guardrails.
+</Callout>
+
+## Prerequisites
+
+Before setting up MCP, ensure you have:
+
+- A CloudAgent account with at least one [connected AWS environment](/guide/onboarding)
+- [Cursor IDE](https://cursor.com) installed (version 0.43 or later)
+- A workload configured with your team's security baselines and governance rules
+
+## Step 1: Generate Your MCP Configuration
+
+1. Log in to [CloudAgent](https://cloudagent.io).
+2. Navigate to **My Account** → **Integrations**.
+3. Click **Generate MCP Config**.
+4. Select the **Workload** you want the IDE to deploy against.
+5. Copy the generated configuration JSON.
+
+<Callout type="warning">
+  **Security Note**: The MCP configuration contains a secure token scoped to your selected workload. Do not share this token or commit it to version control.
+</Callout>
+
+## Step 2: Configure Cursor
+
+1. Open Cursor IDE.
+2. Open the Command Palette (`Cmd+Shift+P` on macOS, `Ctrl+Shift+P` on Windows/Linux).
+3. Search for **"Cursor Settings: Open MCP Config"** and select it.
+4. Paste your CloudAgent MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "cloudagent": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/cloudagent-mcp-server"],
+      "env": {
+        "CLOUDAGENT_API_KEY": "your-api-key-here",
+        "CLOUDAGENT_WORKLOAD_ID": "your-workload-id"
+      }
+    }
+  }
+}
+```
+
+5. Save the file and restart Cursor.
+
+## Step 3: Verify the Connection
+
+1. Open a new chat in Cursor (Composer or Chat panel).
+2. Type: **"List my CloudAgent workloads"**
+3. If configured correctly, the AI will respond with your available workloads.
+
+You should see output similar to:
+
+```
+Connected to CloudAgent. Available workloads:
+- payments-api (prod)
+- user-portal (staging)
+- data-pipeline (dev)
+```
+
+## Available MCP Capabilities
+
+Once connected, your IDE can perform the following operations through CloudAgent:
+
+### Read Operations (No Approval Required)
+- List workloads and their configurations
+- View security baselines and governance rules
+- Check deployment status and history
+- Query AWS resources within workload scope
+
+### Write Operations (Requires Approval)
+- Deploy infrastructure blueprints
+- Update workload configurations
+- Create or modify AWS resources
+
+<Callout type="info">
+  **Guardrails Active**: All deployments are validated against your workload's security baselines before execution. If a request violates a security rule, it will be blocked with an explanation.
+</Callout>
+
+## Troubleshooting
+
+### "Connection refused" or "Server not found"
+- Ensure your API key is valid and hasn't expired
+- Check that the workload ID matches an existing workload
+- Verify your network allows outbound HTTPS connections
+
+### "Permission denied" on deployment
+- Your workload may have restrictive security baselines
+- Contact your security team to review the blocked rule
+- Check the CloudAgent dashboard for detailed error logs
+
+### MCP server not appearing in Cursor
+- Restart Cursor after saving the MCP configuration
+- Ensure the JSON syntax is valid (no trailing commas)
+- Check Cursor's developer console for error messages
+
+## Next Steps
+
+- **[Cookbook: Developing in the Corporate Cloud with Guardrails](/cookbooks/cursor-mcp)** — Learn the full workflow for teams using IDE-based cloud development.
+- **[Blueprints and Agents](/guide/blueprints)** — Create reusable infrastructure templates for your team.
+- **[Managing Workloads](/guide/workloads)** — Configure security baselines and governance rules.

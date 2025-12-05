@@ -9,6 +9,7 @@
     "blueprints": "Blueprints & Agents",
     "reports": "Reports",
     "assistant": "AI Assistant",
+    "mcp": "MCP Integration",
     "faq": "FAQ",
     "---": {
         "type": "separator",

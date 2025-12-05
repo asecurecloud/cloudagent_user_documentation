@@ -1,7 +1,7 @@
 ---
 title: CloudAgent Documentation
 description: Consolidated documentation for CloudAgent, optimized for LLM consumption.
-generated_at: 2025-12-05T21:13:19.094Z
+generated_at: 2025-12-05T22:08:09.792Z
 ---
 
 # CloudAgent Documentation
@@ -695,6 +695,115 @@ The Assistant has access to the web to research best practices, validate syntax,
 *   **Human-in-the-Loop**: All state-changing operations (Create, Update, Delete) require explicit user confirmation.
 *   **Guardrails**: Deployments are checked against your organization's security rules and policies.
 
+# MCP Integration
+
+# MCP Integration
+
+## Objective
+Connect your IDE to CloudAgent using the Model Context Protocol (MCP) to build and deploy cloud infrastructure directly from your development environment.
+
+> **Note:** 
+  **What is MCP?** The Model Context Protocol is an open standard that allows AI-powered IDEs like Cursor to connect to external tools and services. CloudAgent's MCP server lets your AI coding assistant deploy infrastructure on your behalf—with built-in guardrails.
+
+## Prerequisites
+
+Before setting up MCP, ensure you have:
+
+- A CloudAgent account with at least one [connected AWS environment](/guide/onboarding)
+- [Cursor IDE](https://cursor.com) installed (version 0.43 or later)
+- A workload configured with your team's security baselines and governance rules
+
+## Step 1: Generate Your MCP Configuration
+
+1. Log in to [CloudAgent](https://cloudagent.io).
+2. Navigate to **My Account** → **Integrations**.
+3. Click **Generate MCP Config**.
+4. Select the **Workload** you want the IDE to deploy against.
+5. Copy the generated configuration JSON.
+
+> **Note:** 
+  **Security Note**: The MCP configuration contains a secure token scoped to your selected workload. Do not share this token or commit it to version control.
+
+## Step 2: Configure Cursor
+
+1. Open Cursor IDE.
+2. Open the Command Palette (`Cmd+Shift+P` on macOS, `Ctrl+Shift+P` on Windows/Linux).
+3. Search for **"Cursor Settings: Open MCP Config"** and select it.
+4. Paste your CloudAgent MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "cloudagent": {
+      "command": "npx",
+      "args": ["-y", "@anthropic/cloudagent-mcp-server"],
+      "env": {
+        "CLOUDAGENT_API_KEY": "your-api-key-here",
+        "CLOUDAGENT_WORKLOAD_ID": "your-workload-id"
+      }
+    }
+  }
+}
+```
+
+5. Save the file and restart Cursor.
+
+## Step 3: Verify the Connection
+
+1. Open a new chat in Cursor (Composer or Chat panel).
+2. Type: **"List my CloudAgent workloads"**
+3. If configured correctly, the AI will respond with your available workloads.
+
+You should see output similar to:
+
+```
+Connected to CloudAgent. Available workloads:
+- payments-api (prod)
+- user-portal (staging)
+- data-pipeline (dev)
+```
+
+## Available MCP Capabilities
+
+Once connected, your IDE can perform the following operations through CloudAgent:
+
+### Read Operations (No Approval Required)
+- List workloads and their configurations
+- View security baselines and governance rules
+- Check deployment status and history
+- Query AWS resources within workload scope
+
+### Write Operations (Requires Approval)
+- Deploy infrastructure blueprints
+- Update workload configurations
+- Create or modify AWS resources
+
+> **Note:** 
+  **Guardrails Active**: All deployments are validated against your workload's security baselines before execution. If a request violates a security rule, it will be blocked with an explanation.
+
+## Troubleshooting
+
+### "Connection refused" or "Server not found"
+- Ensure your API key is valid and hasn't expired
+- Check that the workload ID matches an existing workload
+- Verify your network allows outbound HTTPS connections
+
+### "Permission denied" on deployment
+- Your workload may have restrictive security baselines
+- Contact your security team to review the blocked rule
+- Check the CloudAgent dashboard for detailed error logs
+
+### MCP server not appearing in Cursor
+- Restart Cursor after saving the MCP configuration
+- Ensure the JSON syntax is valid (no trailing commas)
+- Check Cursor's developer console for error messages
+
+## Next Steps
+
+- **[Cookbook: Developing in the Corporate Cloud with Guardrails](/cookbooks/cursor-mcp)** — Learn the full workflow for teams using IDE-based cloud development.
+- **[Blueprints and Agents](/guide/blueprints)** — Create reusable infrastructure templates for your team.
+- **[Managing Workloads](/guide/workloads)** — Configure security baselines and governance rules.
+
 # FAQ
 
 # FAQ
@@ -722,6 +831,9 @@ Welcome to the CloudAgent Cookbooks! Here you will find step-by-step guides and 
 
 ## Available Cookbooks
 
+*   [**Developing in the Corporate Cloud with Guardrails**](/cookbooks/cursor-mcp)
+    *   Enable developers to build AWS infrastructure from Cursor IDE while security and platform teams maintain governance through CloudAgent's MCP integration.
+
 *   [**Automating Remediation**](/cookbooks/remediation)
     *   Learn how to identify security issues, remediate them with blueprints, and verify the fix in a full-circle workflow.
 
@@ -732,20 +844,22 @@ Welcome to the CloudAgent Cookbooks! Here you will find step-by-step guides and 
 This cookbook guides you through a complete workflow: identifying a security issue, fixing it with a blueprint, and verifying the resolution.
 
 ## Objective
-To secure a public S3 bucket using CloudAgent's recommendation engine and blueprint builder.
+Protect sensitive data by preventing accidental public exposure of S3 buckets. 
+
+In this guide, we will use CloudAgent's recommendation engine to identify the risk and the blueprint builder to remediate it automatically.
 
 ## Step 1: Assessment
 
-Start by reviewing the **Dashboard** to identify security findings.
+Start by reviewing the **Recommendations** page to identify security findings.
 
-1.  Navigate to the **Dashboard**.
-2.  Look at the **Smart Recommendations** widget.
-3.  Click on **Critical Security**.
-4.  Locate the recommendation: **"S3 Bucket has public access enabled"**.
+1.  Navigate to **Recommendations** in the sidebar.
+2.  Review the recommendation categories at the top (Critical Security, Cost Savings, Resource Cleanup, etc.).
+3.  Look for recommendations in the **Critical Security** category.
+4.  Locate the recommendation: **"Enable S3 Block Public Access at Account Level"**.
 
-> **Tip**: Click on the number of items (e.g., "3 Items") to see the specific resources affected by this recommendation.
+> **Tip**: Click on a category card to filter the list by that category.
 
-![Finding Recommendation Details](/images/recommendation_click_guide.png)
+![Recommendations Page](/images/recommendation_click_guide.png)
 
 > **Note:** 
   Public S3 buckets can expose sensitive data. Remediate this promptly unless public access is intentionally required.
@@ -754,18 +868,19 @@ Start by reviewing the **Dashboard** to identify security findings.
 
 CloudAgent allows you to generate a remediation blueprint directly from the recommendation.
 
-1.  Click the **Remediate** button next to the finding.
-2.  This opens the **Blueprint Builder** with a pre-configured template.
-3.  Review the generated CloudFormation template. It should include `PublicAccessBlockConfiguration` set to `true`.
-4.  Click **Deploy** to apply the fix.
+1.  Find the recommendation in the list.
+2.  Click **Run Blueprint** or **Generate Blueprint** in the Automatic Remediation column.
+3.  This opens the **Blueprint Builder** with a pre-configured template.
+4.  Review the generated CloudFormation template.
+5.  Click **Execute** to apply the fix.
 
 ### Example Snippet
-The blueprint will automatically add this configuration to your bucket:
+The blueprint will configure S3 Block Public Access at the account level:
 
 ```yaml
-Type: AWS::S3::Bucket
+Type: AWS::S3::AccountPublicAccessBlock
 Properties:
-  BucketName: my-sensitive-data-bucket
+  AccountId: !Ref AWS::AccountId
   PublicAccessBlockConfiguration:
     BlockPublicAcls: true
     BlockPublicPolicy: true
@@ -777,10 +892,288 @@ Properties:
 
 Once the deployment is complete, verify that the issue is resolved.
 
-1.  Go back to the **Dashboard**.
-2.  Check the **Activity** feed for the "Remediation Deployment" success status.
-3.  Refresh the **Smart Recommendations** list.
-4.  Verify that the "S3 Bucket has public access enabled" finding is **Gone**.
+1.  Go back to the **Recommendations** page.
+2.  Check that the recommendation status has changed or the item is no longer listed.
+3.  Optionally, run a compliance report to confirm the fix.
 
 > **Note:** 
-  **Success!** You have successfully identified, remediated, and verified a security vulnerability using CloudAgent.
+  You have successfully identified, remediated, and verified a security finding using CloudAgent.
+
+# Cursor + MCP Integration
+
+# Developing in the Corporate Cloud with Guardrails
+
+## Objective
+Enable developers to ship faster while maintaining security and compliance standards.
+
+This guide shows how to connect Cursor IDE to CloudAgent via MCP, allowing developers to provision AWS infrastructure using natural language—while security and platform teams enforce governance automatically.
+
+## The Challenge
+
+Modern development teams want speed. They want to provision infrastructure as fast as they can write code. But in enterprise environments, this creates tension:
+
+- **Developers** want self-service access to spin up resources quickly
+- **Security teams** need to enforce baselines (encryption, no public access, approved instance types)
+- **Platform teams** must ensure tagging, cost controls, and architectural standards
+
+The traditional approach—tickets, approval queues, and handoffs—slows everyone down.
+
+## The Solution: IDE + CloudAgent MCP
+
+By connecting Cursor to CloudAgent via MCP (Model Context Protocol), you create a **governed self-service** model:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  CURSOR IDE                                                     │
+│  ┌─────────────────────────────────────────────────────────┐   │
+│  │  Developer: "Create an S3 bucket for user uploads"      │   │
+│  └─────────────────────────────────────────────────────────┘   │
+│                            │                                    │
+│                            ▼                                    │
+│                     MCP Connection                              │
+└────────────────────────────┬────────────────────────────────────┘
+                             │
+                             ▼
+┌─────────────────────────────────────────────────────────────────┐
+│  CLOUDAGENT                                                     │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐          │
+│  │  Security    │  │  Platform    │  │  Workload    │          │
+│  │  Baselines   │  │  Governance  │  │  Context     │          │
+│  │              │  │              │  │              │          │
+│  │ • Encryption │  │ • Required   │  │ • VPC scope  │          │
+│  │ • No public  │  │   tags       │  │ • IAM role   │          │
+│  │ • Approved   │  │ • Naming     │  │ • Region     │          │
+│  │   services   │  │   standards  │  │              │          │
+│  └──────────────┘  └──────────────┘  └──────────────┘          │
+│                            │                                    │
+│                            ▼                                    │
+│              Validated and Deployed to AWS                      │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Result**: Developers move fast. Security and platform teams sleep well.
+
+## Who Does What?
+
+### Developer Workflow
+
+Developers interact with cloud infrastructure using natural language in their IDE:
+
+```
+Developer: "Create a DynamoDB table for session storage"
+```
+
+CloudAgent's MCP server:
+1. Parses the request
+2. Identifies the workload context
+3. Generates a compliant blueprint
+4. Applies security baselines and governance rules automatically
+5. Returns a preview for approval
+6. Deploys to AWS
+
+The developer never needs to know the specific tagging requirements, encryption settings, or VPC configurations—CloudAgent handles it.
+
+### Security Team Workflow
+
+Security teams define **workload security baselines** in CloudAgent:
+
+| Baseline Rule | Effect |
+|--------------|--------|
+| `require-encryption-at-rest` | All S3, EBS, RDS resources must have encryption enabled |
+| `block-public-access` | Prevents creation of public S3 buckets or security groups with 0.0.0.0/0 |
+| `approved-instance-types` | Limits EC2 to approved instance families (e.g., t3, m5) |
+| `require-vpc` | All resources must be deployed within the designated VPC |
+
+When a developer request violates a baseline, CloudAgent blocks it and explains why:
+
+```
+Request blocked: Security baseline violation
+
+Rule: block-public-access
+Reason: S3 bucket 'user-uploads' cannot have public read access.
+Suggestion: Remove PublicReadAccess or request an exception from your security team.
+```
+
+### Platform Team Workflow
+
+Platform teams configure **governance rules** on workloads:
+
+| Governance Rule | Example |
+|----------------|---------|
+| Required tags | `Environment`, `CostCenter`, `Owner` |
+| Naming conventions | `{env}-{app}-{resource}` pattern |
+| Region restrictions | Deploy only to `us-east-1` and `us-west-2` |
+| Cost controls | Maximum instance size, budget alerts |
+
+These rules are automatically applied to every deployment. If a developer forgets to specify tags, CloudAgent adds them based on the workload context.
+
+## Step-by-Step Setup
+
+### For Security Teams: Define Baselines
+
+1. Navigate to **Cloud Setup & Workloads** → select your workload.
+2. Go to the **Security Rules** tab.
+3. Enable the baseline rules that match your organization's requirements:
+   - Require encryption at rest
+   - Block public access
+   - Enforce TLS 1.2+
+   - Require VPC deployment
+4. Click **Save**.
+
+> **Note:** 
+  **Tip**: Start with a restrictive baseline and add exceptions as needed. It's easier to relax rules than to tighten them after resources are deployed.
+
+### For Platform Teams: Configure Governance
+
+1. Navigate to **Cloud Setup & Workloads** → select your workload.
+2. Go to the **Governance** tab.
+3. Configure required tags:
+
+```yaml
+required_tags:
+  - key: Environment
+    allowed_values: [dev, staging, prod]
+  - key: CostCenter
+    required: true
+  - key: Owner
+    default_from: workload.owner
+```
+
+4. Set naming conventions:
+
+```yaml
+naming_pattern: "{environment}-{workload_name}-{resource_type}"
+# Example output: prod-payments-api-bucket
+```
+
+5. Click **Save**.
+
+### For Developers: Connect Your IDE
+
+1. Get your MCP configuration from CloudAgent (**My Account** → **Integrations**).
+2. Open Cursor IDE → **Settings** → **MCP Config**.
+3. Paste the configuration and restart Cursor.
+4. Start building!
+
+> See the full setup guide: **[MCP Integration](/guide/mcp)**
+
+## Example: Building a Feature End-to-End
+
+Let's walk through a real scenario: A developer needs to add file upload functionality to an application.
+
+### Developer Request (in Cursor)
+
+```
+Create the infrastructure for user file uploads:
+- S3 bucket for storing files
+- Lambda function to process uploads
+- API Gateway endpoint for the upload API
+```
+
+### CloudAgent Processing
+
+1. **Context Injection**: CloudAgent identifies this is for the `user-portal` workload in `staging`
+2. **Blueprint Generation**: Creates CloudFormation/Terraform with:
+   - S3 bucket with encryption, versioning, and private access
+   - Lambda with VPC configuration and IAM role
+   - API Gateway with throttling
+3. **Governance Applied**: Adds required tags and naming conventions
+4. **Security Validation**: Checks all resources against baselines
+
+### Preview Returned to Developer
+
+```yaml
+# CloudAgent will deploy the following resources:
+
+Resources:
+  staging-user-portal-uploads-bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+      Tags:
+        - Key: Environment
+          Value: staging
+        - Key: CostCenter
+          Value: CC-1234
+        - Key: Owner
+          Value: jane.developer@company.com
+  
+  # ... Lambda and API Gateway configs ...
+
+Security checks: All passed
+Governance checks: All passed
+
+Approve deployment? [Yes/No]
+```
+
+### Developer Approves
+
+```
+Yes, deploy it.
+```
+
+### Deployment Complete
+
+```
+Deployment successful!
+
+Created resources:
+- S3: staging-user-portal-uploads-bucket
+- Lambda: staging-user-portal-upload-processor
+- API Gateway: staging-user-portal-upload-api
+
+Endpoint: https://abc123.execute-api.us-east-1.amazonaws.com/uploads
+```
+
+**Total time: ~3 minutes**. No tickets. No handoffs. Full compliance.
+
+## Handling Violations
+
+What happens when a developer tries something that violates the rules?
+
+### Example: Attempting a Public Bucket
+
+```
+Developer: "Create a public S3 bucket for marketing assets"
+```
+
+```
+Deployment blocked
+
+Security baseline violation detected:
+• Rule: block-public-access
+• Resource: S3 bucket
+• Issue: Public access is not allowed for this workload
+
+Options:
+1. Deploy as private bucket with CloudFront distribution (recommended)
+2. Request a security exception through CloudAgent
+
+Would you like me to create a private bucket with CloudFront instead?
+```
+
+The developer can either accept the compliant alternative or escalate through proper channels—but they can't accidentally deploy a public bucket.
+
+## Benefits Summary
+
+| Stakeholder | Before | After |
+|-------------|--------|-------|
+| **Developers** | Days waiting for infra tickets | Minutes via IDE chat |
+| **Security** | Manual reviews, missed violations | Automated enforcement, full coverage |
+| **Platform** | Chasing teams for tagging compliance | Auto-applied governance |
+| **Leadership** | Shadow IT and compliance risk | Full visibility and control |
+
+## Next Steps
+
+- **[Set up MCP Integration](/guide/mcp)** — Technical guide to connect Cursor to CloudAgent
+- **[Managing Workloads](/guide/workloads)** — Configure security baselines and governance
+- **[CloudAgent Assistant](/guide/assistant)** — Use AI for cloud operations in the web UI
+
+> **Note:** 
+  **Ready to enable governed self-service for your team?** [Contact us](https://cloudagent.io/contact) for a demo of the MCP integration.
