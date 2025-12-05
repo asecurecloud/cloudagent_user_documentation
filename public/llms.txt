@@ -1,7 +1,7 @@
 ---
 title: CloudAgent Documentation
 description: Consolidated documentation for CloudAgent, optimized for LLM consumption.
-generated_at: 2025-12-05T22:08:09.792Z
+generated_at: 2025-12-05T22:11:03.658Z
 ---
 
 # CloudAgent Documentation
@@ -703,7 +703,7 @@ The Assistant has access to the web to research best practices, validate syntax,
 Connect your IDE to CloudAgent using the Model Context Protocol (MCP) to build and deploy cloud infrastructure directly from your development environment.
 
 > **Note:** 
-  **What is MCP?** The Model Context Protocol is an open standard that allows AI-powered IDEs like Cursor to connect to external tools and services. CloudAgent's MCP server lets your AI coding assistant deploy infrastructure on your behalf—with built-in guardrails.
+  **What is MCP?** The Model Context Protocol is an open standard that allows AI-powered IDEs like Cursor to connect to external tools and services. CloudAgent's MCP server lets your AI coding assistant deploy infrastructure on your behalf, with built-in guardrails.
 
 ## Prerequisites
 
@@ -800,9 +800,9 @@ Once connected, your IDE can perform the following operations through CloudAgent
 
 ## Next Steps
 
-- **[Cookbook: Developing in the Corporate Cloud with Guardrails](/cookbooks/cursor-mcp)** — Learn the full workflow for teams using IDE-based cloud development.
-- **[Blueprints and Agents](/guide/blueprints)** — Create reusable infrastructure templates for your team.
-- **[Managing Workloads](/guide/workloads)** — Configure security baselines and governance rules.
+- **[Cookbook: Developing in the Corporate Cloud with Guardrails](/cookbooks/cursor-mcp)**: Learn the full workflow for teams using IDE-based cloud development.
+- **[Blueprints and Agents](/guide/blueprints)**: Create reusable infrastructure templates for your team.
+- **[Managing Workloads](/guide/workloads)**: Configure security baselines and governance rules.
 
 # FAQ
 
@@ -899,6 +899,13 @@ Once the deployment is complete, verify that the issue is resolved.
 > **Note:** 
   You have successfully identified, remediated, and verified a security finding using CloudAgent.
 
+## Next Steps
+
+- **[Recommendations](/guide/recommendations)**: Learn how to filter, prioritize, and act on all recommendation types
+- **[Blueprints and Agents](/guide/blueprints)**: Create custom blueprints for your organization's common remediation patterns
+- **[My Workflows](/guide/workflows)**: Automate recurring remediation tasks with scheduled workflows
+- **[Reports](/guide/reports)**: Run compliance reports to track your security posture over time
+
 # Cursor + MCP Integration
 
 # Developing in the Corporate Cloud with Guardrails
@@ -906,7 +913,7 @@ Once the deployment is complete, verify that the issue is resolved.
 ## Objective
 Enable developers to ship faster while maintaining security and compliance standards.
 
-This guide shows how to connect Cursor IDE to CloudAgent via MCP, allowing developers to provision AWS infrastructure using natural language—while security and platform teams enforce governance automatically.
+This guide shows how to connect Cursor IDE to CloudAgent via MCP, allowing developers to provision AWS infrastructure using natural language while security and platform teams enforce governance automatically.
 
 ## The Challenge
 
@@ -916,7 +923,7 @@ Modern development teams want speed. They want to provision infrastructure as fa
 - **Security teams** need to enforce baselines (encryption, no public access, approved instance types)
 - **Platform teams** must ensure tagging, cost controls, and architectural standards
 
-The traditional approach—tickets, approval queues, and handoffs—slows everyone down.
+The traditional approach (tickets, approval queues, and handoffs) slows everyone down.
 
 ## The Solution: IDE + CloudAgent MCP
 
@@ -971,7 +978,7 @@ CloudAgent's MCP server:
 5. Returns a preview for approval
 6. Deploys to AWS
 
-The developer never needs to know the specific tagging requirements, encryption settings, or VPC configurations—CloudAgent handles it.
+The developer never needs to know the specific tagging requirements, encryption settings, or VPC configurations; CloudAgent handles it.
 
 ### Security Team Workflow
 
@@ -1158,7 +1165,7 @@ Options:
 Would you like me to create a private bucket with CloudFront instead?
 ```
 
-The developer can either accept the compliant alternative or escalate through proper channels—but they can't accidentally deploy a public bucket.
+The developer can either accept the compliant alternative or escalate through proper channels, but they can't accidentally deploy a public bucket.
 
 ## Benefits Summary
 
@@ -1171,9 +1178,9 @@ The developer can either accept the compliant alternative or escalate through pr
 
 ## Next Steps
 
-- **[Set up MCP Integration](/guide/mcp)** — Technical guide to connect Cursor to CloudAgent
-- **[Managing Workloads](/guide/workloads)** — Configure security baselines and governance
-- **[CloudAgent Assistant](/guide/assistant)** — Use AI for cloud operations in the web UI
+- **[Set up MCP Integration](/guide/mcp)**: Technical guide to connect Cursor to CloudAgent
+- **[Managing Workloads](/guide/workloads)**: Configure security baselines and governance
+- **[CloudAgent Assistant](/guide/assistant)**: Use AI for cloud operations in the web UI
 
 > **Note:** 
   **Ready to enable governed self-service for your team?** [Contact us](https://cloudagent.io/contact) for a demo of the MCP integration.
