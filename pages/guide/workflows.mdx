@@ -1,6 +1,6 @@
 import { Callout } from 'nextra/components'
 
-# 🔄 My Workflows
+# My Workflows
 
 ## Objective
 Create, manage, and monitor automated workflows that execute recurring cloud operations.
@@ -44,7 +44,7 @@ Triggered by specific conditions:
 ## Creating a Workflow
 
 1. Navigate to **My Workflows**.
-2. Click **+ New Workflow**.
+2. Click **+ Create Workflow**.
 3. Choose a template or start from scratch.
 4. Configure the workflow steps:
    - **Action**: What the workflow should do
@@ -53,7 +53,7 @@ Triggered by specific conditions:
    - **Notifications**: Who to alert
 5. Click **Save** to create the workflow.
 
-<Callout type="info" emoji="💡">
+<Callout type="info">
   **Templates**: CloudAgent provides pre-built workflow templates for common operations like backup verification, security scanning, and cost optimization.
 </Callout>
 
@@ -61,12 +61,12 @@ Triggered by specific conditions:
 
 | Status | Description |
 |--------|-------------|
-| 🟢 **Active** | Workflow is running on schedule |
-| ⏸️ **Paused** | Temporarily disabled |
-| 🟡 **Waiting on User** | Requires your approval to continue |
-| ✅ **Completed** | Finished execution successfully |
-| ❌ **Failed** | Encountered an error |
-| 🔄 **Running** | Currently executing |
+| **Active** | Workflow is running on schedule |
+| **Paused** | Temporarily disabled |
+| **Waiting on User** | Requires your approval to continue |
+| **Completed** | Finished execution successfully |
+| **Failed** | Encountered an error |
+| **Running** | Currently executing |
 
 ## Managing Workflows
 
@@ -91,7 +91,7 @@ Common actions available in workflows:
 - **Enable S3 Versioning**: Turn on versioning for S3 buckets
 - **Update Security Groups**: Modify firewall rules
 
-### Compliance & Security
+### Compliance and Security
 - **Run CIS Benchmarks Report**: Generate compliance assessment
 - **Scan for Public Access**: Check for publicly exposed resources
 - **Audit IAM Permissions**: Review access policies
@@ -110,8 +110,8 @@ For sensitive operations, workflows can pause and wait for approval:
 3. Review the proposed action in the dashboard.
 4. Click **Continue** to proceed or **Cancel** to stop.
 
-<Callout type="warning" emoji="⚠️">
-  **Best Practice**: Enable approval steps for any workflow that modifies production resources.
+<Callout type="info">
+  **Tip**: Enable approval steps for any workflow that modifies production resources.
 </Callout>
 
 ## Viewing Workflow History

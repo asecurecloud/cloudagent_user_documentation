@@ -9,19 +9,19 @@ To secure a public S3 bucket using CloudAgent's recommendation engine and bluepr
 
 ## Step 1: Assessment
 
-Start by reviewing the **Dashboard** to identify critical security findings.
+Start by reviewing the **Dashboard** to identify security findings.
 
 1.  Navigate to the **Dashboard**.
 2.  Look at the **Smart Recommendations** widget.
-3.  Click on **🔒 Critical Security**.
+3.  Click on **Critical Security**.
 4.  Locate the recommendation: **"S3 Bucket has public access enabled"**.
 
 > **Tip**: Click on the number of items (e.g., "3 Items") to see the specific resources affected by this recommendation.
 
 ![Finding Recommendation Details](/images/recommendation_click_guide.png)
 
-<Callout type="warning" emoji="⚠️">
-  Public S3 buckets can expose sensitive data. It is critical to remediate this immediately unless public access is intentionally required.
+<Callout type="warning">
+  Public S3 buckets can expose sensitive data. Remediate this promptly unless public access is intentionally required.
 </Callout>
 
 ## Step 2: Remediation
@@ -56,6 +56,6 @@ Once the deployment is complete, verify that the issue is resolved.
 3.  Refresh the **Smart Recommendations** list.
 4.  Verify that the "S3 Bucket has public access enabled" finding is **Gone**.
 
-<Callout type="info" emoji="✅">
+<Callout type="info">
   **Success!** You have successfully identified, remediated, and verified a security vulnerability using CloudAgent.
 </Callout>
