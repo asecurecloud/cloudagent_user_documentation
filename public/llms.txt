@@ -1,7 +1,7 @@
 ---
 title: CloudAgent Documentation
 description: Consolidated documentation for CloudAgent, optimized for LLM consumption.
-generated_at: 2025-11-21T15:18:07.268Z
+generated_at: 2025-12-05T21:13:19.094Z
 ---
 
 # CloudAgent Documentation
@@ -28,6 +28,10 @@ Welcome to the official CloudAgent documentation. This site is designed to help 
     ### [Cookbooks](/cookbooks)
     **Objective**: Find step-by-step recipes and how-to guides for specific tasks and configurations.
   </div>
+  <div className="card">
+    ### [LLM Docs](/llms.txt)
+    **Objective**: A single-file documentation optimized for AI agents and LLMs.
+  </div>
 </div>
 
 > **Note:** 
@@ -49,7 +53,7 @@ Select a topic from the sidebar to get started, or [return to the main documenta
 
 # Getting Started
 
-# 🚀 Getting Started
+# Getting Started
 
 ## Objective
 Get up and running with CloudAgent to start managing and securing your cloud infrastructure.
@@ -67,21 +71,20 @@ CloudAgent is your AI-powered partner for cloud operations. By the end of this g
   If you don't have an account, you can request an invitation by clicking "Sign up".
 
 ## Next Steps
-## Next Steps
 
-Now that you are logged in, the **most important first step** is to connect your cloud environment.
+Now that you are logged in, the next step is to connect your cloud environment.
 
-👉 **[Go to Account Onboarding](/guide/onboarding)** to connect your AWS account and unlock the dashboard features.
+**[Go to Account Onboarding](/guide/onboarding)** to connect your AWS account and unlock the dashboard features.
 
 # Account Onboarding
 
-# ☁️ Account Onboarding
+# Account Onboarding
 
 ## Objective
 Connect your AWS accounts to CloudAgent to enable monitoring, management, and automated actions.
 
 > **Note:** 
-  **Critical Step**: You must onboard at least one cloud account to see any data in the Dashboard, receive recommendations, or use the Blueprint Builder.
+  **Important**: You must onboard at least one cloud account to see any data in the Dashboard, receive recommendations, or use the Blueprint Builder.
 
 CloudAgent makes it easy to connect your cloud environments and start managing your workloads.
 
@@ -103,7 +106,7 @@ CloudAgent makes it easy to connect your cloud environments and start managing y
 
 # Dashboard Overview
 
-# 📊 Dashboard Overview
+# Dashboard Overview
 
 ## Objective
 Gain a comprehensive view of your cloud resources, security posture, and agent activities.
@@ -125,11 +128,11 @@ At the top of the dashboard, you'll find a quick summary of your environment:
 
 ### 2. Smart Recommendations
 The dashboard automatically categorizes findings into actionable groups:
-- **🔒 Critical Security**: High-priority security issues that need immediate attention.
-- **💰 Cost Savings**: Opportunities to reduce your cloud spend.
-- **🧹 Resource Cleanup**: Identification of unused or idle resources.
-- **📋 Compliance**: Audit items mapped to frameworks like SOC 2 and HIPAA.
-- **✨ Platform Insights**: Suggestions to maximize the value of CloudAgent.
+- **Critical Security**: High-priority security issues that need immediate attention.
+- **Cost Savings**: Opportunities to reduce your cloud spend.
+- **Resource Cleanup**: Identification of unused or idle resources.
+- **Compliance**: Audit items mapped to frameworks like SOC 2 and HIPAA.
+- **Platform Insights**: Suggestions to maximize the value of CloudAgent.
 
 ![Platform Insights Recommendation](/images/platform_insights.png)
 
@@ -159,110 +162,13 @@ CloudAgent creates detailed security reports for your cloud account, including *
 *   **Cloud Setup & Workloads**: Manage your cloud infrastructure connections.
 *   **Recommendations**: AI-driven suggestions for optimizing your cloud environment.
 *   **My Workflows**: View and manage your automated workflows.
-*   **My Blueprints**: Create and manage infrastructure blueprints.
-*   **Activity**: A log of recent actions and events.
+*   **Blueprints & Agents**: Create and manage infrastructure blueprints.
+*   **Reports**: Generate and view compliance reports.
 *   **My Account**: Manage your profile and settings.
-
-# Blueprint Builder
-
-# 🛠️ Blueprint Builder
-
-## Objective
-Design, visualize, and deploy standardized infrastructure templates across your environments.
-
-The **Blueprint Builder** allows you to design and deploy infrastructure templates.
-
-## AI-Assisted Builder
-
-The Blueprint Builder uses an AI agent to help you design infrastructure templates. Instead of writing complex code from scratch, you describe what you want in plain English.
-
-### How it Works
-
-1.  **Define Objective**: Start by describing your goal (e.g., "Create a highly available ECS cluster with an Application Load Balancer").
-2.  **Generate Skeleton**: The AI analyzes your request and proposes a "Skeleton Plan" broken down into phases:
-    *   **Assessment**: Checks prerequisites and current state.
-    *   **Configuration**: Defines the resources and settings.
-    *   **Validation**: Ensures the design meets best practices.
-3.  **Refine & Customize**: Use the **Plan Builder Assistant** chat to refine tasks, add notes, or change deployment methods (CloudFormation or CLI).
-4.  **Finalize**: Once satisfied, the builder generates the executable blueprint.
-
-### Key Capabilities
-
--   **Chat Interface**: Interact with the AI to iterate on your design.
--   **Phased Approach**: Structured plans ensure no steps are missed.
--   **Permission Calculation**: Automatically identifies the IAM permissions required to deploy the blueprint.
--   **Deployment Options**: Support for standard CloudFormation stacks or CLI-based deployments.
-
-To access it:
-1.  Click on **My Blueprints** in the left sidebar.
-3.  Click **Create Blueprint** to start a new design.
-
-![Blueprint Builder](/images/blueprint_builder.png)
-
-# AI Assistant
-
-# 🤖 CloudAgent Assistant
-
-The **CloudAgent Assistant** is an AI-powered companion designed to help you manage your cloud infrastructure using natural language. It lives in the bottom-right corner of the application and is always ready to assist.
-
-## Overview
-
-The Assistant is capable of performing complex operations by connecting directly to your cloud environment and the CloudAgent backend. It translates your English requests into specific actions, such as running AWS CLI commands, deploying CloudFormation stacks, or managing your workloads.
-
-> **Note:** 
-  **Tip**: You can ask the Assistant to "explain" resources or errors to get context-aware answers.
-
-## Capabilities
-
-The Assistant is equipped with a powerful set of tools that allow it to:
-
-### 1. 🔍 AWS Discovery & Inspection
-You can ask the Assistant to inspect your live AWS environment. It uses read-only AWS CLI commands to fetch real-time data.
-
-*   **"List all EC2 instances in us-east-1."**
-*   **"Describe the security group 'sg-12345'."**
-*   **"Check if I have any S3 buckets with public access."**
-
-### 2. 📦 Workload Management
-The Assistant can view and update your CloudAgent workloads directly.
-
-*   **"List my workloads."**
-*   **"Update the 'payments' workload to use the 'prod' environment."**
-*   **"Add a rule to the 'portal' workload to prevent public S3 buckets."**
-
-### 3. 🏗️ Infrastructure Deployment
-You can deploy or update infrastructure using CloudFormation. The Assistant will always ask for your approval before making changes.
-
-*   **"Deploy a new S3 bucket named 'my-app-logs'."**
-*   **"Update the 'payments-stack' to enable versioning."**
-*   **"Create a standard VPC with 2 AZs."** (Uses built-in architecture templates)
-
-### 4. 🧠 Research & Validation
-The Assistant has access to the web to research best practices, validate syntax, and find solutions to errors.
-
-*   **"How do I configure an ALB for gRPC?"**
-*   **"Find the CloudFormation syntax for an ECS Fargate service."**
-*   **"What does this error message mean?"**
-
-## How to Use
-
-1.  Click the **CloudAgent** button in the bottom-right corner.
-2.  Type your request in plain English.
-3.  The Assistant will analyze your request and may:
-    *   Ask clarifying questions.
-    *   Run a read-only command to gather context.
-    *   Propose a plan of action (e.g., a CloudFormation template).
-4.  **Review and Approve**: For any action that modifies your infrastructure, the Assistant will present a plan. You must approve it before execution proceeds.
-
-## Safety & Security
-
-*   **Read-Only by Default**: The Assistant defaults to read-only actions for discovery.
-*   **Human-in-the-Loop**: All state-changing operations (Create, Update, Delete) require explicit user confirmation.
-*   **Guardrails**: Deployments are checked against your organization's security rules and policies.
 
 # Managing Workloads
 
-# 📦 Managing Workloads
+# Managing Workloads
 
 ## Objective
 View, manage, and optimize your deployed applications and infrastructure stacks.
@@ -285,17 +191,513 @@ Click on any workload in the list to view its details. The details view provides
 
 ### Key Tabs
 
-*   **Overview**: General information about the workload.
+*   **Overview**: General information about the workload, including the Diagram Preview.
 *   **Tracked Resources**: A list of all cloud resources (e.g., S3 buckets, IAM roles, CloudFormation stacks) associated with this workload.
 *   **Deployment Settings**: Configuration options for how the workload is deployed.
 *   **Governance**: Policies and rules applied to the workload.
 *   **Architecture Preferences**: Settings related to the architectural design of the workload.
 *   **Security Rules**: Security configurations and firewall rules.
-*   **Compliance & Reports**: Compliance status and generated reports.
+
+### Diagram Preview
+
+The **Diagram Preview** panel provides a visual representation of your workload's architecture. It displays all the AWS resources and their relationships in an easy-to-understand diagram.
+
+- **Auto-Generated**: The diagram is automatically generated based on tracked resources.
+- **Expandable View**: Click the **Expand** button to open a full-screen view for detailed inspection.
+- **Resource Icons**: Each AWS service (Lambda, S3, DynamoDB, etc.) is represented with its official icon.
+- **Timestamps**: Shows when the diagram was last generated.
+
+> **Tip**: Use the expanded diagram view during architecture reviews or when onboarding new team members to quickly understand the infrastructure layout.
+
+### Recommendations and Reports
+
+The workload details page also includes:
+
+*   **Top 5 Environment Recommendations**: Priority-ranked suggestions specific to this workload's environment.
+*   **Reports**: Compliance reports (PCI DSS, CIS Benchmarks) with status indicators and quick access to view details.
+
+# Recommendations
+
+# Recommendations
+
+## Objective
+Review and act on AI-powered recommendations to improve security, reduce costs, and optimize your cloud infrastructure.
+
+The **Recommendations** page provides a centralized view of all findings and suggestions across your connected cloud environments.
+
+## Accessing Recommendations
+
+1. Navigate to **Recommendations** in the sidebar.
+2. You will see a comprehensive list of all recommendations organized by category and priority.
+
+![Recommendations Page](/images/recommendations.png)
+
+> **Note:** 
+  **Quick Access**: You can also access category-specific recommendations directly from the Dashboard's Smart Recommendations widget.
+
+## Recommendation Categories
+
+CloudAgent organizes recommendations into actionable categories:
+
+### Critical Security
+High-priority security issues that require immediate attention:
+- Public S3 buckets
+- Overly permissive IAM policies
+- Unencrypted data stores
+- Security group misconfigurations
+
+### Cost Savings
+Opportunities to reduce your cloud spend:
+- Idle or underutilized resources
+- Reserved instance recommendations
+- Right-sizing suggestions
+- Orphaned resources (unattached EBS volumes, unused Elastic IPs)
+
+### Resource Cleanup
+Identification of resources that can be removed:
+- Unused security groups
+- Stale snapshots
+- Abandoned load balancers
+- Empty S3 buckets
+
+### Compliance
+Audit items mapped to industry frameworks:
+- SOC 2 requirements
+- HIPAA controls
+- CIS Benchmark findings
+- PCI DSS compliance gaps
+
+### Platform Insights
+Suggestions to maximize your use of CloudAgent:
+- Incomplete workload configurations
+- Untracked resources
+- Missing environment labels
+
+## Recommendation Details
+
+Each recommendation includes:
+
+| Field | Description |
+|-------|-------------|
+| **Priority** | Severity level (Critical, High, Medium, Low) |
+| **Resources** | Number of affected resources |
+| **Environment** | Which cloud environment contains the finding |
+| **Updated** | When the recommendation was last refreshed |
+
+## Taking Action
+
+For each recommendation, you can:
+
+1. **View Details**: Click to see the specific resources affected.
+2. **Remediate**: Generate a blueprint to fix the issue automatically.
+3. **Dismiss**: Mark as acknowledged if the finding is a known exception.
+4. **Create Workflow**: Set up automated remediation for recurring issues.
+
+> **Note:** 
+  **Tip**: Address Critical and High priority recommendations within 24-48 hours to maintain a strong security posture.
+
+## Filtering and Search
+
+Use the filtering options to focus on specific findings:
+- **By Priority**: Show only Critical, High, Medium, or Low items
+- **By Category**: Filter by Security, Cost, Cleanup, or Compliance
+- **By Environment**: Focus on a specific AWS account
+- **By Workload**: View recommendations for a particular workload
+
+# My Workflows
+
+# My Workflows
+
+## Objective
+Create, manage, and monitor automated workflows that execute recurring cloud operations.
+
+**My Workflows** allows you to automate repetitive tasks, schedule operations, and create multi-step processes that run without manual intervention.
+
+## Accessing Workflows
+
+Navigate to **My Workflows** in the sidebar to view and manage your automated tasks.
+
+![My Workflows Page](/images/workflows.png)
+
+## Understanding Workflows
+
+A workflow is an automated sequence of actions that can:
+- Run on a schedule (daily, weekly, monthly)
+- Execute multiple steps in order
+- Pause for human approval when needed
+- Notify you of results
+
+## Workflow Types
+
+### Manual Workflows
+Triggered on-demand when you need them:
+- One-time cleanup operations
+- Ad-hoc security scans
+- On-demand backups
+
+### Scheduled Workflows
+Run automatically at specified intervals:
+- Daily backup verification
+- Weekly compliance checks
+- Monthly cost reports
+
+### Event-Driven Workflows
+Triggered by specific conditions:
+- New resource detection
+- Security finding alerts
+- Threshold breaches
+
+## Creating a Workflow
+
+1. Navigate to **My Workflows**.
+2. Click **+ Create Workflow**.
+3. Choose a template or start from scratch.
+4. Configure the workflow steps:
+   - **Action**: What the workflow should do
+   - **Target**: Which resources or environments
+   - **Schedule**: When it should run
+   - **Notifications**: Who to alert
+5. Click **Save** to create the workflow.
+
+> **Note:** 
+  **Templates**: CloudAgent provides pre-built workflow templates for common operations like backup verification, security scanning, and cost optimization.
+
+## Workflow Status
+
+| Status | Description |
+|--------|-------------|
+| **Active** | Workflow is running on schedule |
+| **Paused** | Temporarily disabled |
+| **Waiting on User** | Requires your approval to continue |
+| **Completed** | Finished execution successfully |
+| **Failed** | Encountered an error |
+| **Running** | Currently executing |
+
+## Managing Workflows
+
+### Pause a Workflow
+Click the **Pause** button to temporarily stop a scheduled workflow without deleting it.
+
+### Resume a Workflow
+Click **Resume** to reactivate a paused workflow.
+
+### Edit a Workflow
+Click on the workflow name to modify its configuration, schedule, or steps.
+
+### Delete a Workflow
+Remove workflows you no longer need from the workflow list.
+
+## Workflow Actions
+
+Common actions available in workflows:
+
+### Infrastructure Operations
+- **Configure AWS Backup**: Set up backup policies for DynamoDB tables
+- **Enable S3 Versioning**: Turn on versioning for S3 buckets
+- **Update Security Groups**: Modify firewall rules
+
+### Compliance and Security
+- **Run CIS Benchmarks Report**: Generate compliance assessment
+- **Scan for Public Access**: Check for publicly exposed resources
+- **Audit IAM Permissions**: Review access policies
+
+### Cost Management
+- **Run Unused Resources Report**: Find idle resources
+- **Check Reserved Instance Coverage**: Optimize RI utilization
+- **Generate Cost Report**: Create spending analysis
+
+## Human-in-the-Loop
+
+For sensitive operations, workflows can pause and wait for approval:
+
+1. Workflow reaches an approval step.
+2. You receive a notification.
+3. Review the proposed action in the dashboard.
+4. Click **Continue** to proceed or **Cancel** to stop.
+
+> **Note:** 
+  **Tip**: Enable approval steps for any workflow that modifies production resources.
+
+## Viewing Workflow History
+
+Click on any workflow to see:
+- **Execution History**: Past runs with timestamps
+- **Step Details**: What happened at each step
+- **Logs**: Detailed output from each action
+- **Errors**: Any issues encountered during execution
+
+## Integration with Blueprints
+
+Workflows can execute blueprints as part of their steps:
+1. Create a blueprint for the desired infrastructure change.
+2. Add a "Run Blueprint" step to your workflow.
+3. The blueprint deploys automatically when the workflow runs.
+
+# Blueprints & Agents
+
+# Blueprints and Agents
+
+## Objective
+Design, visualize, and deploy standardized infrastructure templates across your environments.
+
+The **Blueprint Builder** allows you to design and deploy infrastructure templates.
+
+## AI-Assisted Builder
+
+The Blueprint Builder uses an AI agent to help you design infrastructure templates. Instead of writing complex code from scratch, you describe what you want in plain English.
+
+### How it Works
+
+1.  **Define Objective**: Start by describing your goal (e.g., "Create a highly available ECS cluster with an Application Load Balancer").
+2.  **Generate Skeleton**: The AI analyzes your request and proposes a "Skeleton Plan" broken down into phases:
+    *   **Assessment**: Checks prerequisites and current state.
+    *   **Configuration**: Defines the resources and settings.
+    *   **Validation**: Ensures the design meets best practices.
+3.  **Refine and Customize**: Use the **Plan Builder Assistant** chat to refine tasks, add notes, or change deployment methods (CloudFormation or CLI).
+4.  **Finalize**: Once satisfied, the builder generates the executable blueprint.
+
+### Key Capabilities
+
+-   **Chat Interface**: Interact with the AI to iterate on your design.
+-   **Phased Approach**: Structured plans ensure no steps are missed.
+-   **Permission Calculation**: Automatically identifies the IAM permissions required to deploy the blueprint.
+-   **Deployment Options**: Support for standard CloudFormation stacks or CLI-based deployments.
+
+To access it:
+1.  Click on **Blueprints & Agents** in the left sidebar.
+2.  Click **Create Blueprint** to start a new design.
+
+![Blueprint Builder](/images/blueprint_builder.png)
+
+## Running a Blueprint
+
+To execute an existing blueprint:
+
+1. Navigate to **Blueprints & Agents** > **My Blueprints**.
+2. Find the blueprint you want to run.
+3. Click **Run Blueprint**.
+4. Select the target environment.
+5. Review the execution plan.
+6. Click **Execute** to deploy.
+
+> **Note:** 
+  **Tip**: You can also run blueprints directly from recommendations by clicking the "Remediate" button.
+
+## Agent History
+
+The **Agent History** tab shows the status and results of all blueprint executions and agent activities.
+
+### Viewing Agent History
+
+1. Navigate to **Blueprints & Agents**.
+2. Click on the **Agent History** tab.
+3. View all past and current agent executions.
+
+### Agent Status
+
+Each agent execution displays:
+
+| Status | Description |
+|--------|-------------|
+| **Completed** | Successfully finished all steps |
+| **Running** | Currently executing |
+| **Waiting on user input** | Paused, awaiting your approval |
+| **Failed** | Encountered an error |
+
+### Agent Details
+
+Click on any agent entry to view:
+- **Execution Timeline**: Step-by-step progress
+- **Logs**: Detailed output from each action
+- **Resources Modified**: What was created, updated, or deleted
+- **Errors**: Any issues encountered
+
+### Managing Running Agents
+
+For agents that are running or waiting:
+- **Continue**: Resume execution after reviewing
+- **Mark As Complete**: Manually mark as finished
+- **View History**: See detailed execution logs
+
+> **Note:** 
+  **Human-in-the-Loop**: Agents will pause and request your approval before making state-changing operations in your AWS environment.
+
+### Searching Agent History
+
+Use the search bar to find specific executions:
+- Search by blueprint name
+- Filter by status
+- Filter by date range
+
+# Reports
+
+# Reports
+
+## Objective
+Generate and review compliance reports to assess your cloud security posture against industry frameworks.
+
+CloudAgent provides detailed security and compliance reports that help you understand your environment's adherence to best practices and regulatory requirements.
+
+## Accessing Reports
+
+Reports can be accessed from multiple locations:
+
+1. **Dashboard**: Quick access via the Reports widget
+2. **Workload Details**: Reports specific to a workload in the Reports section
+3. **Reports Page**: Navigate to **Reports** in the sidebar for the full report library
+
+![Reports Page](/images/reports.png)
+
+## Available Reports
+
+CloudAgent offers a comprehensive library of compliance and security reports:
+
+| Report | Category | Description |
+|--------|----------|-------------|
+| SOC2 Compliance Report | Security & Governance | Assesses environments against SOC2 categories like logical access, system operations, and confidentiality |
+| PCI DSS 3.2.1 Compliance Report | Security & Governance | Evaluates Payment Card Industry Data Security Standard requirements |
+| HIPAA Compliance Report | Security & Governance | Checks AWS configurations for HIPAA compliance across access, auditing, and encryption |
+| CIS AWS Foundations Benchmark v3.0 | Security & Governance | Evaluates AWS configuration against Center for Internet Security benchmarks |
+| NIST 800-53 v5 Compliance Report | Security & Governance | Assesses against NIST security and privacy controls |
+| NIST 800-171 Compliance Report | Security & Governance | Validates controlled unclassified information (CUI) protection |
+| NIST Cybersecurity Framework (CSF) Report | Security & Governance | Evaluates against the NIST CSF framework |
+| ISO 27001 Annex A Compliance Report | Security & Governance | Checks against ISO 27001 information security controls |
+| GDPR Compliance Report | Security & Governance | Reviews AWS practices against GDPR Articles 25, 30, and 32 |
+| FedRAMP Low Compliance Report | Security & Governance | Validates AWS services against FedRAMP Low controls |
+| FedRAMP Moderate Compliance Report | Security & Governance | Assesses environments for FedRAMP Moderate control coverage |
+| Canada GC Compliance Report | Security & Governance | Evaluates against Canadian Guardrail controls for access, monitoring, and encryption |
+| CMMC 2.0 Level 1 Compliance Report | Security & Governance | Checks basic safeguarding controls including access, authentication, and boundary protection |
+| CMMC 2.0 Level 2 Compliance Report | Security & Governance | Evaluates advanced CMMC Level 2 controls across identity, configuration, and secure communications |
+| RBI Cyber Security Framework Report | Security & Governance | Assesses against Reserve Bank of India cybersecurity guidelines |
+| AWS Resiliency and High Availability Report | Resilience & Backup | Checks multi-AZ deployments, delete protection, and backup configurations |
+| AWS Resource Backup Coverage Report | Resilience & Backup | Validates backup policies and coverage across resources |
+| Unused AWS Resources Report | Cost & Billing | Identifies idle or unused resources for cost optimization |
+| AWS Logging Status Report | Logging & Monitoring | Verifies CloudTrail, VPC Flow Logs, and other logging configurations |
+| AWS Public Resource Exposure Report | Security & Governance | Scans for publicly accessible resources |
+| AWS Encryption In-Transit Coverage Report | Security & Governance | Validates TLS/SSL configurations and encryption in transit |
+
+For the complete and up-to-date list, visit [cloudagent.io/libraries/all-reports](https://cloudagent.io/libraries/all-reports).
+
+## Report Status
+
+Each report displays a status indicator:
+
+| Status | Meaning |
+|--------|---------|
+| **Passed** | All checks passed successfully |
+| **Warning** | Some non-critical findings require attention |
+| **Failed** | Findings that need remediation |
+| **Running** | Report generation in progress |
+
+## Running a New Report
+
+1. Navigate to the **Reports** page or workload details.
+2. Click **+ Run New Report**.
+3. Select the report type from the available options.
+4. Choose the target environment(s).
+5. Click **Generate** to start the report.
+
+> **Note:** 
+  **Processing Time**: Reports typically complete within 5-15 minutes depending on the size of your environment.
+
+## Viewing Report Details
+
+Click **View Report** on any completed report to see:
+
+- **Executive Summary**: High-level overview of findings
+- **Detailed Findings**: Individual check results with pass/fail status
+- **Affected Resources**: Specific resources that need attention
+- **Remediation Steps**: Recommended actions to resolve issues
+- **Export Options**: Download as PDF for sharing with auditors
+
+![Report Detail View](/images/report_detail.png)
+
+## Scheduling Reports
+
+To run reports on a recurring schedule, create a workflow:
+
+1. Navigate to **My Workflows**.
+2. Click **+ Create Workflow**.
+3. Select the report you want to schedule (e.g., "Canada GC Compliance Report").
+4. Configure the schedule (Daily, Weekly, Monthly).
+5. Save the workflow.
+
+The report will run automatically at the scheduled time.
+
+> **Note:** 
+  **Notifications**: Configure email alerts in the workflow to receive reports automatically when they complete.
+
+## Report History
+
+All generated reports are stored in your report history:
+- View past reports to track compliance trends
+- Compare results over time
+- Export historical data for audits
+
+# AI Assistant
+
+# CloudAgent Assistant
+
+The **CloudAgent Assistant** is an AI-powered companion designed to help you manage your cloud infrastructure using natural language. It lives in the bottom-right corner of the application and is always ready to assist.
+
+## Overview
+
+The Assistant is capable of performing complex operations by connecting directly to your cloud environment and the CloudAgent backend. It translates your English requests into specific actions, such as running AWS CLI commands, deploying CloudFormation stacks, or managing your workloads.
+
+> **Note:** 
+  **Tip**: You can ask the Assistant to "explain" resources or errors to get context-aware answers.
+
+## Capabilities
+
+The Assistant is equipped with a powerful set of tools that allow it to:
+
+### 1. AWS Discovery and Inspection
+You can ask the Assistant to inspect your live AWS environment. It uses read-only AWS CLI commands to fetch real-time data.
+
+*   **"List all EC2 instances in us-east-1."**
+*   **"Describe the security group 'sg-12345'."**
+*   **"Check if I have any S3 buckets with public access."**
+
+### 2. Workload Management
+The Assistant can view and update your CloudAgent workloads directly.
+
+*   **"List my workloads."**
+*   **"Update the 'payments' workload to use the 'prod' environment."**
+*   **"Add a rule to the 'portal' workload to prevent public S3 buckets."**
+
+### 3. Infrastructure Deployment
+You can deploy or update infrastructure using CloudFormation. The Assistant will always ask for your approval before making changes.
+
+*   **"Deploy a new S3 bucket named 'my-app-logs'."**
+*   **"Update the 'payments-stack' to enable versioning."**
+*   **"Create a standard VPC with 2 AZs."** (Uses built-in architecture templates)
+
+### 4. Research and Validation
+The Assistant has access to the web to research best practices, validate syntax, and find solutions to errors.
+
+*   **"How do I configure an ALB for gRPC?"**
+*   **"Find the CloudFormation syntax for an ECS Fargate service."**
+*   **"What does this error message mean?"**
+
+## How to Use
+
+1.  Click the **CloudAgent** button in the bottom-right corner.
+2.  Type your request in plain English.
+3.  The Assistant will analyze your request and may:
+    *   Ask clarifying questions.
+    *   Run a read-only command to gather context.
+    *   Propose a plan of action (e.g., a CloudFormation template).
+4.  **Review and Approve**: For any action that modifies your infrastructure, the Assistant will present a plan. You must approve it before execution proceeds.
+
+## Safety and Security
+
+*   **Read-Only by Default**: The Assistant defaults to read-only actions for discovery.
+*   **Human-in-the-Loop**: All state-changing operations (Create, Update, Delete) require explicit user confirmation.
+*   **Guardrails**: Deployments are checked against your organization's security rules and policies.
 
 # FAQ
 
-# ❓ FAQ
+# FAQ
 
 ## Objective
 Find answers to common questions about account management and platform usage.
@@ -304,7 +706,7 @@ Find answers to common questions about account management and platform usage.
 A: On the login page, click the "Forgot password" link to initiate the password reset process.
 
 **Q: Where can I see my available credits?**
-A: Your available credits are displayed in the bottom left corner of the sidebar.
+A: Your available credits are displayed in the top navigation bar.
 
 **Q: How do I access the LLM-friendly documentation?**
 A: The consolidated documentation for AI agents is available at `/public/llms.txt` in the repository.
@@ -314,7 +716,7 @@ A: The consolidated documentation for AI agents is available at `/public/llms.tx
 
 # Overview
 
-# 🍳 Cookbooks
+# Cookbooks
 
 Welcome to the CloudAgent Cookbooks! Here you will find step-by-step guides and recipes for common tasks and advanced configurations.
 
@@ -334,11 +736,11 @@ To secure a public S3 bucket using CloudAgent's recommendation engine and bluepr
 
 ## Step 1: Assessment
 
-Start by reviewing the **Dashboard** to identify critical security findings.
+Start by reviewing the **Dashboard** to identify security findings.
 
 1.  Navigate to the **Dashboard**.
 2.  Look at the **Smart Recommendations** widget.
-3.  Click on **🔒 Critical Security**.
+3.  Click on **Critical Security**.
 4.  Locate the recommendation: **"S3 Bucket has public access enabled"**.
 
 > **Tip**: Click on the number of items (e.g., "3 Items") to see the specific resources affected by this recommendation.
@@ -346,7 +748,7 @@ Start by reviewing the **Dashboard** to identify critical security findings.
 ![Finding Recommendation Details](/images/recommendation_click_guide.png)
 
 > **Note:** 
-  Public S3 buckets can expose sensitive data. It is critical to remediate this immediately unless public access is intentionally required.
+  Public S3 buckets can expose sensitive data. Remediate this promptly unless public access is intentionally required.
 
 ## Step 2: Remediation
 
