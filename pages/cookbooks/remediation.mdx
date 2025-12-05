@@ -5,20 +5,20 @@ import { Callout } from 'nextra/components'
 This cookbook guides you through a complete workflow: identifying a security issue, fixing it with a blueprint, and verifying the resolution.
 
 ## Objective
-To secure a public S3 bucket using CloudAgent's recommendation engine and blueprint builder.
+To enable S3 Block Public Access using CloudAgent's recommendation engine and blueprint builder.
 
 ## Step 1: Assessment
 
-Start by reviewing the **Dashboard** to identify security findings.
+Start by reviewing the **Recommendations** page to identify security findings.
 
-1.  Navigate to the **Dashboard**.
-2.  Look at the **Smart Recommendations** widget.
-3.  Click on **Critical Security**.
-4.  Locate the recommendation: **"S3 Bucket has public access enabled"**.
+1.  Navigate to **Recommendations** in the sidebar.
+2.  Review the recommendation categories at the top (Critical Security, Cost Savings, Resource Cleanup, etc.).
+3.  Look for recommendations in the **Critical Security** category.
+4.  Locate the recommendation: **"Enable S3 Block Public Access at Account Level"**.
 
-> **Tip**: Click on the number of items (e.g., "3 Items") to see the specific resources affected by this recommendation.
+> **Tip**: Click on a category card to filter the list by that category.
 
-![Finding Recommendation Details](/images/recommendation_click_guide.png)
+![Recommendations Page](/images/recommendation_click_guide.png)
 
 <Callout type="warning">
   Public S3 buckets can expose sensitive data. Remediate this promptly unless public access is intentionally required.
@@ -28,18 +28,19 @@ Start by reviewing the **Dashboard** to identify security findings.
 
 CloudAgent allows you to generate a remediation blueprint directly from the recommendation.
 
-1.  Click the **Remediate** button next to the finding.
-2.  This opens the **Blueprint Builder** with a pre-configured template.
-3.  Review the generated CloudFormation template. It should include `PublicAccessBlockConfiguration` set to `true`.
-4.  Click **Deploy** to apply the fix.
+1.  Find the recommendation in the list.
+2.  Click **Run Blueprint** or **Generate Blueprint** in the Automatic Remediation column.
+3.  This opens the **Blueprint Builder** with a pre-configured template.
+4.  Review the generated CloudFormation template.
+5.  Click **Execute** to apply the fix.
 
 ### Example Snippet
-The blueprint will automatically add this configuration to your bucket:
+The blueprint will configure S3 Block Public Access at the account level:
 
 ```yaml
-Type: AWS::S3::Bucket
+Type: AWS::S3::AccountPublicAccessBlock
 Properties:
-  BucketName: my-sensitive-data-bucket
+  AccountId: !Ref AWS::AccountId
   PublicAccessBlockConfiguration:
     BlockPublicAcls: true
     BlockPublicPolicy: true
@@ -51,11 +52,10 @@ Properties:
 
 Once the deployment is complete, verify that the issue is resolved.
 
-1.  Go back to the **Dashboard**.
-2.  Check the **Activity** feed for the "Remediation Deployment" success status.
-3.  Refresh the **Smart Recommendations** list.
-4.  Verify that the "S3 Bucket has public access enabled" finding is **Gone**.
+1.  Go back to the **Recommendations** page.
+2.  Check that the recommendation status has changed or the item is no longer listed.
+3.  Optionally, run a compliance report to confirm the fix.
 
 <Callout type="info">
-  **Success!** You have successfully identified, remediated, and verified a security vulnerability using CloudAgent.
+  You have successfully identified, remediated, and verified a security finding using CloudAgent.
 </Callout>
