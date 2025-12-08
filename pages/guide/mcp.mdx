@@ -17,47 +17,46 @@ Before setting up MCP, ensure you have:
 - [Cursor IDE](https://cursor.com) installed (version 0.43 or later)
 - A workload configured with your team's security baselines and governance rules
 
-## Step 1: Generate Your MCP Configuration
+## Step 1: Get Your MCP Configuration
 
 1. Log in to [CloudAgent](https://cloudagent.io).
-2. Navigate to **My Account** → **Integrations**.
-3. Click **Generate MCP Config**.
-4. Select the **Workload** you want the IDE to deploy against.
-5. Copy the generated configuration JSON.
+2. Navigate to **My Account** → **MCP Extension**.
+3. Copy the configuration using **Copy Configuration** or download it with **Download Config**.
 
-<Callout type="warning">
-  **Security Note**: The MCP configuration contains a secure token scoped to your selected workload. Do not share this token or commit it to version control.
-</Callout>
+The configuration file looks like this:
+
+```json
+{
+  "mcpServers": {
+    "cloudagent": {
+      "url": "https://api.cloudagent.io/mcp",
+      "enabled": true
+    }
+  }
+}
+```
 
 ## Step 2: Configure Cursor
 
 1. Open Cursor IDE.
 2. Open the Command Palette (`Cmd+Shift+P` on macOS, `Ctrl+Shift+P` on Windows/Linux).
 3. Search for **"Cursor Settings: Open MCP Config"** and select it.
-4. Paste your CloudAgent MCP configuration:
-
-```json
-{
-  "mcpServers": {
-    "cloudagent": {
-      "command": "npx",
-      "args": ["-y", "@anthropic/cloudagent-mcp-server"],
-      "env": {
-        "CLOUDAGENT_API_KEY": "your-api-key-here",
-        "CLOUDAGENT_WORKLOAD_ID": "your-workload-id"
-      }
-    }
-  }
-}
-```
-
+4. Paste your CloudAgent MCP configuration.
 5. Save the file and restart Cursor.
 
-## Step 3: Verify the Connection
+<Callout type="info">
+  **Other Tools**: CloudAgent MCP also works with ChatGPT, Claude, and other MCP-compatible tools. Check the Setup Instructions tabs on the MCP Extension page for tool-specific guidance.
+</Callout>
+
+## Step 3: Authenticate with OAuth
+
+When you first connect to the CloudAgent MCP server, you'll be prompted to authenticate:
 
 1. Open a new chat in Cursor (Composer or Chat panel).
-2. Type: **"List my CloudAgent workloads"**
-3. If configured correctly, the AI will respond with your available workloads.
+2. Type any CloudAgent command, such as: **"List my CloudAgent workloads"**
+3. Cursor will prompt you to authenticate with CloudAgent via OAuth.
+4. Complete the OAuth flow in your browser.
+5. Once authenticated, the AI will respond with your available workloads.
 
 You should see output similar to:
 
@@ -67,6 +66,10 @@ Connected to CloudAgent. Available workloads:
 - user-portal (staging)
 - data-pipeline (dev)
 ```
+
+<Callout type="info">
+  **Authentication**: MCP authentication uses OAuth. You'll be prompted to authenticate when first connecting to the MCP server. Your session will persist until you sign out.
+</Callout>
 
 ## Available MCP Capabilities
 
@@ -90,9 +93,14 @@ Once connected, your IDE can perform the following operations through CloudAgent
 ## Troubleshooting
 
 ### "Connection refused" or "Server not found"
-- Ensure your API key is valid and hasn't expired
-- Check that the workload ID matches an existing workload
+- Verify the MCP server URL is `https://api.cloudagent.io/mcp`
+- Check that `enabled` is set to `true` in your configuration
 - Verify your network allows outbound HTTPS connections
+
+### OAuth authentication not working
+- Ensure pop-ups are allowed for the OAuth flow
+- Try signing out and re-authenticating
+- Clear your browser cookies for cloudagent.io and try again
 
 ### "Permission denied" on deployment
 - Your workload may have restrictive security baselines
