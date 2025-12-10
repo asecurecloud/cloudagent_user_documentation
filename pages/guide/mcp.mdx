@@ -3,10 +3,10 @@ import { Callout } from 'nextra/components'
 # MCP Integration
 
 ## Objective
-Connect your IDE to CloudAgent using the Model Context Protocol (MCP) to build and deploy cloud infrastructure directly from your development environment.
+Connect your AI tools to CloudAgent using the Model Context Protocol (MCP) to build and deploy cloud infrastructure with built-in guardrails.
 
 <Callout type="info">
-  **What is MCP?** The Model Context Protocol is an open standard that allows AI-powered IDEs like Cursor to connect to external tools and services. CloudAgent's MCP server lets your AI coding assistant deploy infrastructure on your behalf, with built-in guardrails.
+  **What is MCP?** The Model Context Protocol is an open standard that allows AI-powered tools to connect to external services. CloudAgent's MCP server lets your AI assistant deploy infrastructure on your behalf, with security and governance controls applied automatically.
 </Callout>
 
 ## Prerequisites
@@ -14,8 +14,8 @@ Connect your IDE to CloudAgent using the Model Context Protocol (MCP) to build a
 Before setting up MCP, ensure you have:
 
 - A CloudAgent account with at least one [connected AWS environment](/guide/onboarding)
-- [Cursor IDE](https://cursor.com) installed (version 0.43 or later)
 - A workload configured with your team's security baselines and governance rules
+- One of the supported AI tools: Cursor, Claude Desktop, or ChatGPT Desktop
 
 ## Step 1: Get Your MCP Configuration
 
@@ -36,25 +36,59 @@ The configuration file looks like this:
 }
 ```
 
-## Step 2: Configure Cursor
+## Step 2: Configure Your AI Tool
 
-1. Open Cursor IDE.
-2. Open the Command Palette (`Cmd+Shift+P` on macOS, `Ctrl+Shift+P` on Windows/Linux).
-3. Search for **"Cursor Settings: Open MCP Config"** and select it.
-4. Paste your CloudAgent MCP configuration.
-5. Save the file and restart Cursor.
+Select your tool and follow the setup instructions:
 
-<Callout type="info">
-  **Other Tools**: CloudAgent MCP also works with ChatGPT, Claude, and other MCP-compatible tools. Check the Setup Instructions tabs on the MCP Extension page for tool-specific guidance.
-</Callout>
+<details>
+<summary>**Cursor**</summary>
+
+1. **Open Cursor Settings**: Go to Cursor → Settings → Cursor Settings.
+2. **Navigate to Tools & MCP**: In the settings sidebar, click on "Tools & MCP".
+3. **Add MCP Configuration**: Click "Add MCP Server" and paste the configuration from CloudAgent.
+4. **Restart Cursor**: Restart Cursor to load the new MCP configuration.
+5. **Authenticate with OAuth**: When you first use the MCP server, Cursor will prompt you to authenticate using OAuth. Follow the authentication flow to complete setup.
+6. **Test Integration**: Ask Cursor to access your CloudAgent resources or list your cloud environments.
+
+</details>
+
+<details>
+<summary>**Claude Desktop**</summary>
+
+1. **Open Claude Desktop**: Launch the Claude Desktop application.
+2. **Access Settings**: Go to Claude → Settings (or press `Cmd/Ctrl + ,`).
+3. **Navigate to Connectors**: In the settings sidebar, click on "Connectors".
+4. **Add Custom Connector**: Click "Add Custom Connector" and enter the following:
+   - **Name**: CloudAgent (or any name you prefer)
+   - **URL**: `https://api.cloudagent.io/mcp`
+5. **Follow Authentication Instructions**: Follow the OAuth authentication instructions that appear to complete the setup.
+6. **Test Integration**: Ask Claude to access your CloudAgent resources or list your cloud environments.
+
+</details>
+
+<details>
+<summary>**ChatGPT Desktop**</summary>
+
+1. **Install ChatGPT Desktop**: Download and install ChatGPT Desktop from the official website.
+2. **Open Settings**: In ChatGPT Desktop, go to Settings → Plugins.
+3. **Configure MCP**: Add the MCP configuration to your ChatGPT Desktop settings file:
+
+```
+~/.config/chatgpt-desktop/mcp-servers.json
+```
+
+4. **Restart ChatGPT**: Restart ChatGPT Desktop to load the new configuration.
+5. **Verify Connection**: Ask ChatGPT to access your CloudAgent resources or list your cloud environments.
+
+</details>
 
 ## Step 3: Authenticate with OAuth
 
 When you first connect to the CloudAgent MCP server, you'll be prompted to authenticate:
 
-1. Open a new chat in Cursor (Composer or Chat panel).
+1. Start a conversation with your AI tool.
 2. Type any CloudAgent command, such as: **"List my CloudAgent workloads"**
-3. Cursor will prompt you to authenticate with CloudAgent via OAuth.
+3. You'll be prompted to authenticate with CloudAgent via OAuth.
 4. Complete the OAuth flow in your browser.
 5. Once authenticated, the AI will respond with your available workloads.
 
@@ -68,12 +102,12 @@ Connected to CloudAgent. Available workloads:
 ```
 
 <Callout type="info">
-  **Authentication**: MCP authentication uses OAuth. You'll be prompted to authenticate when first connecting to the MCP server. Your session will persist until you sign out.
+  **Authentication**: MCP authentication uses OAuth. You'll be prompted to authenticate when connecting to the MCP server.
 </Callout>
 
 ## Available MCP Capabilities
 
-Once connected, your IDE can perform the following operations through CloudAgent:
+Once connected, your AI tool can perform the following operations through CloudAgent:
 
 ### Read Operations (No Approval Required)
 - List workloads and their configurations
@@ -94,7 +128,6 @@ Once connected, your IDE can perform the following operations through CloudAgent
 
 ### "Connection refused" or "Server not found"
 - Verify the MCP server URL is `https://api.cloudagent.io/mcp`
-- Check that `enabled` is set to `true` in your configuration
 - Verify your network allows outbound HTTPS connections
 
 ### OAuth authentication not working
@@ -107,10 +140,10 @@ Once connected, your IDE can perform the following operations through CloudAgent
 - Contact your security team to review the blocked rule
 - Check the CloudAgent dashboard for detailed error logs
 
-### MCP server not appearing in Cursor
-- Restart Cursor after saving the MCP configuration
+### MCP server not appearing
+- Restart your AI tool after saving the configuration
 - Ensure the JSON syntax is valid (no trailing commas)
-- Check Cursor's developer console for error messages
+- Check for error messages in your tool's console or logs
 
 ## Next Steps
 

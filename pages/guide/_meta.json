@@ -10,6 +10,7 @@
     "reports": "Reports",
     "assistant": "AI Assistant",
     "mcp": "MCP Integration",
+    "account": "User Settings",
     "faq": "FAQ",
     "---": {
         "type": "separator",
