@@ -1,5 +1,7 @@
 {
     "index": "Overview",
-    "remediation": "Automating Remediation",
-    "cursor-mcp": "Cursor + MCP Integration"
+    "deploy-aws-cursor": "Deploy AWS from Cursor",
+    "git-integration": "Git Integration",
+    "cursor-mcp": "Cursor + MCP Integration",
+    "remediation": "Automating Remediation"
 }

@@ -1,0 +1,116 @@
+import { Callout } from 'nextra/components'
+
+# Cursor IDE Integration
+
+Deploy and manage AWS infrastructure as **workloads** directly from Cursor. CloudAgent treats your infrastructure as a single entity — one CloudFormation stack, version-controlled in Git, with automated CI/CD.
+
+## What You Get
+
+| Feature | Description |
+|---------|-------------|
+| **Workload Management** | All resources managed as one entity |
+| **Single CloudFormation** | One stack per workload, not scattered resources |
+| **Git Integration** | Commit infrastructure to GitHub automatically |
+| **CI/CD Pipelines** | Automated deployment flows |
+| **Security Presets** | 4 to 191 rules applied automatically |
+
+## Quick Setup (2 minutes)
+
+### Step 1: Get Your MCP Config
+
+Go to [Dashboard → MCP Extension](https://cloudagent.io/dashboard/mcp) and select the **Cursor** tab.
+
+Copy your configuration:
+
+```json
+{
+  "mcpServers": {
+    "cloudagent": {
+      "url": "https://api.cloudagent.io/mcp",
+      "enabled": true
+    }
+  }
+}
+```
+
+### Step 2: Add to Cursor
+
+1. Open Cursor → **Settings** → **Cursor Settings**
+2. Navigate to **Tools & MCP** in the sidebar
+3. Click **Add MCP Server**
+4. Paste the configuration
+5. Restart Cursor
+
+### Step 3: Authenticate & Select Workload
+
+When you first use CloudAgent:
+1. OAuth prompt appears — authenticate with your CloudAgent account
+2. Select a **workload** to deploy to (or create one)
+
+<Callout type="info">
+A workload is CloudAgent's way of grouping related resources. Think of it as a project that contains all your infrastructure as one manageable unit.
+</Callout>
+
+## How Workloads Work
+
+When you ask Cursor to deploy infrastructure, CloudAgent:
+
+1. **Identifies the workload** from context or asks you to select one
+2. **Generates CloudFormation** with security rules applied
+3. **Shows preview** for your approval
+4. **Deploys to AWS** as a single stack
+5. **Commits to Git** (if configured)
+6. **Triggers CI/CD** (if configured)
+
+```
+You: "Add an S3 bucket for uploads to my API workload"
+
+CloudAgent:
+→ Workload: api-backend (Production)
+→ Security Preset: Production (23 rules)
+→ Generated: S3 bucket with encryption, versioning, block public access
+→ Stack: api-backend-stack
+→ Commit: "Add S3 bucket for uploads"
+```
+
+## Example Prompts
+
+| What You Say | What CloudAgent Does |
+|--------------|---------------------|
+| "Create a new workload for my blog backend" | Creates workload with Production security preset |
+| "Add DynamoDB to my workload" | Adds to existing stack, commits to Git |
+| "Show my workload's architecture" | Generates diagram of all resources |
+| "What security rules are applied?" | Lists active rules from your preset |
+| "Deploy to production" | Triggers CI/CD pipeline |
+
+## Progressive Tutorials
+
+Start simple, then level up:
+
+1. **[Deploy AWS from Cursor](/cookbooks/deploy-aws-cursor)** — Your first workload
+2. **[Connect Git Repository](/cookbooks/git-integration)** — Version control your infrastructure
+3. **[Cursor + MCP Integration](/cookbooks/cursor-mcp)** — Develop with guardrails
+
+## Keyboard Shortcuts
+
+| Action | Shortcut |
+|--------|----------|
+| Open AI Chat | `Cmd/Ctrl + L` |
+| Open Composer | `Cmd/Ctrl + I` |
+| Accept suggestion | `Tab` |
+
+## Troubleshooting
+
+**"No workload selected"**
+- Ask CloudAgent to list your workloads: `"Show my workloads"`
+- Or create one: `"Create a workload called my-app"`
+
+**MCP not connecting?**
+- Verify URL is `https://api.cloudagent.io/mcp`
+- Restart Cursor after config changes
+
+## Next Steps
+
+- [Deploy AWS from Cursor](/cookbooks/deploy-aws-cursor) — Complete tutorial
+- [Workloads Guide](/guide/workloads) — Deep dive on workload management
+- [Security Rules](/guide/workloads#security-rules) — Understand security presets

@@ -1,0 +1,259 @@
+import { Callout } from 'nextra/components'
+
+# Connect Your Workload to Git
+
+Version control your infrastructure by connecting CloudAgent workloads to GitHub. Every deployment creates a pull request with your CloudFormation changes — giving you full history, code review, and GitOps workflows.
+
+## What You'll Learn
+
+- Connect a GitHub repository to your workload via the dashboard
+- How CloudAgent proposes infrastructure changes via pull requests
+- Review infrastructure diffs before they're merged
+
+**Prerequisites:** Complete [Deploy AWS from Cursor](/cookbooks/deploy-aws-cursor) first.
+
+---
+
+## Why Git Integration?
+
+| Without Git | With Git |
+|-------------|----------|
+| Infrastructure changes are ephemeral | Full history of every change |
+| "Who changed what?" is unknown | Git blame shows who and when |
+| No code review for infra | PRs enable infra review |
+| Changes happen immediately | Review and approve before merge |
+
+---
+
+## How Git Integration Works
+
+<Callout type="warning">
+**Important:** Git setup must be done through the CloudAgent dashboard UI. OAuth authentication is required to connect your GitHub account, which cannot be done through chat.
+</Callout>
+
+CloudAgent's git integration follows a **PR-only model** for security:
+
+- **All changes go through pull requests** — CloudAgent never commits directly to your main branch
+- **You control the merge** — Review, approve, and merge PRs through your normal GitHub workflow
+- **CloudAgent has no write access to main** — This is intentional for security
+
+This design ensures your infrastructure changes always go through code review before being applied.
+
+---
+
+## Step 1: Connect GitHub to CloudAgent
+
+Link your GitHub account to CloudAgent via the dashboard:
+
+1. Go to [Dashboard → Integrations](https://cloudagent.io/dashboard/integrations)
+2. Click **Connect GitHub**
+3. Complete the OAuth authorization flow in GitHub
+4. Select which repositories CloudAgent can access
+
+<Callout type="info">
+CloudAgent requests permission to create branches and pull requests in your repository. It does not have direct write access to your main branch.
+</Callout>
+
+---
+
+## Step 2: Link Repository to Workload
+
+Configure git for your workload through the dashboard:
+
+1. Go to [Dashboard → Workloads](https://cloudagent.io/dashboard/workloads)
+2. Select your workload
+3. Click **Settings and Deployment** tab
+4. Under **Source code**, select **GitHub repository**
+5. Choose:
+   - **GitHub Connection**: Your linked account
+   - **Repository**: Target repo
+   - **Base Branch**: `main` or `master` (the branch PRs will target)
+6. Click **Save Changes**
+
+<Callout type="warning">
+Git configuration cannot be done via chat due to OAuth requirements. Always use the dashboard UI to set up and modify git connections.
+</Callout>
+
+---
+
+## Step 3: Deploy with Pull Requests
+
+When you deploy with git integration enabled, CloudAgent creates a pull request:
+
+```
+You: "Add an SQS queue for async processing"
+```
+
+CloudAgent generates the resource and shows:
+```
+Adding to workload: file-processor
+Repository: myorg/file-processor-infra
+
+Changes:
++ AWS::SQS::Queue (ProcessingQueue)
++ AWS::SQS::QueuePolicy
+
+This will create a pull request for review.
+
+Proceed?
+```
+
+```
+You: "Yes"
+```
+
+**Result:**
+- CloudAgent creates a new branch with your changes
+- A pull request is opened against your base branch
+- You receive a link to review: `https://github.com/myorg/file-processor-infra/pull/42`
+
+<Callout type="info">
+CloudAgent deploys to AWS when you confirm the action. The pull request captures the CloudFormation changes for your git history. You control when to merge the PR.
+</Callout>
+
+---
+
+## Step 4: Review Changes in GitHub
+
+After deployment, review the pull request in GitHub:
+
+### PR Contents
+
+Your PR includes:
+- CloudFormation diff showing exactly what changed
+- Resources being added, modified, or deleted
+- Security rules that were applied
+- Estimated cost impact (if enabled)
+
+### Repository Structure
+
+Once merged, your repository contains:
+
+```
+myorg/file-processor-infra/
+├── cloudformation/
+│   └── file-processor.yaml    ← Full CloudFormation template
+├── README.md
+└── .cloudagent/
+    └── workload.json          ← Workload metadata
+```
+
+Your CloudFormation template contains all resources:
+```yaml
+# cloudformation/file-processor.yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: file-processor workload managed by CloudAgent
+
+Resources:
+  UploadsBucket:
+    Type: AWS::S3::Bucket
+    # ... full configuration
+
+  ProcessorFunction:
+    Type: AWS::Lambda::Function
+    # ... full configuration
+
+  ProcessingQueue:          # ← New resource
+    Type: AWS::SQS::Queue
+    # ... full configuration
+```
+
+---
+
+## Rollbacks and Reverts
+
+<Callout type="warning">
+**CloudAgent does not perform rollbacks.** Since CloudAgent only has permission to create branches and PRs (not write to main), rollbacks are handled through your standard git workflow.
+</Callout>
+
+To revert infrastructure changes:
+
+1. **Use git revert** — Create a revert commit in your repository
+2. **Merge the revert** — Follow your normal PR/merge process
+3. **Redeploy via CloudAgent** — Ask CloudAgent to sync the workload with the reverted template
+
+```bash
+# In your repository
+git revert <commit-hash>
+git push origin main
+```
+
+Then in Cursor:
+```
+You: "Sync file-processor with the latest template from git"
+```
+
+This design ensures:
+- The main branch owner controls what gets merged
+- All changes (including reverts) go through code review
+- CloudAgent cannot accidentally overwrite your main branch
+
+---
+
+## Git Configuration Options
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Base Branch** | The branch PRs will target | main |
+| **Template Path** | Where CloudFormation templates are stored | /cloudformation/ |
+| **PR Title Template** | Custom template for PR titles | Auto-generated |
+| **Include Metadata** | Store workload metadata in .cloudagent/ | Enabled |
+
+Configure in **Dashboard → Workloads → Settings and Deployment → Git Repository**.
+
+<Callout type="info">
+There is no option for direct commits. All changes go through pull requests for security reasons.
+</Callout>
+
+---
+
+## Troubleshooting
+
+**"Repository not found"**
+- Ensure CloudAgent has access: [Dashboard → Integrations](https://cloudagent.io/dashboard/integrations)
+- Check repository name is correct
+- Verify the OAuth connection is still valid
+
+**"Permission denied"**
+- Re-authorize the GitHub connection in the dashboard
+- Ensure the repository allows CloudAgent to create branches and PRs
+
+**PRs not appearing**
+- Check the configured base branch exists
+- Verify deployment succeeded in CloudFormation console
+- Check GitHub for any branch protection rules blocking PR creation
+
+**"Can't configure git via chat"**
+- Git setup requires OAuth authentication
+- Use the [Dashboard → Integrations](https://cloudagent.io/dashboard/integrations) page to connect GitHub
+
+---
+
+## Security Design
+
+CloudAgent's git integration is designed with security in mind:
+
+| Design Choice | Reason |
+|---------------|--------|
+| **PR-only** | All changes are reviewable before merge |
+| **No main branch access** | Prevents accidental overwrites or unauthorized changes |
+| **No chat-based setup** | OAuth requires browser-based authentication |
+| **No rollback capability** | Rollbacks are a git operation controlled by branch owners |
+
+This ensures that CloudAgent enhances your workflow without compromising your repository's security model.
+
+---
+
+## Next Steps
+
+| Tutorial | What You'll Learn |
+|----------|-------------------|
+| ← [Deploy AWS from Cursor](/cookbooks/deploy-aws-cursor) | Create your first workload |
+| → [Cursor + MCP Integration](/cookbooks/cursor-mcp) | Develop with guardrails |
+
+---
+
+## Related
+
+- [Settings and Deployment](/guide/workloads#settings) — Full Git configuration options
+- [Integrations](/guide/integrations) — Connect GitHub, GitLab, Bitbucket

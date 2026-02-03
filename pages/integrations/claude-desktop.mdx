@@ -1,0 +1,77 @@
+import { Callout } from 'nextra/components'
+
+# Claude Desktop Integration
+
+Connect Claude Desktop to CloudAgent and deploy AWS infrastructure through conversation.
+
+## Why Claude Desktop + CloudAgent?
+
+- **Native MCP support** — Claude Desktop has built-in MCP
+- **Long context** — describe complex architectures in detail
+- **Artifacts** — see CloudFormation previews inline
+
+## Quick Setup (2 minutes)
+
+### Step 1: Locate Config File
+
+Find your Claude Desktop config:
+
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+### Step 2: Add CloudAgent MCP Server
+
+Edit the config file and add:
+
+```json
+{
+  "mcpServers": {
+    "cloudagent": {
+      "url": "https://api.cloudagent.io/mcp",
+      "enabled": true
+    }
+  }
+}
+```
+
+<Callout type="info">
+Copy your exact config from [Dashboard → MCP Extension](https://cloudagent.io/dashboard/mcp) → **Claude** tab.
+</Callout>
+
+### Step 3: Restart Claude Desktop
+
+Quit and reopen Claude Desktop to load the new configuration.
+
+### Step 4: Authenticate
+
+Start a conversation and ask Claude to connect to CloudAgent. You'll be prompted to authenticate via OAuth.
+
+## Test Your Connection
+
+```
+"What CloudAgent workloads do I have access to?"
+```
+
+## Example Conversation
+
+**You**: I need to deploy a serverless API that processes images and stores them in S3.
+
+**Claude**: I'll help you set up that infrastructure. Let me create:
+- S3 bucket for image storage (encrypted, private)
+- Lambda function for image processing
+- API Gateway endpoint to trigger the Lambda
+
+Here's the CloudFormation preview...
+
+[Approve to deploy]
+
+## Tips for Best Results
+
+1. **Be specific about requirements** — mention compliance needs upfront
+2. **Use workload context** — "Deploy to the staging workload"
+3. **Ask for previews** — "Show me the CloudFormation before deploying"
+
+## Next Steps
+
+- [Deploy AWS Infrastructure](/cookbooks/deploy-aws-cursor) — step-by-step tutorial
+- [Security Baselines](/guide/workloads) — understand auto-applied rules

@@ -8,6 +8,10 @@
         "title": "User Guide",
         "type": "page"
     },
+    "integrations": {
+        "title": "IDE Integrations",
+        "type": "page"
+    },
     "cookbooks": {
         "title": "Cookbooks",
         "type": "page"

@@ -1,0 +1,86 @@
+import { Callout } from 'nextra/components'
+
+# VS Code Integration
+
+Connect VS Code to CloudAgent via MCP and deploy infrastructure using natural language alongside your code.
+
+## Why VS Code + CloudAgent?
+
+- **Familiar environment** — stay in the world's most popular editor
+- **Extension ecosystem** — works alongside your existing tools
+- **GitHub Copilot compatible** — use both AI assistants
+
+## Setup Options
+
+VS Code supports MCP through extensions. Choose your approach:
+
+### Option 1: Copilot Extension (Recommended)
+
+If you use GitHub Copilot:
+
+1. Install the **MCP for Copilot** extension from VS Code marketplace
+2. Add CloudAgent MCP server config to `settings.json`:
+
+```json
+{
+  "mcp.servers": {
+    "cloudagent": {
+      "url": "https://api.cloudagent.io/mcp"
+    }
+  }
+}
+```
+
+3. Restart VS Code
+4. Authenticate when prompted
+
+### Option 2: Continue Extension
+
+If you use Continue:
+
+1. Install **Continue** extension
+2. Edit `~/.continue/config.json`:
+
+```json
+{
+  "mcpServers": {
+    "cloudagent": {
+      "url": "https://api.cloudagent.io/mcp"
+    }
+  }
+}
+```
+
+3. Restart VS Code
+
+<Callout type="info">
+Get your exact configuration from [Dashboard → MCP Extension](https://cloudagent.io/dashboard/mcp).
+</Callout>
+
+## Test Your Connection
+
+Open the AI chat panel and ask:
+
+```
+"List my CloudAgent workloads"
+```
+
+## Example Prompts
+
+| What You Say | What CloudAgent Does |
+|--------------|---------------------|
+| "Create an RDS PostgreSQL database" | Creates encrypted RDS with backups |
+| "Deploy a VPC with public/private subnets" | Creates VPC with NAT gateway |
+| "Set up CloudFront for my S3 bucket" | Creates distribution with HTTPS |
+
+## Troubleshooting
+
+**Extension not detecting MCP server?**
+- Check the config file path is correct
+- Ensure JSON syntax is valid
+- Restart VS Code completely
+
+## Next Steps
+
+- [Deploy AWS Infrastructure](/cookbooks/deploy-aws-cursor) — tutorial (works for any IDE)
+- [MCP Reference](/guide/mcp) — technical documentation

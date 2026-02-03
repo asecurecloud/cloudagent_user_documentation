@@ -1,0 +1,257 @@
+import { Callout } from 'nextra/components'
+
+# Deploy AWS Infrastructure from Cursor IDE
+
+Create a complete workload with S3, Lambda, API Gateway, and DynamoDB — managed as a single CloudFormation stack with security rules automatically applied.
+
+## What You'll Build
+
+A **file processing API** workload containing:
+- S3 bucket for uploads
+- Lambda function for processing
+- API Gateway endpoint
+- DynamoDB for metadata
+
+**Time:** 10 minutes | **Security:** Production preset (23 rules)
+
+## Prerequisites
+
+- [Cursor IDE](https://cursor.sh) with [MCP configured](/integrations/cursor)
+- [CloudAgent account](https://cloudagent.io) with AWS connected
+- Basic familiarity with AWS services
+
+---
+
+## Step 1: Create a Workload
+
+Open Cursor AI chat (`Cmd+L` / `Ctrl+L`) and create your workload:
+
+```
+You: "Create a new workload called file-processor for a file upload API"
+```
+
+CloudAgent responds:
+```
+Created workload: file-processor
+Environment: Sandbox (616241259270)
+Security Preset: Development Environments (14 rules)
+Deployment Method: CloudFormation
+
+Ready to add resources. What would you like to deploy?
+```
+
+<Callout type="info">
+**What just happened?** CloudAgent created a workload entity that will group all your infrastructure. Changes deploy as a single CloudFormation stack.
+</Callout>
+
+---
+
+## Step 2: Add S3 Storage
+
+```
+You: "Add an S3 bucket for storing uploaded files"
+```
+
+CloudAgent generates and shows preview:
+```yaml
+# Adding to workload: file-processor
+# Security rules applied: 14
+
+Resources:
+  UploadsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: file-processor-uploads-${AWS::AccountId}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LogsBucket
+```
+
+```
+You: "Deploy it"
+```
+
+**Result:** S3 bucket created with encryption, versioning, access logging — all from your security preset.
+
+---
+
+## Step 3: Add Lambda Processing
+
+```
+You: "Add a Lambda function that processes files when uploaded to the bucket"
+```
+
+CloudAgent adds to the same stack:
+```yaml
+# Adding to workload: file-processor
+# Stack now contains: S3 bucket + Lambda
+
+Resources:
+  ProcessorFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: file-processor-handler
+      Runtime: python3.11
+      Handler: index.handler
+      Role: !GetAtt ProcessorRole.Arn
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref UploadsBucket
+      VpcConfig:  # Added by security preset
+        SecurityGroupIds: [!Ref LambdaSG]
+        SubnetIds: !Ref PrivateSubnets
+
+  UploadTrigger:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ProcessorFunction
+      Principal: s3.amazonaws.com
+      SourceArn: !GetAtt UploadsBucket.Arn
+```
+
+```
+You: "Yes, deploy"
+```
+
+---
+
+## Step 4: Add API Gateway
+
+```
+You: "Add an API Gateway endpoint to trigger uploads via HTTP"
+```
+
+```yaml
+# Adding to workload: file-processor
+# Stack now contains: S3 + Lambda + API Gateway
+
+Resources:
+  UploadApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: file-processor-api
+
+  UploadEndpoint:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref UploadResource
+      RestApiId: !Ref UploadApi
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/...
+```
+
+```
+You: "Deploy"
+```
+
+---
+
+## Step 5: Add DynamoDB for Metadata
+
+```
+You: "Add a DynamoDB table to store file metadata with fileId as the partition key"
+```
+
+```yaml
+# Adding to workload: file-processor
+# Stack now contains: S3 + Lambda + API Gateway + DynamoDB
+
+Resources:
+  MetadataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: file-processor-metadata
+      AttributeDefinitions:
+        - AttributeName: fileId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: fileId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:  # Added by security preset
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:  # Added by security preset
+        SSEEnabled: true
+```
+
+```
+You: "Deploy"
+```
+
+---
+
+## Step 6: Review Your Workload
+
+```
+You: "Show me the architecture diagram for file-processor"
+```
+
+CloudAgent generates a visual diagram showing all resources and their connections.
+
+```
+You: "What's the API endpoint URL?"
+```
+
+```
+API Gateway Endpoint: https://abc123.execute-api.us-east-1.amazonaws.com/prod/upload
+S3 Bucket: file-processor-uploads-123456789
+DynamoDB Table: file-processor-metadata
+Lambda Function: file-processor-handler
+```
+
+---
+
+## What CloudAgent Applied Automatically
+
+| Resource | Security Rules Applied |
+|----------|----------------------|
+| S3 | Encryption, block public access, versioning, access logging |
+| Lambda | VPC deployment, minimal IAM, environment encryption |
+| API Gateway | HTTPS only, throttling, request validation |
+| DynamoDB | Encryption at rest, point-in-time recovery |
+
+**Total:** 14 rules from Development Environments preset
+
+---
+
+## Progressive Learning Path
+
+| Level | Tutorial | What You Learn |
+|-------|----------|----------------|
+| ✅ **Beginner** | This tutorial | Create workload, add resources |
+| 🔜 **Intermediate** | [Git Integration](/cookbooks/git-integration) | Version control infrastructure |
+| 🔜 **Advanced** | [Cursor + MCP Integration](/cookbooks/cursor-mcp) | Develop with guardrails |
+
+---
+
+## Troubleshooting
+
+**"Workload not found"**
+- List workloads: `"Show my workloads"`
+- Create one: `"Create a workload called my-app"`
+
+**Deployment failed**
+- Check CloudFormation console for detailed error
+- Ask: `"Why did the deployment fail?"`
+
+**Security rule blocking resource**
+- Ask: `"What security rules are blocking this?"`
+- Request exception or adjust configuration
+
+## Related
+
+- [Cursor Integration](/integrations/cursor) — Setup guide
+- [Workloads](/guide/workloads) — Full workload documentation
+- [Security Rules](/guide/workloads#security-rules) — Available presets

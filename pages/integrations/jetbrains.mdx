@@ -1,0 +1,84 @@
+import { Callout } from 'nextra/components'
+
+# JetBrains IDEs Integration
+
+Connect IntelliJ IDEA, PyCharm, WebStorm, or any JetBrains IDE to CloudAgent using the built-in MCP support.
+
+## Why JetBrains + CloudAgent?
+
+- **Built-in MCP** — JetBrains 2025.2+ has native MCP support
+- **Enterprise-ready** — integrates with existing JetBrains workflows
+- **Multi-language** — works across all JetBrains IDEs
+
+## Supported IDEs
+
+- IntelliJ IDEA (Ultimate & Community)
+- PyCharm (Professional & Community)
+- WebStorm
+- GoLand
+- Rider
+- PhpStorm
+- RubyMine
+- CLion
+
+<Callout type="info">
+Requires JetBrains IDE version **2025.2 or later** for built-in MCP support.
+</Callout>
+
+## Quick Setup (3 minutes)
+
+### Step 1: Enable AI Assistant
+
+1. Open your JetBrains IDE
+2. Go to **Settings** → **Plugins**
+3. Ensure **AI Assistant** is installed and enabled
+
+### Step 2: Add CloudAgent MCP Server
+
+1. Go to **Settings** → **Tools** → **AI Assistant** → **MCP Servers**
+2. Click **Add Server**
+3. Enter:
+   - **Name**: `CloudAgent`
+   - **URL**: `https://api.cloudagent.io/mcp`
+4. Click **OK**
+
+### Step 3: Authenticate
+
+When you first interact with CloudAgent, you'll be prompted to authenticate via OAuth.
+
+### Step 4: Test Connection
+
+Open AI Assistant panel (`Alt+Enter` or `Cmd+Enter`) and ask:
+
+```
+"List my CloudAgent environments"
+```
+
+## Example Prompts
+
+| What You Say | What CloudAgent Does |
+|--------------|---------------------|
+| "Create an RDS MySQL database for my app" | Creates encrypted RDS with backups |
+| "Deploy a Lambda for this Python function" | Creates Lambda with proper runtime |
+| "Set up ECS Fargate for my Docker container" | Creates cluster with task definition |
+
+## IntelliJ-Specific Tips
+
+1. **Use with Database Tools** — deploy RDS, then connect via IntelliJ's database browser
+2. **Combine with AWS Toolkit** — CloudAgent deploys, AWS Toolkit manages
+3. **Terminal integration** — view deployment logs in built-in terminal
+
+## Troubleshooting
+
+**MCP option not visible?**
+- Update to JetBrains 2025.2 or later
+- Ensure AI Assistant plugin is enabled
+
+**Authentication failing?**
+- Clear IDE cache: **File** → **Invalidate Caches**
+- Re-add the MCP server
+
+## Next Steps
+
+- [Deploy AWS Infrastructure](/cookbooks/deploy-aws-cursor) — step-by-step tutorial
+- [MCP Reference](/guide/mcp) — technical documentation
