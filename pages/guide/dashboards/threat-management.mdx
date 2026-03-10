@@ -1,0 +1,67 @@
+import { Callout } from 'nextra/components'
+
+# Threat Management
+
+<Callout type="warning">
+  Threat Management is currently in preview. The dedicated dashboard is under active development — features described here reflect both current capabilities and planned enhancements.
+</Callout>
+
+## Overview
+
+Threat Management in CloudAgent brings together cloud-native security services to help you detect, investigate, and respond to threats across your environments. Currently, threat detection integrations are available for AWS. While the full Threat Management dashboard is coming soon, several threat detection capabilities are already available through CloudAgent's existing features.
+
+## Current Threat Detection Capabilities
+
+CloudAgent currently supports threat detection through its **Recommendations** and **Reports** systems. The platform evaluates your environments against threat detection best practices and flags gaps in your security posture.
+
+### Supported AWS Security Services
+
+For AWS accounts, CloudAgent integrates with the following threat detection services:
+
+| AWS Service | What It Does | CloudAgent Integration |
+|-------------|-------------|----------------------|
+| AWS GuardDuty | Continuous threat monitoring using ML-based anomaly detection across CloudTrail, VPC Flow Logs, and DNS | Recommendations to enable and configure GuardDuty |
+| AWS Security Hub | Centralized security findings aggregation from multiple AWS services | Recommendations to enable Security Hub and review findings |
+| AWS IAM Access Analyzer | Identifies resources shared with external entities and validates IAM policies | Recommendations to enable Access Analyzer for each region |
+
+### How Threat Detection Works Today
+
+1. **Recommendations**: Navigate to the [Recommendations](/guide/reports-insights/recommendations) page and filter by the **Threat Detection** category. For AWS accounts, CloudAgent checks whether GuardDuty, Security Hub, and IAM Access Analyzer are enabled and properly configured. If these services aren't enabled yet, CloudAgent will surface recommendations to turn them on.
+
+2. **Compliance Reports**: Several [reports](/guide/reports-insights/reports) include threat detection controls:
+   - **CIS AWS Foundations Benchmark** checks for GuardDuty and Security Hub enablement
+   - **NIST 800-53** and **NIST CSF** reports assess threat monitoring controls
+   - **SOC2** reports evaluate security monitoring and incident response readiness
+
+3. **Automated Remediation**: When CloudAgent identifies that a threat detection service is not enabled, you can use a blueprint or workflow to automatically enable it. Each recommendation includes a remediation blueprint that can be executed directly.
+
+## Planned Capabilities
+
+The upcoming Threat Management dashboard will provide a centralized view for:
+
+- **Active Threats**: Real-time feed of GuardDuty findings and Security Hub alerts, prioritized by severity
+- **Threat Timeline**: Visual timeline of security events across accounts and regions
+- **Investigation Workflows**: Click-through investigation from alert to affected resources with contextual information
+- **Automated Response**: Pre-built response blueprints for common threat types (compromised credentials, unusual API activity, network anomalies)
+- **Cross-Account Visibility**: Unified threat view across all connected AWS accounts
+
+## Getting Started with Threat Detection
+
+Even before the full dashboard launches, you can set up a strong threat detection foundation:
+
+1. **Enable GuardDuty**: Go to [Recommendations](/guide/reports-insights/recommendations), find the "Enable AWS GuardDuty" recommendation, and run the remediation blueprint
+2. **Enable Security Hub**: Similarly, enable Security Hub through the recommendations workflow
+3. **Enable IAM Access Analyzer**: Set up Access Analyzer to monitor for unintended external resource sharing
+4. **Run a Security Report**: Generate a CIS AWS Foundations Benchmark or NIST CSF report to assess your overall threat readiness
+5. **Schedule Ongoing Checks**: Create a [workflow](/guide/automation/workflows) to run threat detection checks weekly
+
+<Callout type="info">
+  **Tip**: Enabling GuardDuty, Security Hub, and IAM Access Analyzer across all your connected accounts gives CloudAgent the broadest threat visibility when the full dashboard launches.
+</Callout>
+
+## Next Steps
+
+- [Recommendations](/guide/reports-insights/recommendations) — Review and act on threat detection recommendations
+- [Reports](/guide/reports-insights/reports) — Run compliance reports that include threat monitoring controls
+- [Blueprints & Agents](/guide/automation/blueprints) — Use remediation blueprints to enable security services
+- [My Workflows](/guide/automation/workflows) — Schedule automated threat posture checks

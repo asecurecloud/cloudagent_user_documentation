@@ -1,13 +1,15 @@
 ---
 title: CloudAgent Documentation
 description: Consolidated documentation for CloudAgent, optimized for LLM consumption.
-generated_at: 2025-12-08T17:01:49.137Z
+generated_at: 2026-03-10T16:37:26.909Z
 ---
 
 # CloudAgent Documentation
 
 This is a consolidated version of the CloudAgent documentation.
 It includes the User Guide, Cookbooks, and other resources.
+
+For product overview, use cases, and personas see: https://cloudagent.io/llms-full.txt
 
 ---
 
@@ -17,25 +19,29 @@ It includes the User Guide, Cookbooks, and other resources.
 
 # CloudAgent Documentation
 
-Welcome to the official CloudAgent documentation. This site is designed to help you get the most out of the platform, whether you are a first-time user or an advanced operator.
+Welcome to the official CloudAgent documentation. Deploy and manage AWS infrastructure using natural language from your favorite IDE.
 
 <div className="cards">
   <div className="card">
-    ### [User Guide](/guide)
-    **Objective**: Explore the CloudAgent interface and learn how to manage your cloud workforce with our screenshot-driven guide.
+    ### [IDE Integrations](/integrations)
+    **Connect your IDE**: Deploy infrastructure from Cursor, VS Code, Claude Desktop, ChatGPT, or JetBrains with MCP integration.
   </div>
   <div className="card">
     ### [Cookbooks](/cookbooks)
-    **Objective**: Find step-by-step recipes and how-to guides for specific tasks and configurations.
+    **Tutorials**: Step-by-step guides for deploying infrastructure, setting up CI/CD, and automating workflows.
+  </div>
+  <div className="card">
+    ### [User Guide](/guide)
+    **Platform Reference**: Explore workloads, security rules, governance, and the full CloudAgent dashboard.
   </div>
   <div className="card">
     ### [LLM Docs](/llms.txt)
-    **Objective**: A single-file documentation optimized for AI agents and LLMs.
+    **For AI Agents**: Single-file documentation optimized for AI agents and LLMs.
   </div>
 </div>
 
 > **Note:** 
-  Start with the **User Guide** for a comprehensive tour, or jump to **Cookbooks** if you have a specific task in mind.
+  **New to CloudAgent?** Start with [Deploy AWS from Cursor](/cookbooks/deploy-aws-cursor) to ship your first infrastructure in 10 minutes.
 
 # User Guide
 
@@ -74,11 +80,14 @@ CloudAgent is your AI-powered partner for cloud operations. By the end of this g
 
 Now that you are logged in, the next step is to connect your cloud environment.
 
-**[Go to Account Onboarding](/guide/onboarding)** to connect your AWS account and unlock the dashboard features.
+**[Go to Account Onboarding](/guide/cloud-setup/aws)** to connect your AWS account and unlock the dashboard features.
 
-# Account Onboarding
+# Cloud Setup
 
-# Account Onboarding
+
+# AWS Onboarding
+
+# AWS Onboarding
 
 ## Objective
 Connect your AWS accounts to CloudAgent to enable monitoring, management, and automated actions.
@@ -104,17 +113,286 @@ CloudAgent makes it easy to connect your cloud environments and start managing y
 
 ![Onboarding Step 3](/images/onboarding_step3.png)
 
-# Dashboard Overview
+## Next Steps
+
+- [Azure Onboarding](/guide/cloud-setup/azure) — Connect your Azure subscriptions
+- [Permissions & Access Control](/guide/cloud-setup/permissions) — Understand CloudAgent's permission model
+- [Managing Workloads](/guide/workloads-governance/workloads) — Create workloads for your connected accounts
+
+# Azure Onboarding
+
+# Azure Onboarding
+
+> **Note:** 
+  Azure support is currently in early access. The onboarding flow is fully functional — additional Azure features (assessments, workload support) are planned for future releases.
+
+## Overview
+
+CloudAgent supports connecting Azure subscriptions alongside your AWS accounts. Once connected, Azure environments appear in your Cloud Environments list and are available to CloudAgent's agent tools for resource discovery and analysis.
+
+## Prerequisites
+
+Before connecting an Azure subscription, you'll need:
+
+- An Azure account with permissions to create App Registrations and assign roles
+- The **Tenant ID** for your Azure Active Directory (found in Azure Portal → Azure Active Directory → Overview)
+- One or more **Subscription IDs** you want to connect, or a **Management Group ID** for automatic discovery
+- Admin consent capability for Microsoft Graph API permissions
+
+## Step 1: Enter Your Tenant Details
+
+In CloudAgent, navigate to **Cloud Setup** and click **+ Add Cloud Environment**, then select **Azure**.
+
+The wizard walks you through four steps. Start by entering:
+
+- **Azure Tenant ID**: Your Azure AD tenant identifier (UUID format)
+- **Description** (optional): A friendly label like "Production Azure" or "Dev Tenant"
+- **Environment Type**: Choose between Azure Public (default) or Azure US Government
+
+## Step 2: Select Subscription Access
+
+Choose how CloudAgent discovers your subscriptions:
+
+| Mode | How It Works | Best For |
+|------|-------------|----------|
+| Manual Entry | Enter subscription IDs individually with optional descriptions | Small environments or specific subscriptions |
+| Management Group | Provide a management group ID — CloudAgent auto-discovers all subscriptions within it | Large organizations with many subscriptions |
+
+You can always add more subscriptions later by editing the environment.
+
+## Step 3: Create a Service Principal
+
+CloudAgent needs a Service Principal (app registration) in your Azure AD to authenticate. Choose one of three setup methods:
+
+### Option A: Terraform
+
+Download the generated Terraform template and apply it. The template automatically creates the app registration, assigns the required Graph API permissions, and sets up RBAC roles. After running `terraform apply`, the output provides the Client ID and Client Secret you'll need in the next step.
+
+> **Note:** 
+  Terraform templates are tailored to your chosen subscription mode — subscription-level or management group-level — so the correct RBAC scope is applied automatically.
+
+### Option B: PowerShell
+
+Download the PowerShell script and run it in Azure Cloud Shell or a local PowerShell session with the Az module installed. The script performs the same setup as Terraform and outputs the credentials at completion.
+
+### Option C: Manual Setup (Azure Portal)
+
+Follow the step-by-step instructions in the wizard to configure everything through the Azure Portal:
+
+1. **Create an App Registration**: Navigate to Azure AD → App registrations → New registration. Name it something like "CloudAgent" and register it.
+
+2. **Create a Client Secret**: In the app registration, go to Certificates & secrets → New client secret. Copy the secret value immediately — it's only shown once.
+
+3. **Assign Graph API Permissions**: In API permissions, add the following Microsoft Graph (Application) permissions, then grant admin consent:
+   - `Directory.Read.All`
+   - `Policy.Read.All`
+   - `User.Read.All`
+   - `AuditLog.Read.All`
+   - `IdentityRiskyUser.Read.All`
+   - `IdentityRiskyServicePrincipal.Read.All`
+   - `IdentityRiskEvent.Read.All`
+   - `UserAuthenticationMethod.Read`
+
+4. **Assign Subscription Roles**: In each subscription (or management group), assign the **Reader** and **Backup Reader** roles to the app registration.
+
+After completing your chosen method, enter the **Client ID** and **Client Secret** in the wizard.
+
+## Step 4: Validate and Save
+
+Click **Test Connection** to verify that CloudAgent can authenticate with your Service Principal. The validation checks that:
+
+- The Service Principal credentials are valid
+- The tenant is accessible
+- The assigned permissions allow resource access
+- (For management group mode) Subscriptions can be discovered
+
+Once validated, give the environment a name and click **Save**. Your Azure environment now appears in Cloud Environments alongside your AWS accounts.
+
+> **Note:** 
+  Store your Client Secret securely. CloudAgent encrypts it before storage, but if you lose the original value, you'll need to create a new secret in Azure and update the environment.
+
+## What You Can Do with Azure Today
+
+With an Azure environment connected, CloudAgent can:
+
+- **Discover resources** across your subscriptions using Azure Resource Graph
+- **List subscriptions** and their properties
+- **Include Azure environments** in multi-cloud workload definitions
+
+Additional capabilities — including Azure-specific assessments, compliance reports, and agent-driven remediation — are on the roadmap.
+
+## Troubleshooting
+
+**Test Connection fails with authentication error**: Verify that the Client ID and Client Secret are correct. If using manual setup, confirm that admin consent was granted for all Graph API permissions.
+
+**No subscriptions discovered (management group mode)**: Ensure the Service Principal has the Reader role assigned at the management group level, not just individual subscriptions.
+
+**"Insufficient permissions" after successful connection**: The Service Principal likely needs additional role assignments. Verify that both Reader and Backup Reader are assigned at the correct scope (subscription or management group).
+
+**Cannot find Tenant ID**: In the Azure Portal, go to Azure Active Directory → Overview. The Tenant ID is displayed on the overview page.
+
+## Next Steps
+
+- [Permissions & Access Control](/guide/cloud-setup/permissions) — Understand CloudAgent's permission model across all providers
+- [Account Onboarding](/guide/cloud-setup/aws) — Connect your AWS accounts
+- [Managing Workloads](/guide/workloads-governance/workloads) — Create workloads spanning AWS and Azure environments
+
+# Permissions & Access Control
+
+# Permissions & Access Control
+
+## How CloudAgent Accesses Your Cloud
+
+CloudAgent is a multi-cloud platform that connects to your cloud accounts — including AWS, Azure, and Google Workspace — through provider-specific authentication methods. Each connected account is represented as a **permission profile** (also called a cloud environment). You can connect multiple accounts across different providers and manage them all from a single place.
+
+This page covers the general permission model. For provider-specific onboarding steps, see [Account Onboarding](/guide/cloud-setup/aws) (AWS) and [Azure Onboarding](/guide/cloud-setup/azure).
+
+## AWS IAM Role Setup
+
+When you connect an AWS account, CloudAgent generates a CloudFormation template that creates an IAM role in your account. The setup involves three components:
+
+| Component | Description |
+|-----------|-------------|
+| IAM Role Name | A dedicated role (e.g., `CloudAgentRole`) created in your account |
+| External ID | A unique identifier that prevents unauthorized access — only requests with this ID can assume the role |
+| Trust Policy | Allows CloudAgent's service account to assume the role in your account |
+
+At minimum, the role uses the **AWS managed `ReadOnlyAccess` policy**. This is enough to power dashboards, reports, recommendations, and health checks — no additional per-service permissions are required to get started.
+
+### Deployment Options
+
+You can deploy the IAM role using:
+
+1. **One-Click CloudFormation**: Launch the stack directly from CloudAgent's setup wizard — the template is pre-configured with your role name and external ID
+2. **Download Template**: Download the CloudFormation JSON/YAML to deploy through your own AWS console or CI/CD pipeline
+3. **Terraform**: Generate a Terraform configuration instead of CloudFormation
+
+> **Note:** 
+  The External ID is a critical security feature. It prevents the "confused deputy" problem where an unauthorized party could assume the role. Never share your External ID publicly.
+
+### Built-in Security Restrictions
+
+Every IAM role created by CloudAgent includes automatic restrictions regardless of the permission level you choose:
+
+- **Data Access Restriction**: Denies `secretsmanager:GetSecretValue`, `s3:GetObject`, and `s3:GetObjectVersion` — CloudAgent can see your infrastructure configuration but cannot read your actual data or secrets
+- **Temporary Access** (optional): Time-limited role access that automatically expires after a configured duration
+
+## Permission Levels (AWS)
+
+When connecting an AWS account, choose the access level that matches your needs:
+
+| Level | AWS Managed Policy | What It Can Do | Best For |
+|-------|-------------------|---------------|----------|
+| Read-Only | `ReadOnlyAccess` | View resources, generate reports, run compliance checks, health checks, cost analytics | Monitoring and auditing — most users start here |
+| Limited Write | `ReadOnlyAccess` + selective write policies | Everything above, plus automated remediation of specific resource types | Teams adopting automated fixes |
+| Full Admin | `ReadOnlyAccess` + broad write policies | Everything above, plus full blueprint deployment and infrastructure management | Full infrastructure automation |
+
+> **Note:** 
+  **Start with Read-Only.** The AWS managed `ReadOnlyAccess` policy is all you need for dashboards, reports, recommendations, health checks, and cost analysis. You can upgrade later as you adopt deployment and remediation features.
+
+Write-level access is only needed when you want CloudAgent to make changes in your account — for example, deploying a blueprint, running a remediation workflow, or enabling a security service like GuardDuty.
+
+## Managing Connected Accounts
+
+Navigate to **Settings** > **Cloud Environments** to view and manage your permission profiles. This page shows all connected cloud accounts across providers (AWS, Azure, Google Workspace).
+
+![Cloud Setup](/images/cloud_setup_cc.png)
+
+From this page you can:
+
+- **Add a new account**: Click the add button to start the connection wizard for any supported provider
+- **Edit an existing profile**: Update the account name, description, or reconnect with different permissions
+- **Delete a profile**: Remove an account connection (this does not affect the role or resources in your cloud account)
+- **View security rules**: See which security baselines are applied to this environment
+
+## Connecting a New AWS Account
+
+The connection wizard walks you through three steps:
+
+### Step 1: Account Details
+
+Enter your AWS Account ID and select a permission level. Give the environment a descriptive name (e.g., "Production - us-east-1" or "Sandbox Account").
+
+### Step 2: Deploy the IAM Role
+
+Choose your deployment method (CloudFormation one-click, download template, or Terraform) and deploy the role to your AWS account. The wizard shows the exact role name and External ID that will be configured.
+
+### Step 3: Validate Credentials
+
+After deploying the IAM role, click **Validate** to confirm CloudAgent can successfully assume the role. Validation checks that:
+
+- The role exists with the correct name
+- The External ID matches
+- The trust policy allows CloudAgent's service account
+- The permission level grants the expected access
+
+Once validated, the account appears in your cloud environments and is available for use across all CloudAgent features.
+
+## Authentication Methods
+
+CloudAgent supports two authentication approaches:
+
+| Method | How It Works | Recommended? |
+|--------|-------------|:------------:|
+| IAM Role (STS AssumeRole) | CloudAgent assumes a role in your account using STS with an External ID | Yes |
+| IAM User Credentials | Access key and secret key for a dedicated IAM user | Legacy only |
+
+IAM roles are strongly recommended because they don't require long-lived credentials, support automatic rotation, and provide better auditability through CloudTrail.
+
+## Multi-Account and Multi-Cloud Management
+
+CloudAgent supports connecting multiple cloud accounts — across AWS, Azure, and other providers — under a single user profile. Each account operates as an independent permission profile with its own:
+
+- Permission level and IAM role
+- Security rules and baselines
+- Deployment preferences
+- Architecture preferences
+
+When using features like the Cost Dashboard, Health Dashboard, or Reports, you select which environment (account) to analyze. Workloads can span multiple environments by selecting multiple accounts during workload configuration.
+
+## Credential Rotation
+
+Since CloudAgent uses IAM role assumption (not stored credentials), credential rotation is handled automatically by AWS STS. Temporary session credentials are generated on each API call and expire after a short duration.
+
+If you need to update the IAM role:
+
+1. Modify the CloudFormation stack or IAM role directly in your AWS account
+2. Return to CloudAgent's Cloud Environments page
+3. Click **Edit** on the permission profile
+4. Click **Validate** to confirm the updated role works correctly
+
+## Troubleshooting
+
+**Validation fails after deploying the IAM role**: Verify that the CloudFormation stack completed successfully in your AWS account. Check that the role name and External ID match exactly what CloudAgent's wizard specified.
+
+**"Access Denied" errors during scans or reports**: This usually means the IAM role is missing or misconfigured. The AWS managed `ReadOnlyAccess` policy covers all read operations CloudAgent needs. If you see access errors on write operations (remediation, deployment), upgrade to Limited Write or Full Admin.
+
+**Cannot see resources from a connected account**: Ensure the permission profile is validated (green checkmark) in Cloud Environments. If the checkmark is missing, click Edit and re-run the validation step.
+
+**Multiple accounts showing the same data**: Each permission profile should point to a different AWS Account ID. Check your Cloud Environments list to ensure accounts aren't duplicated.
+
+## Next Steps
+
+- [Account Onboarding](/guide/cloud-setup/aws) — Step-by-step guide for your first AWS account connection
+- [Security Rules & Baselines](/guide/workloads-governance/security-baselines) — Configure compliance rules for connected accounts
+- [Governance & Architecture](/guide/workloads-governance/governance) — Set up deployment controls and architecture preferences
+- [Managing Workloads](/guide/workloads-governance/workloads) — Create workloads that span your connected accounts
+
+# Dashboards
+
+
+# Overview
 
 # Dashboard Overview
 
 ## Objective
+
 Gain a comprehensive view of your cloud resources, security posture, and agent activities.
 
 Once logged in, you will see the **Dashboard Overview**. This is your central hub for managing your cloud workforce.
 
 > **Note:** 
-  **Prerequisite**: The dashboard will appear empty until you connect a cloud account. Please complete the [Account Onboarding](/guide/onboarding) step first.
+  **Prerequisite**: The dashboard will appear empty until you connect a cloud account. Please complete the [Account Onboarding](/guide/cloud-setup/aws) step first.
 
 ![Dashboard Overview](/images/dashboard_overview.png)
 
@@ -152,7 +430,8 @@ A real-time feed of what your agents are doing:
 ### 5. Reports
 CloudAgent creates detailed security reports for your cloud account, including **cost** and **compliance** reports (such as **SOC 2** and **HIPAA**).
 
-> Get the full list of available reports at [cloudagent.io/libraries/all-reports](https://cloudagent.io/libraries/all-reports).
+> **Note:** 
+  Get the full list of available reports at [cloudagent.io/libraries/all-reports](https://cloudagent.io/libraries/all-reports).
 
 ![CloudAgent Report Example](/images/cloudagent-report.gif)
 
@@ -165,6 +444,340 @@ CloudAgent creates detailed security reports for your cloud account, including *
 *   **Blueprints & Agents**: Create and manage infrastructure blueprints.
 *   **Reports**: Generate and view compliance reports.
 *   **My Account**: Manage your profile and settings.
+
+## Next Steps
+
+- [Cost Dashboard](/guide/dashboards/cost) — Analyze your cloud spending and savings opportunities
+- [Health Dashboard](/guide/dashboards/health) — Monitor resource health across your environments
+- [Recommendations](/guide/reports-insights/recommendations) — Act on prioritized findings
+
+# Cost Dashboard
+
+# Cost Dashboard
+
+## Objective
+
+Monitor and optimize your cloud spending with real-time cost analytics, forecasting, and actionable savings recommendations.
+
+The Cost Dashboard consolidates data from multiple sources into a single view of your spending. For AWS accounts, it pulls from AWS Cost Explorer, Anomaly Detection, Compute Optimizer, Savings Plans, and Cost Optimization Hub. CloudAgent's own assessment engine also generates cost-related recommendations independently — so you'll see actionable findings even if some of those AWS services are not enabled in your account.
+
+## Accessing the Cost Dashboard
+
+Navigate to **Dashboards → Cost** in the sidebar, or go directly to `/dashboards/cost`.
+
+![Cost Dashboard](/images/cost_dashboard_cc.png)
+
+> **Note:** 
+  Cost data may take a few minutes to load after connecting a new AWS account. If the dashboard appears empty, click the **Refresh** button and ensure your connected role has the AWS managed `ReadOnlyAccess` policy — this covers all the permissions CloudAgent needs for cost data.
+
+The Cost Dashboard works with AWS accounts connected through [Cloud Environments](/guide/cloud-setup/permissions). The dashboard pulls data from several AWS services — the more you have enabled, the richer the data:
+
+| Data Source | Description | What Happens If Not Enabled |
+|-------------|-------------|----------------------------|
+| AWS Cost Explorer | Historical spend data and trends | Enabled by default on all AWS accounts. If spend charts appear empty, verify your IAM role permissions and click Refresh. |
+| AWS Anomaly Detection | Unusual spending pattern alerts | The anomaly section will not appear. You'll still see cost data from other sources. |
+| AWS Compute Optimizer | EC2, RDS, and EBS rightsizing insights | Rightsizing recommendations will not be available. CloudAgent's own assessment engine may still surface cost findings independently. |
+| AWS Cost Optimization Hub | Cross-service optimization opportunities | This section will not appear. Other recommendation sources still function normally. |
+
+> **Note:** 
+  The dashboard displays status indicators for each data source so you can quickly see which services are active and which need to be enabled. Even without any AWS cost services configured, CloudAgent's built-in assessment engine can identify cost optimization opportunities through its own checks.
+
+## Key Metrics
+
+The top of the dashboard displays summary cards with your most important cost data:
+
+| Metric | Description |
+|--------|-------------|
+| Monthly Spend | Total spend for the current and previous months with a trend comparison |
+| Daily Average Spend | Average daily cost over the lookback period (default 90 days) |
+| Total Period Spend | Aggregated spending across the entire analysis window |
+| Spend Trend | Percentage change comparing the first half vs. second half of the period |
+| Estimated Savings | Total potential monthly savings from all recommendation types |
+
+## Understanding Your Cost Data
+
+### Spend Over Time
+
+The daily spend trend chart shows your spending as an area chart over the lookback period. Hover over any point to see the exact daily amount. This view helps you spot gradual increases, seasonal patterns, or sudden spikes.
+
+### Spend by Service
+
+A horizontal bar chart breaks down your top 8 cloud services by total spend, sorted from highest to lowest. For AWS accounts, common leaders include EC2, RDS, S3, and Lambda. Use this to identify which services drive the most cost.
+
+### Spend by Linked Account
+
+For organizations with multiple cloud accounts, the vertical bar chart shows cost distribution across up to 10 linked accounts. This is particularly useful for chargeback, cost allocation, and identifying accounts with unexpected growth.
+
+## Filtering and Controls
+
+You can adjust the dashboard view using these controls:
+
+- **Environment Selector**: Choose which cloud account or permission profile to analyze. If you have multiple accounts connected, switch between them here.
+- **Refresh**: Force a fresh data pull from your cloud provider's APIs. The dashboard caches data to reduce API calls, so use this when you need the latest numbers.
+- **Lookback Period**: The default analysis window is 90 days. This determines how far back the trend chart and calculations extend.
+
+## Anomaly Detection
+
+When AWS Cost Anomaly Detection is configured in your account, the dashboard surfaces unusual spending patterns automatically. Each anomaly shows:
+
+- The AWS service where the anomaly occurred
+- The date range of the unusual activity
+- Expected spend vs. actual spend
+- The overspend impact amount
+- A confidence score
+
+If you haven't enabled AWS Cost Anomaly Detection, this section will not appear. To enable it, set up Cost Anomaly Detection monitors in the AWS Billing & Cost Management console. Once configured, anomalies will surface here automatically on your next dashboard refresh.
+
+Clicking an anomaly opens a direct link to the AWS Cost Anomaly Detection console for deeper investigation.
+
+## Savings Recommendations
+
+The Cost Dashboard aggregates optimization recommendations from multiple sources. For AWS accounts, these include three native AWS services plus CloudAgent's own assessment engine. If a particular AWS service is not enabled, that section simply won't appear — the remaining sources continue to function normally.
+
+### Rightsizing Recommendations
+
+Sourced from AWS Compute Optimizer, these suggest changes to your EC2 instances, RDS databases, and EBS volumes. If Compute Optimizer is not enabled in your account, this section will not appear — enable it in the AWS console to get rightsizing insights.
+
+| Column | Description |
+|--------|-------------|
+| Resource ID | The specific instance or volume to modify |
+| Current Type | Your current instance type or configuration |
+| Recommended Type | The suggested target configuration |
+| Monthly Savings | Estimated cost reduction per month |
+| Action | Modify, Terminate, or Migrate |
+
+### Savings Plans Recommendations
+
+Based on your usage patterns, AWS recommends commitment-based discounts:
+
+| Column | Description |
+|--------|-------------|
+| Plan Type | Compute Savings Plan, EC2 Instance, or SageMaker |
+| Term | 1-year or 3-year commitment |
+| Payment Option | All Upfront, Partial Upfront, or No Upfront |
+| Hourly Commitment | Dollar amount per hour to purchase |
+| Monthly Savings | Estimated savings after commitment |
+
+### Cost Optimization Hub
+
+Additional cross-service recommendations that combine insights from multiple AWS optimization tools into unified suggestions.
+
+## Taking Action on Cost Findings
+
+Once you identify cost optimization opportunities:
+
+1. Review the specific recommendations in the dashboard
+2. Navigate to **Recommendations** for a prioritized action list across all categories
+3. Create a remediation workflow to automate the fix — see [My Workflows](/guide/automation/workflows) for scheduling automated responses
+4. Re-run the cost analysis after implementing changes to verify savings
+
+> **Note:** 
+  **Tip**: Create a scheduled workflow to generate weekly cost reports and email them to your finance team automatically.
+
+## Troubleshooting
+
+**Cost data appears delayed**: AWS Cost Explorer data typically updates once per day. If you connected a new account, allow 24-48 hours for historical data to populate.
+
+**Missing cost data for an account**: Verify the permission profile is validated on the [Cloud Setup](/guide/cloud-setup/aws) page — the AWS managed `ReadOnlyAccess` policy covers all the permissions CloudAgent needs for cost data. Also try clicking **Refresh** to force a fresh data pull.
+
+**No recommendations showing**: AWS services like Compute Optimizer and Cost Optimization Hub need 14+ days of usage data before generating recommendations. If you haven't enabled these services yet, only CloudAgent's own assessment engine recommendations will appear.
+
+**Anomalies section not visible**: This section only appears when AWS Cost Anomaly Detection is both configured in your account and has detected anomalies. If you haven't set up Cost Anomaly Detection monitors yet, enable them in the AWS Billing console.
+
+## Next Steps
+
+- [Recommendations](/guide/reports-insights/recommendations) — View and act on prioritized optimization findings
+- [My Workflows](/guide/automation/workflows) — Schedule automated cost reports and remediation
+- [Reports](/guide/reports-insights/reports) — Generate formal compliance and cost reports for stakeholders
+
+# Health Dashboard
+
+# Health Dashboard
+
+## Objective
+
+Monitor the operational health of your cloud resources across all workloads and environments from a single dashboard. Currently, health checks are available for AWS resources.
+
+The Health Dashboard aggregates health check results from your tracked resources and cloud environments, giving you a real-time view of what's healthy, what has issues, and what hasn't been checked yet.
+
+## Accessing the Health Dashboard
+
+Navigate to **Health Dashboard** in the sidebar, or go directly to `/dashboard/health`.
+
+![Health Dashboard](/images/health_dashboard_cc.png)
+
+## Key Health Metrics
+
+The top of the dashboard displays summary cards:
+
+| Metric | Description |
+|--------|-------------|
+| Health Score | Percentage of evaluated resources that are healthy. Calculated as `healthy / (healthy + unhealthy) × 100%` |
+| Total Resources | Count of all resources being monitored across workloads and environments |
+| Healthy | Resources where all health checks passed |
+| Issues | Resources with one or more failed health checks |
+| Data Sources | Number of workloads and cloud environments providing health data |
+
+The Health Score uses color-coded indicators: green when 80% or above, amber between 50-79%, and red below 50%. Resources that haven't been checked yet are excluded from the score calculation.
+
+## Understanding Health Statuses
+
+Each resource is assigned one of four statuses:
+
+| Status | Meaning |
+|--------|---------|
+| **Healthy** | All health checks passed — the resource is operating as expected |
+| **Issues** | One or more health checks failed — investigation or remediation needed |
+| **Not Checked** | The resource has never been evaluated — run a health check to assess it |
+| **Skipped** | The resource type is not supported for health checks or the check is not applicable |
+
+## Resource-Level Health Details
+
+Click any resource in the table to expand its details. Each resource shows:
+
+- **Resource identity**: Name, type (e.g., `AWS::ECS::Service`), ARN, region, and account ID
+- **Associated workloads**: Which workloads track this resource, with links to workload details
+- **Individual health checks**: A breakdown of each check that was run, including:
+  - Check name and category (availability, errors, configuration, capacity, runtime-eol)
+  - Pass or fail status
+  - Summary explanation of the result
+  - Detailed metrics (expandable)
+  - Timestamp of when the check was last evaluated
+
+> **Note:** 
+  Health checks cover multiple categories: availability (is the resource running?), errors (are there failures in logs?), configuration (is the setup correct?), and capacity (is the resource under pressure?).
+
+## Filtering Resources
+
+Use the filter controls to narrow down the resource list:
+
+- **Search**: Filter by resource name, type, ARN, resource ID, workload name, or environment name
+- **Status filter**: Show only Healthy, Issues, Not Checked, or Skipped resources
+- **Workload filter**: Limit the view to resources belonging to a specific workload
+
+## Running Health Checks
+
+To refresh health data, click the **Refresh** button and choose between refreshing workload resources or environment resources. Before the check runs, you can configure:
+
+### Lookback Period
+
+Choose how far back to analyze CloudWatch metrics and alarms: 1, 3, 7 (default), 14, 30, or 60 days. A longer lookback catches intermittent issues but takes more time to process.
+
+### CloudWatch Log Checks
+
+When enabled, CloudAgent searches CloudWatch logs for error keywords like "error", "fail", and "exception". This is off by default because it can increase AWS API costs for workloads with large log volumes.
+
+### Force Refresh
+
+When enabled (the default), a fresh report is generated regardless of cache. When disabled, the most recent report is reused if it was generated within the last 24 hours.
+
+> **Note:** 
+  Enabling CloudWatch Log Checks on workloads with high log volume may increase your AWS API costs. Use the lookback period to limit the scope.
+
+## Data Freshness
+
+Click the data freshness indicator to see when each workload and environment was last checked. The modal shows:
+
+- Last health check timestamp for each data source (displayed as relative time, e.g., "2h ago")
+- Resource count per data source
+- Individual refresh buttons for each workload or environment
+- Bulk refresh option for all sources at once
+
+Data is considered fresh if generated within the last 24 hours. Sources showing "Never checked" need an initial health check run.
+
+## Taking Action on Health Issues
+
+When the dashboard surfaces resources with issues:
+
+1. Click the resource to view its failed health checks and understand the root cause
+2. Navigate to **Recommendations** to see if CloudAgent has suggested a fix
+3. Create a remediation workflow to address the issue — either manually or through an automated blueprint
+4. Re-run the health check after remediation to confirm the fix
+
+## Troubleshooting
+
+**Health score seems low despite no critical issues**: The score includes all evaluated resources. Check if non-critical resources (like dev/test environments) are pulling the score down. Use workload filters to see production health separately.
+
+**Resources showing "Not Checked"**: These resources haven't had health checks run yet. Click Refresh and select the appropriate workload or environment to evaluate them.
+
+**Health data not updating**: Verify that the permission profile for the environment is validated and uses at least the AWS managed `ReadOnlyAccess` policy, which covers the CloudWatch permissions health checks require. Also check that force refresh is enabled if you're seeing stale data.
+
+**Checks showing "Skipped"**: Some resource types don't have health checks available yet. CloudAgent continuously expands its check coverage.
+
+## Next Steps
+
+- [Recommendations](/guide/reports-insights/recommendations) — Act on health-related findings with prioritized remediation steps
+- [Managing Workloads](/guide/workloads-governance/workloads) — Configure which resources are tracked and monitored
+- [My Workflows](/guide/automation/workflows) — Schedule periodic health checks as automated workflows
+
+# Threat Management
+
+# Threat Management
+
+> **Note:** 
+  Threat Management is currently in preview. The dedicated dashboard is under active development — features described here reflect both current capabilities and planned enhancements.
+
+## Overview
+
+Threat Management in CloudAgent brings together cloud-native security services to help you detect, investigate, and respond to threats across your environments. Currently, threat detection integrations are available for AWS. While the full Threat Management dashboard is coming soon, several threat detection capabilities are already available through CloudAgent's existing features.
+
+## Current Threat Detection Capabilities
+
+CloudAgent currently supports threat detection through its **Recommendations** and **Reports** systems. The platform evaluates your environments against threat detection best practices and flags gaps in your security posture.
+
+### Supported AWS Security Services
+
+For AWS accounts, CloudAgent integrates with the following threat detection services:
+
+| AWS Service | What It Does | CloudAgent Integration |
+|-------------|-------------|----------------------|
+| AWS GuardDuty | Continuous threat monitoring using ML-based anomaly detection across CloudTrail, VPC Flow Logs, and DNS | Recommendations to enable and configure GuardDuty |
+| AWS Security Hub | Centralized security findings aggregation from multiple AWS services | Recommendations to enable Security Hub and review findings |
+| AWS IAM Access Analyzer | Identifies resources shared with external entities and validates IAM policies | Recommendations to enable Access Analyzer for each region |
+
+### How Threat Detection Works Today
+
+1. **Recommendations**: Navigate to the [Recommendations](/guide/reports-insights/recommendations) page and filter by the **Threat Detection** category. For AWS accounts, CloudAgent checks whether GuardDuty, Security Hub, and IAM Access Analyzer are enabled and properly configured. If these services aren't enabled yet, CloudAgent will surface recommendations to turn them on.
+
+2. **Compliance Reports**: Several [reports](/guide/reports-insights/reports) include threat detection controls:
+   - **CIS AWS Foundations Benchmark** checks for GuardDuty and Security Hub enablement
+   - **NIST 800-53** and **NIST CSF** reports assess threat monitoring controls
+   - **SOC2** reports evaluate security monitoring and incident response readiness
+
+3. **Automated Remediation**: When CloudAgent identifies that a threat detection service is not enabled, you can use a blueprint or workflow to automatically enable it. Each recommendation includes a remediation blueprint that can be executed directly.
+
+## Planned Capabilities
+
+The upcoming Threat Management dashboard will provide a centralized view for:
+
+- **Active Threats**: Real-time feed of GuardDuty findings and Security Hub alerts, prioritized by severity
+- **Threat Timeline**: Visual timeline of security events across accounts and regions
+- **Investigation Workflows**: Click-through investigation from alert to affected resources with contextual information
+- **Automated Response**: Pre-built response blueprints for common threat types (compromised credentials, unusual API activity, network anomalies)
+- **Cross-Account Visibility**: Unified threat view across all connected AWS accounts
+
+## Getting Started with Threat Detection
+
+Even before the full dashboard launches, you can set up a strong threat detection foundation:
+
+1. **Enable GuardDuty**: Go to [Recommendations](/guide/reports-insights/recommendations), find the "Enable AWS GuardDuty" recommendation, and run the remediation blueprint
+2. **Enable Security Hub**: Similarly, enable Security Hub through the recommendations workflow
+3. **Enable IAM Access Analyzer**: Set up Access Analyzer to monitor for unintended external resource sharing
+4. **Run a Security Report**: Generate a CIS AWS Foundations Benchmark or NIST CSF report to assess your overall threat readiness
+5. **Schedule Ongoing Checks**: Create a [workflow](/guide/automation/workflows) to run threat detection checks weekly
+
+> **Note:** 
+  **Tip**: Enabling GuardDuty, Security Hub, and IAM Access Analyzer across all your connected accounts gives CloudAgent the broadest threat visibility when the full dashboard launches.
+
+## Next Steps
+
+- [Recommendations](/guide/reports-insights/recommendations) — Review and act on threat detection recommendations
+- [Reports](/guide/reports-insights/reports) — Run compliance reports that include threat monitoring controls
+- [Blueprints & Agents](/guide/automation/blueprints) — Use remediation blueprints to enable security services
+- [My Workflows](/guide/automation/workflows) — Schedule automated threat posture checks
+
+# Workloads & Governance
+
 
 # Managing Workloads
 
@@ -207,7 +820,8 @@ The **Diagram Preview** panel provides a visual representation of your workload'
 - **Resource Icons**: Each AWS service (Lambda, S3, DynamoDB, etc.) is represented with its official icon.
 - **Timestamps**: Shows when the diagram was last generated.
 
-> **Tip**: Use the expanded diagram view during architecture reviews or when onboarding new team members to quickly understand the infrastructure layout.
+> **Note:** 
+  **Tip**: Use the expanded diagram view during architecture reviews or when onboarding new team members to quickly understand the infrastructure layout.
 
 ### Recommendations and Reports
 
@@ -215,6 +829,322 @@ The workload details page also includes:
 
 *   **Top 5 Environment Recommendations**: Priority-ranked suggestions specific to this workload's environment.
 *   **Reports**: Compliance reports (PCI DSS, CIS Benchmarks) with status indicators and quick access to view details.
+
+## Next Steps
+
+- [Security Rules & Baselines](/guide/workloads-governance/security-baselines) — Configure compliance rules for your workloads
+- [Governance & Architecture](/guide/workloads-governance/governance) — Set deployment controls and architecture preferences
+- [Recommendations](/guide/reports-insights/recommendations) — View findings across your workloads
+
+# Security Rules & Baselines
+
+# Security Rules & Baselines
+
+## What Are Security Baselines?
+
+Security baselines are collections of predefined compliance checks that validate your cloud infrastructure against security best practices. When applied to a workload, these rules are enforced at deployment time — blocking any infrastructure that violates your selected standards before it reaches your cloud account.
+
+For AWS environments, CloudAgent includes **192 security rules** covering 42 AWS services across 11 security categories. Rules are enforced using AWS CloudFormation Guard, which validates your CloudFormation or Terraform templates against enabled rules during blueprint generation. Additional provider-specific rules will be added as CloudAgent expands its multi-cloud support.
+
+## Available Presets
+
+To get started quickly, CloudAgent provides five security presets that enable progressively stricter rule sets:
+
+| Preset | Rules Enabled | Best For |
+|--------|:------------:|----------|
+| None | 0 | Unrestricted deployments (not recommended) |
+| Relaxed Sandbox | 4 | Quick experiments and proof-of-concept work |
+| Basic Security | 8 | Environments with minimal compliance needs |
+| Development | 12 | Dev/staging environments with standard protections |
+| Production | 21 | Production workloads requiring comprehensive controls |
+| All Best Practices | 192 | Maximum security posture across all services |
+
+> **Note:** 
+  Presets are starting points. After selecting one, you can enable or disable individual rules to match your organization's specific requirements.
+
+### What Each Preset Covers
+
+**Relaxed Sandbox (4 rules)**: EC2 detailed monitoring, CloudTrail enabled, and RDS public access restrictions. The minimum to maintain basic visibility.
+
+**Basic Security (8 rules)**: Adds security group requirements, S3 public access blocks, and RDS/Redshift public access restrictions. Covers the most common misconfiguration risks.
+
+**Development (12 rules)**: Adds CloudTrail file validation, S3 bucket logging, VPC Flow Logs, and HTTPS/TLS enforcement. Ensures logging and encryption-in-transit are in place.
+
+**Production (21 rules)**: Adds encryption at rest (EBS, RDS, S3), database backups, multi-AZ support, auto-scaling, and cross-region replication. Comprehensive coverage for workloads handling real data.
+
+**All Best Practices (192 rules)**: Every available rule across all 42 supported services. Best for high-compliance environments like healthcare, finance, or government.
+
+## Rule Categories
+
+Rules are organized into 11 categories:
+
+| Category | Description | Example Rules |
+|----------|-------------|---------------|
+| Encryption | At-rest encryption for storage and databases | EBS volume encryption, RDS encryption, S3 default encryption |
+| Encryption In-Transit | TLS/SSL enforcement for data in motion | ALB HTTPS redirect, CloudFront TLS, API Gateway TLS |
+| Public Access | Prevent unintended public exposure | S3 block public access, RDS no public access, Redshift no public access |
+| Network Access Control | Security group and network configuration | Restricted SSH/RDP, VPC Flow Logs, no unrestricted ingress |
+| Identity & Access Management | IAM policies and access patterns | MFA enforcement, access key rotation, least-privilege policies |
+| Logging | Audit trail and monitoring configuration | CloudTrail enabled, S3 access logging, VPC Flow Logs |
+| Backup | Data protection and recovery | RDS automated backups, cross-region replication, delete protection |
+| Resiliency | High availability and fault tolerance | Multi-AZ deployments, auto-scaling, load balancing |
+| Cost & Billing | Cost governance controls | EBS optimization, instance rightsizing |
+| No Plain Text Passwords | Secrets management | No hardcoded credentials in templates or parameters |
+| Other Best Practices | General operational excellence | Detailed monitoring, tagging standards |
+
+## How Rules Are Applied
+
+Security rules are enforced during the deployment pipeline:
+
+1. **Configure**: Select a preset or customize individual rules in the workload's **Security Rules** tab
+2. **Save**: Rule configuration is stored with the workload definition
+3. **Deploy**: When you create infrastructure via a blueprint, CloudAgent generates a CloudFormation or Terraform template
+4. **Validate**: CloudFormation Guard checks the template against all enabled rules
+5. **Block or Proceed**: If violations are found, deployment is blocked with a detailed explanation. If all checks pass, deployment proceeds
+
+> **Note:** 
+  Security rules are preventive — they block non-compliant deployments before resources are created. They do not retroactively scan existing infrastructure. Use [Reports](/guide/reports-insights/reports) for post-deployment compliance scanning.
+
+## Configuring Security Rules
+
+### Selecting a Preset
+
+1. Navigate to your workload and open the **Security Rules** tab
+2. Choose a preset from the dropdown (e.g., "Production")
+3. The corresponding rules are automatically enabled
+4. Click **Save** to apply
+
+### Customizing Individual Rules
+
+After selecting a preset, you can fine-tune:
+
+- **Group by Category or Service**: Toggle the view to see rules organized by security category (e.g., Encryption, Logging) or by AWS service (e.g., S3, EC2, RDS)
+- **Toggle individual rules**: Use the switch next to each rule to enable or disable it
+- **Enable/disable entire categories**: Use the category-level toggle to enable or disable all rules in a group
+- **Enable All / Disable All**: Use the global toggle to quickly enable or disable every rule
+
+### Understanding Rule Details
+
+Each rule displays:
+
+- **Title**: A descriptive name (e.g., "EBS Volume Encryption Key Rule")
+- **Description**: What the rule checks and why it matters
+- **Service**: The AWS service this rule applies to
+- **Category**: The security category (Encryption, Logging, etc.)
+
+> **Note:** 
+  Rule definitions are maintained by CloudAgent and cannot be modified. You can only enable or disable rules — this ensures consistent compliance standards across your organization.
+
+## Viewing Compliance Against Rules
+
+When a deployment is blocked by a security rule violation, the preview shows:
+
+- Which rule was violated
+- Which resource in the template caused the violation
+- The reason for the failure
+- A suggested fix
+
+After addressing violations, resubmit the deployment for re-validation.
+
+For ongoing compliance monitoring of existing resources, use the [Reports](/guide/reports-insights/reports) page to generate compliance reports (CIS Benchmark, SOC2, HIPAA, etc.) that assess your deployed infrastructure against industry frameworks.
+
+## Integration with Other Features
+
+Security rules work alongside other CloudAgent capabilities:
+
+- **Reports**: Compliance reports assess your deployed resources against similar standards. Security rules prevent new violations; reports catch existing ones.
+- **Recommendations**: CloudAgent recommends enabling security services (GuardDuty, Security Hub) that complement your baseline rules.
+- **Blueprints**: When agents generate infrastructure, security rules are applied automatically to the output template.
+- **Governance**: Required tags and change approvals complement security rules — together they form a complete compliance framework.
+
+## Troubleshooting
+
+**Deployment blocked unexpectedly**: Check which rule failed in the deployment preview. If the rule doesn't apply to your use case, disable it in the workload's Security Rules tab and redeploy.
+
+**Too many rules enabled**: Start with a preset that matches your environment (e.g., "Development" for staging) and add rules incrementally rather than starting with "All Best Practices."
+
+**Rule changes not taking effect**: Ensure you clicked Save after modifying rules. Rule changes are stored with the workload and apply to the next deployment.
+
+**Cannot find a specific rule**: Use the "Group by Service" view and expand the relevant AWS service to locate rules for that service.
+
+## Next Steps
+
+- [Governance & Architecture](/guide/workloads-governance/governance) — Configure change approvals, required tags, and architecture preferences
+- [Managing Workloads](/guide/workloads-governance/workloads) — Set up workloads and assign security baselines
+- [Reports](/guide/reports-insights/reports) — Run compliance reports to assess existing infrastructure
+- [Recommendations](/guide/reports-insights/recommendations) — Review security recommendations across your environment
+
+# Governance & Architecture
+
+# Governance & Architecture
+
+## What Is Governance in CloudAgent?
+
+Governance in CloudAgent provides organizational controls for how infrastructure is deployed and managed. While [Security Rules](/guide/workloads-governance/security-baselines) enforce technical compliance (encryption, public access, etc.), governance controls enforce operational standards — change approvals, tagging policies, architecture preferences, and deployment methods.
+
+These settings are configured per workload and are applied automatically when developers request infrastructure through CloudAgent's MCP integration or blueprint system.
+
+## Accessing Governance Settings
+
+Navigate to any workload and you'll find governance settings across three tabs:
+
+1. **Governance** — Change approvals and required tags
+2. **Architecture** — Infrastructure preferences and patterns
+3. **Deployment Settings** — IaC method, CI/CD, and networking
+
+## Change Approvals
+
+Control whether infrastructure changes are deployed immediately or require review.
+
+### Deployment Modes
+
+| Mode | Behavior |
+|------|----------|
+| Deploy immediately | Changes are applied to AWS without a review step (default) |
+| Create change set for review | A CloudFormation change set is created and held for manual approval |
+
+When change set mode is enabled, you can configure notifications:
+
+- **Email notifications**: Add one or more email addresses (comma-separated) to receive alerts when a change set is ready for review
+- **Slack notifications**: Coming soon
+
+> **Note:** 
+  **Tip**: Use change set mode for production workloads so that all infrastructure changes go through a review step before reaching AWS.
+
+## Required Resource Tags
+
+Enforce consistent tagging standards across all resources deployed under a workload. Tags are automatically injected into generated templates.
+
+For each required tag, configure:
+
+| Field | Description |
+|-------|-------------|
+| Key | The tag name (e.g., "Environment", "CostCenter", "Owner") |
+| Value | An optional fixed value — if set, this exact value is applied to all resources |
+| Notes | Optional context for your team (e.g., "Required for EC2 instances") |
+
+Common tagging patterns include environment labels ("prod", "staging", "dev"), cost center codes for chargeback, team ownership, and project identifiers.
+
+## Architecture Preferences
+
+Architecture preferences guide CloudAgent when generating infrastructure blueprints. These are soft preferences (not hard constraints) — they tell the system which cloud services and patterns to prefer when there are multiple valid options. The options below currently apply to AWS deployments.
+
+### Compute
+
+| Setting | Options |
+|---------|---------|
+| Instance Size | No Preference, Small, Large |
+
+### Databases
+
+| Setting | Options |
+|---------|---------|
+| SQL Database | No Preference, Aurora, MySQL, Postgres |
+| NoSQL Database | No Preference, DynamoDB, RDS MongoDB |
+
+### Website Hosting
+
+| Setting | Options |
+|---------|---------|
+| Static Websites | No Preference, CloudFront + S3, Amplify |
+| Dynamic Websites | No Preference, ECS + ALB, EC2 + ALB |
+
+### Architecture Presets
+
+For quick setup, apply a preset:
+
+- **Production App/Environment**: Selects highly available patterns (Aurora, ECS + ALB, larger instances)
+- **Sandbox/Testing**: Selects cost-efficient patterns (smaller instances, simpler hosting)
+
+> **Note:** 
+  Architecture preferences are applied when developers request infrastructure through MCP or when an agent generates a blueprint. The agent uses these preferences to select appropriate resource types and configurations.
+
+## Deployment Settings
+
+Configure how infrastructure is deployed to your cloud provider. The options below apply to AWS deployments; additional provider-specific methods will be available as CloudAgent expands its multi-cloud deployment support.
+
+### Deployment Method
+
+| Method | Description |
+|--------|-------------|
+| CloudFormation | AWS-native Infrastructure as Code (default) |
+| Terraform | HashiCorp's cross-cloud IaC tool |
+| OpenTofu | Open-source Terraform alternative |
+| AWS CLI | Direct API calls for simple operations |
+
+### Source Code Integration
+
+Connect a GitHub repository to store and version your infrastructure code:
+
+1. Select a GitHub connection (configured in [Integrations](/integrations))
+2. Choose the repository and branch
+3. Infrastructure templates are committed to the repo on each deployment
+
+If you prefer not to use source control, select "No source code" — templates are managed within CloudAgent.
+
+### Deployment Flow
+
+| Flow | Behavior |
+|------|----------|
+| Manual | Developer initiates each deployment through CloudAgent |
+| GitHub Actions | Deployment triggers automatically on code push |
+| CodePipeline/CodeBuild | AWS-native CI/CD pipeline handles deployment |
+
+For automated flows, you can configure:
+
+- **Automatic deployment**: Deploy when changes land on the configured branch
+- **Require approval step**: Pause the pipeline for manual review before deployment
+- **Branch selection**: Choose which branch triggers deployments
+
+### Terraform State Management
+
+When using Terraform or OpenTofu, configure where state is stored:
+
+- **Not set**: State managed locally (not recommended for teams)
+- **S3 bucket**: Specify a bucket name for remote state storage
+
+### Networking
+
+- **Use existing VPCs**: Enable this to deploy into your existing VPC infrastructure instead of creating new VPCs. Specify VPC IDs or use the "Fetch VPCs" button to discover available VPCs in your account.
+
+### Resource Type Controls
+
+Restrict which AWS resource types can be deployed under this workload:
+
+- **Allow All Resources**: Any resource type can be created
+- **Allowed Resources List**: Only specified resource types are permitted
+
+## How Governance Applies During Deployment
+
+When a developer requests infrastructure through MCP or a blueprint, CloudAgent applies governance in this order:
+
+1. **Architecture preferences** guide resource selection (e.g., Aurora over MySQL)
+2. **Required tags** are injected into the generated template
+3. **Security rules** validate the template for compliance
+4. **Deployment method** determines how the template reaches AWS
+5. **Change approval** controls whether deployment proceeds immediately or waits for review
+
+If any step fails validation, the developer receives a clear explanation of what was blocked and why, along with a suggested fix.
+
+## Troubleshooting
+
+**Changes deploying without review**: Check that the Governance tab is set to "Create change set for review" rather than "Deploy immediately."
+
+**Tags not appearing on resources**: Verify that required tags are saved in the Governance tab. Tags are applied at template generation time — existing resources won't retroactively receive tags.
+
+**Architecture preferences not reflected**: Preferences are guidance, not constraints. If a specific resource type is explicitly requested, it may override the preference. Check the generated template to see what was applied.
+
+**Cannot connect GitHub repository**: Ensure you have a GitHub integration configured in your account settings. The repository selector only shows repos from connected GitHub accounts.
+
+## Next Steps
+
+- [Security Rules & Baselines](/guide/workloads-governance/security-baselines) — Configure security compliance rules for your workload
+- [Managing Workloads](/guide/workloads-governance/workloads) — Create and manage workload definitions
+- [Blueprints & Agents](/guide/automation/blueprints) — Use agents to generate governed infrastructure
+- [MCP Integration](/guide/mcp) — Connect your IDE for developer-driven infrastructure requests
+
+# Reports & Insights
+
 
 # Recommendations
 
@@ -303,6 +1233,226 @@ Use the filtering options to focus on specific findings:
 - **By Category**: Filter by Security, Cost, Cleanup, or Compliance
 - **By Environment**: Focus on a specific AWS account
 - **By Workload**: View recommendations for a particular workload
+
+## Next Steps
+
+- [Reports](/guide/reports-insights/reports) — Generate compliance reports based on recommendation findings
+- [My Workflows](/guide/automation/workflows) — Automate remediation actions for recurring recommendations
+- [Blueprints & Agents](/guide/automation/blueprints) — Use agents to execute remediation blueprints
+
+# Reports
+
+# Reports
+
+## Objective
+Generate and review compliance reports to assess your cloud security posture against industry frameworks.
+
+CloudAgent provides detailed security and compliance reports that help you understand your environment's adherence to best practices and regulatory requirements.
+
+## Accessing Reports
+
+Reports can be accessed from multiple locations:
+
+1. **Dashboard**: Quick access via the Reports widget
+2. **Workload Details**: Reports specific to a workload in the Reports section
+3. **Reports Page**: Navigate to **Reports** in the sidebar for the full report library
+
+![Reports Page](/images/reports.png)
+
+## Available Reports
+
+CloudAgent offers a comprehensive library of compliance and security reports:
+
+| Report | Category | Description |
+|--------|----------|-------------|
+| SOC2 Compliance Report | Security & Governance | Assesses environments against SOC2 categories like logical access, system operations, and confidentiality |
+| PCI DSS 3.2.1 Compliance Report | Security & Governance | Evaluates Payment Card Industry Data Security Standard requirements |
+| HIPAA Compliance Report | Security & Governance | Checks AWS configurations for HIPAA compliance across access, auditing, and encryption |
+| CIS AWS Foundations Benchmark v3.0 | Security & Governance | Evaluates AWS configuration against Center for Internet Security benchmarks |
+| NIST 800-53 v5 Compliance Report | Security & Governance | Assesses against NIST security and privacy controls |
+| NIST 800-171 Compliance Report | Security & Governance | Validates controlled unclassified information (CUI) protection |
+| NIST Cybersecurity Framework (CSF) Report | Security & Governance | Evaluates against the NIST CSF framework |
+| ISO 27001 Annex A Compliance Report | Security & Governance | Checks against ISO 27001 information security controls |
+| GDPR Compliance Report | Security & Governance | Reviews AWS practices against GDPR Articles 25, 30, and 32 |
+| FedRAMP Low Compliance Report | Security & Governance | Validates AWS services against FedRAMP Low controls |
+| FedRAMP Moderate Compliance Report | Security & Governance | Assesses environments for FedRAMP Moderate control coverage |
+| Canada GC Compliance Report | Security & Governance | Evaluates against Canadian Guardrail controls for access, monitoring, and encryption |
+| CMMC 2.0 Level 1 Compliance Report | Security & Governance | Checks basic safeguarding controls including access, authentication, and boundary protection |
+| CMMC 2.0 Level 2 Compliance Report | Security & Governance | Evaluates advanced CMMC Level 2 controls across identity, configuration, and secure communications |
+| RBI Cyber Security Framework Report | Security & Governance | Assesses against Reserve Bank of India cybersecurity guidelines |
+| AWS Resiliency and High Availability Report | Resilience & Backup | Checks multi-AZ deployments, delete protection, and backup configurations |
+| AWS Resource Backup Coverage Report | Resilience & Backup | Validates backup policies and coverage across resources |
+| Unused AWS Resources Report | Cost & Billing | Identifies idle or unused resources for cost optimization |
+| AWS Logging Status Report | Logging & Monitoring | Verifies CloudTrail, VPC Flow Logs, and other logging configurations |
+| AWS Public Resource Exposure Report | Security & Governance | Scans for publicly accessible resources |
+| AWS Encryption In-Transit Coverage Report | Security & Governance | Validates TLS/SSL configurations and encryption in transit |
+
+For the complete and up-to-date list, visit [cloudagent.io/libraries/all-reports](https://cloudagent.io/libraries/all-reports).
+
+## Report Status
+
+Each report displays a status indicator:
+
+| Status | Meaning |
+|--------|---------|
+| **Passed** | All checks passed successfully |
+| **Warning** | Some non-critical findings require attention |
+| **Failed** | Findings that need remediation |
+| **Running** | Report generation in progress |
+
+## Running a New Report
+
+1. Navigate to the **Reports** page or workload details.
+2. Click **+ Run New Report**.
+3. Select the report type from the available options.
+4. Choose the target environment(s).
+5. Click **Generate** to start the report.
+
+> **Note:** 
+  **Processing Time**: Reports typically complete within 5-15 minutes depending on the size of your environment.
+
+## Viewing Report Details
+
+Click **View Report** on any completed report to see:
+
+- **Executive Summary**: High-level overview of findings
+- **Detailed Findings**: Individual check results with pass/fail status
+- **Affected Resources**: Specific resources that need attention
+- **Remediation Steps**: Recommended actions to resolve issues
+- **Export Options**: Download as PDF for sharing with auditors
+
+![Report Detail View](/images/report_detail.png)
+
+## Scheduling Reports
+
+To run reports on a recurring schedule, create a workflow:
+
+1. Navigate to **My Workflows**.
+2. Click **+ Create Workflow**.
+3. Select the report you want to schedule (e.g., "Canada GC Compliance Report").
+4. Configure the schedule (Daily, Weekly, Monthly).
+5. Save the workflow.
+
+The report will run automatically at the scheduled time.
+
+> **Note:** 
+  **Notifications**: Configure email alerts in the workflow to receive reports automatically when they complete.
+
+## Report History
+
+All generated reports are stored in your report history:
+- View past reports to track compliance trends
+- Compare results over time
+- Export historical data for audits
+
+## Next Steps
+
+- [My Workflows](/guide/automation/workflows) — Schedule automated report generation
+- [Audit Logs](/guide/reports-insights/audit-logs) — Use report history as part of your audit trail
+- [Recommendations](/guide/reports-insights/recommendations) — Act on findings surfaced in reports
+
+# Audit Logs
+
+# Audit Logs & Activity
+
+## Overview
+
+CloudAgent tracks the execution history of all automated actions — agent runs, workflow executions, report scans, and blueprint deployments. This activity trail serves as an audit log for understanding what CloudAgent has done in your environments, when it happened, and what the results were.
+
+## Where to Find Activity History
+
+Activity history is spread across three views, each accessible from the sidebar:
+
+| View | What It Shows | Navigate To |
+|------|-------------|------------|
+| Agent History | All agent and blueprint executions with detailed logs | **Blueprints & Agents** → Agent History tab |
+| Workflow History | All workflow runs with status and results | **My Workflows** → History |
+| Report History | All compliance report and scan executions | **Reports** → My Reports |
+
+## Agent History
+
+The Agent History tab (under Blueprints & Agents) is the most comprehensive activity view. Every time an agent runs — whether triggered by a blueprint, a workflow, or a direct user action — it's logged here.
+
+### What's Recorded
+
+Each agent execution record includes:
+
+| Field | Description |
+|-------|-------------|
+| Name | The agent or blueprint name |
+| Environment | Which cloud account the agent operated on |
+| Workflow | Link to the parent workflow, if the agent was triggered by one |
+| Status | Current state: Running, Waiting on User, Completed, or Failed |
+| Summary | AI-generated summary of what the agent did and found |
+| Timestamp | When the execution started and last updated |
+
+### Execution Details
+
+Click any agent record to view the full execution log, which includes:
+
+- **Step-by-step timeline**: Each action the agent took in sequence
+- **Detailed logs**: Output from each operation
+- **Resources modified**: What was created, updated, or deleted in your cloud account
+- **Errors**: Any issues encountered during execution
+
+### Search and Filter
+
+Use the search bar to filter agent history by name, status, environment, or summary content. Results are sorted by most recent first, with the ability to load additional months of history.
+
+> **Note:** 
+  Agent executions include a human-in-the-loop checkpoint — agents pause before making state-changing operations in your cloud account, giving you a chance to review and approve before proceeding.
+
+## Workflow History
+
+The Workflow History view shows all workflow executions:
+
+- **Workflow title** and configuration
+- **Status**: Completed, Failed, Running
+- **Last update** timestamp
+- **Execution details**: Click to see the full workflow definition and results
+
+Search and sort by title, status, or date. Load older history in 3-month increments.
+
+## Report History
+
+The Report History (My Reports) view tracks all compliance report and scan executions:
+
+- **Report name** and type (e.g., SOC2, CIS Benchmark, HIPAA)
+- **Cloud Environment** the report was run against
+- **Parent workflow** if the report was triggered by a scheduled workflow
+- **Status**: Complete, In Progress, or Failed
+- **Actions**: View the full report, or open an AI chat to analyze findings
+
+## Using Activity Data for Audits
+
+CloudAgent's execution history provides evidence for compliance audits:
+
+**What you can demonstrate:**
+- When compliance reports were generated and what they found
+- Which remediation actions were taken and by whom (user-initiated vs. automated)
+- That human approval was required before state-changing operations
+- The timeline of security improvements across your environment
+
+**How to export evidence:**
+- Open any completed report and export it as PDF for auditor review
+- Screenshot agent execution timelines showing the sequence of actions taken
+- Reference workflow schedules to demonstrate ongoing compliance monitoring cadence
+
+> **Note:** 
+  Schedule regular compliance reports (weekly or monthly) using [My Workflows](/guide/automation/workflows). This creates a consistent audit trail of compliance posture over time.
+
+## Data Retention
+
+Execution history is retained and available through the time-window pagination in each view. Load older records in 3-month increments to access historical data.
+
+## Next Steps
+
+- [Blueprints & Agents](/guide/automation/blueprints) — Understand how agents execute and generate logs
+- [Reports](/guide/reports-insights/reports) — Run compliance reports that feed into your audit trail
+- [My Workflows](/guide/automation/workflows) — Schedule automated checks for continuous compliance evidence
+
+# Automation
+
 
 # My Workflows
 
@@ -433,9 +1583,15 @@ Workflows can execute blueprints as part of their steps:
 2. Add a "Run Blueprint" step to your workflow.
 3. The blueprint deploys automatically when the workflow runs.
 
+## Next Steps
+
+- [Blueprints & Agents](/guide/automation/blueprints) — Create reusable infrastructure templates
+- [Reports](/guide/reports-insights/reports) — Generate compliance reports to use in workflows
+- [Recommendations](/guide/reports-insights/recommendations) — View findings that can trigger workflow actions
+
 # Blueprints & Agents
 
-# Blueprints and Agents
+# Blueprints & Agents
 
 ## Objective
 Design, visualize, and deploy standardized infrastructure templates across your environments.
@@ -501,7 +1657,7 @@ Each agent execution displays:
 |--------|-------------|
 | **Completed** | Successfully finished all steps |
 | **Running** | Currently executing |
-| **Waiting on user input** | Paused, awaiting your approval |
+| **Waiting on User** | Paused, awaiting your approval |
 | **Failed** | Encountered an error |
 
 ### Agent Details
@@ -529,110 +1685,11 @@ Use the search bar to find specific executions:
 - Filter by status
 - Filter by date range
 
-# Reports
+## Next Steps
 
-# Reports
-
-## Objective
-Generate and review compliance reports to assess your cloud security posture against industry frameworks.
-
-CloudAgent provides detailed security and compliance reports that help you understand your environment's adherence to best practices and regulatory requirements.
-
-## Accessing Reports
-
-Reports can be accessed from multiple locations:
-
-1. **Dashboard**: Quick access via the Reports widget
-2. **Workload Details**: Reports specific to a workload in the Reports section
-3. **Reports Page**: Navigate to **Reports** in the sidebar for the full report library
-
-![Reports Page](/images/reports.png)
-
-## Available Reports
-
-CloudAgent offers a comprehensive library of compliance and security reports:
-
-| Report | Category | Description |
-|--------|----------|-------------|
-| SOC2 Compliance Report | Security & Governance | Assesses environments against SOC2 categories like logical access, system operations, and confidentiality |
-| PCI DSS 3.2.1 Compliance Report | Security & Governance | Evaluates Payment Card Industry Data Security Standard requirements |
-| HIPAA Compliance Report | Security & Governance | Checks AWS configurations for HIPAA compliance across access, auditing, and encryption |
-| CIS AWS Foundations Benchmark v3.0 | Security & Governance | Evaluates AWS configuration against Center for Internet Security benchmarks |
-| NIST 800-53 v5 Compliance Report | Security & Governance | Assesses against NIST security and privacy controls |
-| NIST 800-171 Compliance Report | Security & Governance | Validates controlled unclassified information (CUI) protection |
-| NIST Cybersecurity Framework (CSF) Report | Security & Governance | Evaluates against the NIST CSF framework |
-| ISO 27001 Annex A Compliance Report | Security & Governance | Checks against ISO 27001 information security controls |
-| GDPR Compliance Report | Security & Governance | Reviews AWS practices against GDPR Articles 25, 30, and 32 |
-| FedRAMP Low Compliance Report | Security & Governance | Validates AWS services against FedRAMP Low controls |
-| FedRAMP Moderate Compliance Report | Security & Governance | Assesses environments for FedRAMP Moderate control coverage |
-| Canada GC Compliance Report | Security & Governance | Evaluates against Canadian Guardrail controls for access, monitoring, and encryption |
-| CMMC 2.0 Level 1 Compliance Report | Security & Governance | Checks basic safeguarding controls including access, authentication, and boundary protection |
-| CMMC 2.0 Level 2 Compliance Report | Security & Governance | Evaluates advanced CMMC Level 2 controls across identity, configuration, and secure communications |
-| RBI Cyber Security Framework Report | Security & Governance | Assesses against Reserve Bank of India cybersecurity guidelines |
-| AWS Resiliency and High Availability Report | Resilience & Backup | Checks multi-AZ deployments, delete protection, and backup configurations |
-| AWS Resource Backup Coverage Report | Resilience & Backup | Validates backup policies and coverage across resources |
-| Unused AWS Resources Report | Cost & Billing | Identifies idle or unused resources for cost optimization |
-| AWS Logging Status Report | Logging & Monitoring | Verifies CloudTrail, VPC Flow Logs, and other logging configurations |
-| AWS Public Resource Exposure Report | Security & Governance | Scans for publicly accessible resources |
-| AWS Encryption In-Transit Coverage Report | Security & Governance | Validates TLS/SSL configurations and encryption in transit |
-
-For the complete and up-to-date list, visit [cloudagent.io/libraries/all-reports](https://cloudagent.io/libraries/all-reports).
-
-## Report Status
-
-Each report displays a status indicator:
-
-| Status | Meaning |
-|--------|---------|
-| **Passed** | All checks passed successfully |
-| **Warning** | Some non-critical findings require attention |
-| **Failed** | Findings that need remediation |
-| **Running** | Report generation in progress |
-
-## Running a New Report
-
-1. Navigate to the **Reports** page or workload details.
-2. Click **+ Run New Report**.
-3. Select the report type from the available options.
-4. Choose the target environment(s).
-5. Click **Generate** to start the report.
-
-> **Note:** 
-  **Processing Time**: Reports typically complete within 5-15 minutes depending on the size of your environment.
-
-## Viewing Report Details
-
-Click **View Report** on any completed report to see:
-
-- **Executive Summary**: High-level overview of findings
-- **Detailed Findings**: Individual check results with pass/fail status
-- **Affected Resources**: Specific resources that need attention
-- **Remediation Steps**: Recommended actions to resolve issues
-- **Export Options**: Download as PDF for sharing with auditors
-
-![Report Detail View](/images/report_detail.png)
-
-## Scheduling Reports
-
-To run reports on a recurring schedule, create a workflow:
-
-1. Navigate to **My Workflows**.
-2. Click **+ Create Workflow**.
-3. Select the report you want to schedule (e.g., "Canada GC Compliance Report").
-4. Configure the schedule (Daily, Weekly, Monthly).
-5. Save the workflow.
-
-The report will run automatically at the scheduled time.
-
-> **Note:** 
-  **Notifications**: Configure email alerts in the workflow to receive reports automatically when they complete.
-
-## Report History
-
-All generated reports are stored in your report history:
-- View past reports to track compliance trends
-- Compare results over time
-- Export historical data for audits
+- [My Workflows](/guide/automation/workflows) — Automate blueprint execution on a schedule
+- [AI Assistant](/guide/automation/assistant) — Use natural language to create and run blueprints
+- [Recommendations](/guide/reports-insights/recommendations) — View findings that blueprints can remediate
 
 # AI Assistant
 
@@ -695,28 +1752,34 @@ The Assistant has access to the web to research best practices, validate syntax,
 *   **Human-in-the-Loop**: All state-changing operations (Create, Update, Delete) require explicit user confirmation.
 *   **Guardrails**: Deployments are checked against your organization's security rules and policies.
 
+## Next Steps
+
+- [Blueprints & Agents](/guide/automation/blueprints) — Create reusable templates for common tasks
+- [MCP Integration](/guide/mcp) — Connect CloudAgent to your IDE for AI-powered workflows
+- [Managing Workloads](/guide/workloads-governance/workloads) — Configure the workloads the assistant can operate on
+
 # MCP Integration
 
 # MCP Integration
 
 ## Objective
-Connect your IDE to CloudAgent using the Model Context Protocol (MCP) to build and deploy cloud infrastructure directly from your development environment.
+Connect your AI tools to CloudAgent using the Model Context Protocol (MCP) to build and deploy cloud infrastructure with built-in guardrails.
 
 > **Note:** 
-  **What is MCP?** The Model Context Protocol is an open standard that allows AI-powered IDEs like Cursor to connect to external tools and services. CloudAgent's MCP server lets your AI coding assistant deploy infrastructure on your behalf, with built-in guardrails.
+  **What is MCP?** The Model Context Protocol is an open standard that allows AI-powered tools to connect to external services. CloudAgent's MCP server lets your AI assistant deploy infrastructure on your behalf, with security and governance controls applied automatically.
 
 ## Prerequisites
 
 Before setting up MCP, ensure you have:
 
-- A CloudAgent account with at least one [connected AWS environment](/guide/onboarding)
-- [Cursor IDE](https://cursor.com) installed (version 0.43 or later)
+- A CloudAgent account with at least one [connected AWS environment](/guide/cloud-setup/aws)
 - A workload configured with your team's security baselines and governance rules
+- One of the supported AI tools: Cursor, Claude Desktop, or ChatGPT Desktop
 
 ## Step 1: Get Your MCP Configuration
 
 1. Log in to [CloudAgent](https://cloudagent.io).
-2. Navigate to **My Account** → **MCP Extension**.
+2. Navigate to **Setup** → **MCP Extension** in the sidebar.
 3. Copy the configuration using **Copy Configuration** or download it with **Download Config**.
 
 The configuration file looks like this:
@@ -732,24 +1795,59 @@ The configuration file looks like this:
 }
 ```
 
-## Step 2: Configure Cursor
+## Step 2: Configure Your AI Tool
 
-1. Open Cursor IDE.
-2. Open the Command Palette (`Cmd+Shift+P` on macOS, `Ctrl+Shift+P` on Windows/Linux).
-3. Search for **"Cursor Settings: Open MCP Config"** and select it.
-4. Paste your CloudAgent MCP configuration.
-5. Save the file and restart Cursor.
+Select your tool and follow the setup instructions:
 
-> **Note:** 
-  **Other Tools**: CloudAgent MCP also works with ChatGPT, Claude, and other MCP-compatible tools. Check the Setup Instructions tabs on the MCP Extension page for tool-specific guidance.
+<details>
+<summary>**Cursor**</summary>
+
+1. **Open Cursor Settings**: Go to Cursor → Settings → Cursor Settings.
+2. **Navigate to Tools & MCP**: In the settings sidebar, click on "Tools & MCP".
+3. **Add MCP Configuration**: Click "Add MCP Server" and paste the configuration from CloudAgent.
+4. **Restart Cursor**: Restart Cursor to load the new MCP configuration.
+5. **Authenticate with OAuth**: When you first use the MCP server, Cursor will prompt you to authenticate using OAuth. Follow the authentication flow to complete setup.
+6. **Test Integration**: Ask Cursor to access your CloudAgent resources or list your cloud environments.
+
+</details>
+
+<details>
+<summary>**Claude Desktop**</summary>
+
+1. **Open Claude Desktop**: Launch the Claude Desktop application.
+2. **Access Settings**: Go to Claude → Settings (or press `Cmd/Ctrl + ,`).
+3. **Navigate to Connectors**: In the settings sidebar, click on "Connectors".
+4. **Add Custom Connector**: Click "Add Custom Connector" and enter the following:
+   - **Name**: CloudAgent (or any name you prefer)
+   - **URL**: `https://api.cloudagent.io/mcp`
+5. **Follow Authentication Instructions**: Follow the OAuth authentication instructions that appear to complete the setup.
+6. **Test Integration**: Ask Claude to access your CloudAgent resources or list your cloud environments.
+
+</details>
+
+<details>
+<summary>**ChatGPT Desktop**</summary>
+
+1. **Install ChatGPT Desktop**: Download and install ChatGPT Desktop from the official website.
+2. **Open Settings**: In ChatGPT Desktop, go to Settings → Plugins.
+3. **Configure MCP**: Add the MCP configuration to your ChatGPT Desktop settings file:
+
+```
+~/.config/chatgpt-desktop/mcp-servers.json
+```
+
+4. **Restart ChatGPT**: Restart ChatGPT Desktop to load the new configuration.
+5. **Verify Connection**: Ask ChatGPT to access your CloudAgent resources or list your cloud environments.
+
+</details>
 
 ## Step 3: Authenticate with OAuth
 
 When you first connect to the CloudAgent MCP server, you'll be prompted to authenticate:
 
-1. Open a new chat in Cursor (Composer or Chat panel).
+1. Start a conversation with your AI tool.
 2. Type any CloudAgent command, such as: **"List my CloudAgent workloads"**
-3. Cursor will prompt you to authenticate with CloudAgent via OAuth.
+3. You'll be prompted to authenticate with CloudAgent via OAuth.
 4. Complete the OAuth flow in your browser.
 5. Once authenticated, the AI will respond with your available workloads.
 
@@ -763,11 +1861,11 @@ Connected to CloudAgent. Available workloads:
 ```
 
 > **Note:** 
-  **Authentication**: MCP authentication uses OAuth. You'll be prompted to authenticate when first connecting to the MCP server. Your session will persist until you sign out.
+  **Authentication**: MCP authentication uses OAuth. You'll be prompted to authenticate when connecting to the MCP server.
 
 ## Available MCP Capabilities
 
-Once connected, your IDE can perform the following operations through CloudAgent:
+Once connected, your AI tool can perform the following operations through CloudAgent:
 
 ### Read Operations (No Approval Required)
 - List workloads and their configurations
@@ -787,7 +1885,6 @@ Once connected, your IDE can perform the following operations through CloudAgent
 
 ### "Connection refused" or "Server not found"
 - Verify the MCP server URL is `https://api.cloudagent.io/mcp`
-- Check that `enabled` is set to `true` in your configuration
 - Verify your network allows outbound HTTPS connections
 
 ### OAuth authentication not working
@@ -800,32 +1897,685 @@ Once connected, your IDE can perform the following operations through CloudAgent
 - Contact your security team to review the blocked rule
 - Check the CloudAgent dashboard for detailed error logs
 
-### MCP server not appearing in Cursor
-- Restart Cursor after saving the MCP configuration
+### MCP server not appearing
+- Restart your AI tool after saving the configuration
 - Ensure the JSON syntax is valid (no trailing commas)
-- Check Cursor's developer console for error messages
+- Check for error messages in your tool's console or logs
 
 ## Next Steps
 
 - **[Cookbook: Developing in the Corporate Cloud with Guardrails](/cookbooks/cursor-mcp)**: Learn the full workflow for teams using IDE-based cloud development.
-- **[Blueprints and Agents](/guide/blueprints)**: Create reusable infrastructure templates for your team.
-- **[Managing Workloads](/guide/workloads)**: Configure security baselines and governance rules.
+- **[Blueprints & Agents](/guide/automation/blueprints)**: Create reusable infrastructure templates for your team.
+- **[Managing Workloads](/guide/workloads-governance/workloads)**: Configure security baselines and governance rules.
 
-# FAQ
+# User Settings
 
-# FAQ
+# User Settings
 
 ## Objective
-Find answers to common questions about account management and platform usage.
+Manage your profile, security settings, and subscription.
 
-**Q: How do I reset my password?**
-A: On the login page, click the "Forgot password" link to initiate the password reset process.
+To access your account settings, click **My Account** in the top navigation bar.
+
+![My Account Settings](/images/passwordreset.png)
+
+## Personal Information
+
+The **Personal Information** section displays your:
+- **Username**: Your login identifier
+- **Email**: The email address associated with your account
+
+## Password
+
+To change your password:
+
+1. Navigate to **My Account**.
+2. In the **Password** section, click **Change Password**.
+3. Enter your current password and your new password.
+4. Click **Save** to update.
+
+## Two-Factor Authentication
+
+Add an extra layer of security to your account by enabling 2FA.
+
+1. Navigate to **My Account**.
+2. Scroll to the **Two-Factor Authentication** section.
+3. Click **Enable 2FA**.
+4. Scan the QR code with your authenticator app (Google Authenticator, Authy, etc.).
+5. Enter the verification code to confirm setup.
+
+Once enabled, you'll need to enter a code from your authenticator app each time you log in.
+
+## Credits and Subscriptions
+
+CloudAgent uses a credit-based system to meter usage across the platform. Your current credit balance is always visible in the top navigation bar.
+
+Click the **Credits & Subscriptions** tab to:
+
+- **View your balance**: See your total available credits, including monthly subscription credits and any add-on credits
+- **Purchase additional credits**: Buy credits on demand when you need more capacity
+- **Manage overages**: Choose whether services pause when credits are depleted or auto-billing handles overages
+- **View your plan**: See your current subscription tier and included monthly credits
+
+Credits are consumed when CloudAgent performs actions on your behalf — running compliance reports, executing agent blueprints, processing workflows, and similar operations. The credit cost scales with the complexity and duration of each action.
+
+## Next Steps
+
+- [Permissions & Access Control](/guide/cloud-setup/permissions) — Manage your connected cloud accounts
+- [FAQ](/guide/faq) — Common questions about account management and billing
+
+# FAQ
+
+# FAQ
+
+Find answers to common questions about CloudAgent, organized by topic.
+
+---
+
+## Getting Started & Onboarding
+
+**Q: What cloud providers does CloudAgent support?**
+
+A: CloudAgent currently supports AWS and Azure, with Google Workspace available for specific integrations. AWS has the most mature feature set. Azure support is in early access — see [Azure Onboarding](/guide/cloud-setup/azure).
+
+**Q: What AWS permissions does CloudAgent need?**
+
+A: At minimum, the AWS managed `ReadOnlyAccess` policy. This is enough for dashboards, reports, recommendations, and health checks. Write-level access is only needed for deployment and remediation features. See [Permissions & Access Control](/guide/cloud-setup/permissions).
+
+**Q: How do I connect my first AWS account?**
+
+A: Navigate to **Cloud Setup** in the sidebar, click **+ Add Cloud Environment**, select AWS, and follow the 3-step wizard. CloudAgent generates a CloudFormation template that creates an IAM role in your account. See [Account Onboarding](/guide/cloud-setup/aws).
+
+**Q: Can I connect multiple AWS accounts?**
+
+A: Yes. Each AWS account is added as a separate cloud environment. There's no limit to the number of accounts you can connect. Use the environment selector in dashboards to switch between them.
+
+**Q: Do I need to enable AWS Cost Explorer, GuardDuty, or other services before using CloudAgent?**
+
+A: No — CloudAgent works with whatever AWS services you have enabled. The more you enable, the richer the data. For example, the Cost Dashboard shows spend data when Cost Explorer is active, and CloudAgent's own assessment engine provides recommendations regardless. Each dashboard section indicates what's available and what needs to be enabled.
+
+---
+
+## Reports & Compliance
+
+**Q: What compliance frameworks does CloudAgent support?**
+
+A: CloudAgent supports 20+ compliance report types including SOC2, PCI DSS 3.2.1, HIPAA, CIS AWS Foundations Benchmark v3.0, NIST 800-53, NIST 800-171, NIST CSF, ISO 27001, GDPR, FedRAMP (Low and Moderate), Canada GC, CMMC 2.0 (Level 1 and 2), and RBI Cyber Security Framework. See [Reports](/guide/reports-insights/reports) for the full list.
+
+**Q: How long does a compliance report take to generate?**
+
+A: Typically 5–15 minutes, depending on the size of your environment and the number of resources being evaluated.
+
+**Q: Can I schedule reports to run automatically?**
+
+A: Yes. Create a workflow in [My Workflows](/guide/automation/workflows) that triggers the report on a schedule (daily, weekly, or monthly). You can also configure email notifications to receive results automatically.
+
+**Q: How do I export a report for auditors?**
+
+A: Open any completed report and use the export option to download it as a PDF. You can also reference report history as part of your audit evidence trail — see [Audit Logs](/guide/reports-insights/audit-logs).
+
+---
+
+## Workloads & Resources
+
+**Q: What is a workload in CloudAgent?**
+
+A: A workload is a logical grouping of cloud resources that represent an application or service. Workloads let you apply security rules, governance settings, and architecture preferences to a set of related resources. See [Managing Workloads](/guide/workloads-governance/workloads).
+
+**Q: Can a workload span multiple cloud accounts?**
+
+A: Yes. When creating a workload, you can select resources from multiple connected environments. This is useful for applications that span production and staging accounts, or for multi-cloud setups.
+
+**Q: How do I add resources to a workload?**
+
+A: In the workload editor, use the resource picker to search and add resources from your connected environments. Resources are tracked automatically once added.
+
+---
+
+## Workflows & Automation
+
+**Q: What can I automate with workflows?**
+
+A: Workflows can automate compliance report generation, remediation actions, email notifications, and multi-step sequences. For example, you can schedule a weekly SOC2 report that emails results to your compliance team. See [My Workflows](/guide/automation/workflows).
+
+**Q: What's the difference between a workflow and a blueprint?**
+
+A: A blueprint is a single agent task (e.g., "deploy an S3 bucket with encryption"). A workflow orchestrates one or more actions on a schedule or trigger (e.g., "run a compliance report every Monday and email the results"). Blueprints can be triggered as steps within workflows.
+
+**Q: Do agents make changes automatically, or do I need to approve them?**
+
+A: Agents include a human-in-the-loop checkpoint — they pause before making state-changing operations in your cloud account and wait for your approval. You can review what the agent plans to do before it proceeds. See [Blueprints & Agents](/guide/automation/blueprints).
+
+---
+
+## MCP & IDE Integrations
+
+**Q: What IDEs does CloudAgent's MCP integration support?**
+
+A: CloudAgent provides an MCP server that works with any MCP-compatible IDE, including Cursor, VS Code (with the Continue extension), Windsurf, and other editors that support the Model Context Protocol. See [MCP Integration](/guide/mcp).
+
+**Q: How do I set up MCP in my IDE?**
+
+A: Navigate to **MCP Extension** in the CloudAgent sidebar to get your connection configuration. Copy the server URL and API key into your IDE's MCP settings. The exact steps vary by IDE — the MCP page includes instructions for each supported editor.
+
+**Q: What can I do through MCP?**
+
+A: Through MCP, you can ask your IDE's AI assistant to interact with CloudAgent — for example, deploying infrastructure, running compliance checks, listing resources, or generating reports. The AI uses CloudAgent's agent tools to execute these requests in your connected cloud accounts.
+
+**Q: Does MCP require write permissions?**
+
+A: MCP works with read-only access for queries and reports. Write-level permissions are only needed if you want the AI to deploy infrastructure or run remediation through your IDE.
+
+---
+
+## Security & Permissions
+
+**Q: Can CloudAgent read my data (S3 objects, secrets, etc.)?**
+
+A: No. Every IAM role created by CloudAgent includes an explicit deny policy for `s3:GetObject`, `s3:GetObjectVersion`, and `secretsmanager:GetSecretValue`. CloudAgent can see your infrastructure configuration but cannot access your actual data or secrets.
+
+**Q: Is my data encrypted?**
+
+A: Yes. All credentials (AWS role external IDs, Azure client secrets) are encrypted before storage. Communication between CloudAgent and your cloud accounts uses TLS encryption in transit.
+
+**Q: How do I revoke CloudAgent's access to my AWS account?**
+
+A: Delete the CloudFormation stack that created the IAM role in your AWS account, or delete the IAM role directly. Then remove the environment from CloudAgent's Cloud Setup page.
+
+---
+
+## Credits & Billing
 
 **Q: Where can I see my available credits?**
-A: Your available credits are displayed in the top navigation bar.
+
+A: Your credit balance is displayed in the top navigation bar. For more details, navigate to **My Account** → **Credits & Subscriptions**.
+
+**Q: What uses credits?**
+
+A: Credits are consumed when CloudAgent performs actions on your behalf — running reports, executing agents, and processing workflows. The exact credit cost depends on the complexity and duration of the action.
+
+**Q: What happens when I run out of credits?**
+
+A: Services will pause until credits are replenished. You can purchase additional credits or configure your account settings to handle overages.
+
+---
+
+## Account Management
+
+**Q: How do I change my password?**
+
+A: Navigate to **My Account** in the top navigation and click **Change Password** in the Password section. See [User Settings](/guide/account).
+
+**Q: How do I enable Two-Factor Authentication (2FA)?**
+
+A: Go to **My Account** and click **Enable 2FA** in the Two-Factor Authentication section. Scan the QR code with your authenticator app (Google Authenticator, Authy, etc.) and enter the verification code to confirm.
+
+**Q: How do I reset my password if I forgot it?**
+
+A: On the login page, click the "Forgot password" link to initiate the password reset process via email.
 
 **Q: How do I access the LLM-friendly documentation?**
-A: The consolidated documentation for AI agents is available at `/public/llms.txt` in the repository.
+
+A: The consolidated documentation for AI agents is available at [`/llms.txt`](/llms.txt). You can also find it via the **LLM Docs** link in the top navigation. This is useful for feeding CloudAgent's documentation into other AI tools.
+
+# IDE Integrations
+
+
+# Overview
+
+# IDE Integrations
+
+Connect CloudAgent to your favorite IDE and deploy AWS infrastructure using natural language.
+
+## Supported IDEs
+
+CloudAgent integrates with any MCP-compatible tool. Here are our officially supported integrations:
+
+| IDE | MCP Support | Setup Time | Best For |
+|-----|-------------|------------|----------|
+| [Cursor](/integrations/cursor) | Native | 2 min | AI-first developers |
+| [VS Code](/integrations/vscode) | Extension | 5 min | Largest ecosystem |
+| [Claude Desktop](/integrations/claude-desktop) | Native | 2 min | Claude power users |
+| [ChatGPT](/integrations/chatgpt) | Plugin | 3 min | ChatGPT subscribers |
+| [JetBrains](/integrations/jetbrains) | Built-in (2025.2+) | 3 min | Enterprise Java/Python |
+
+## How It Works
+
+1. **Get your MCP config** from [Dashboard → MCP Extension](https://cloudagent.io/dashboard/mcp)
+2. **Add to your IDE** following the guide for your tool
+3. **Authenticate** via OAuth when prompted
+4. **Start deploying** using natural language
+
+```
+You: "Create an S3 bucket for user uploads with encryption"
+CloudAgent: Creates S3 bucket with AES-256 encryption, versioning,
+            and block public access — all security baselines applied.
+```
+
+## Why IDE Integration?
+
+- **Stay in flow** — no context switching to AWS console
+- **Natural language** — describe what you need, not how to configure it
+- **Automatic security** — baselines applied to every resource
+- **Governance built-in** — tags, naming, and compliance enforced
+
+Ready to get started? Pick your IDE above.
+
+# Cursor IDE
+
+# Cursor IDE Integration
+
+Deploy and manage AWS infrastructure as **workloads** directly from Cursor. CloudAgent treats your infrastructure as a single entity — one CloudFormation stack, version-controlled in Git, with automated CI/CD.
+
+## What You Get
+
+| Feature | Description |
+|---------|-------------|
+| **Workload Management** | All resources managed as one entity |
+| **Single CloudFormation** | One stack per workload, not scattered resources |
+| **Git Integration** | Commit infrastructure to GitHub automatically |
+| **CI/CD Pipelines** | Automated deployment flows |
+| **Security Presets** | 4 to 191 rules applied automatically |
+
+## Quick Setup (2 minutes)
+
+### Step 1: Get Your MCP Config
+
+Go to [Dashboard → MCP Extension](https://cloudagent.io/dashboard/mcp) and select the **Cursor** tab.
+
+Copy your configuration:
+
+```json
+{
+  "mcpServers": {
+    "cloudagent": {
+      "url": "https://api.cloudagent.io/mcp",
+      "enabled": true
+    }
+  }
+}
+```
+
+### Step 2: Add to Cursor
+
+1. Open Cursor → **Settings** → **Cursor Settings**
+2. Navigate to **Tools & MCP** in the sidebar
+3. Click **Add MCP Server**
+4. Paste the configuration
+5. Restart Cursor
+
+### Step 3: Authenticate & Select Workload
+
+When you first use CloudAgent:
+1. OAuth prompt appears — authenticate with your CloudAgent account
+2. Select a **workload** to deploy to (or create one)
+
+> **Note:** 
+A workload is CloudAgent's way of grouping related resources. Think of it as a project that contains all your infrastructure as one manageable unit.
+
+## How Workloads Work
+
+When you ask Cursor to deploy infrastructure, CloudAgent:
+
+1. **Identifies the workload** from context or asks you to select one
+2. **Generates CloudFormation** with security rules applied
+3. **Shows preview** for your approval
+4. **Deploys to AWS** as a single stack
+5. **Commits to Git** (if configured)
+6. **Triggers CI/CD** (if configured)
+
+```
+You: "Add an S3 bucket for uploads to my API workload"
+
+CloudAgent:
+→ Workload: api-backend (Production)
+→ Security Preset: Production (23 rules)
+→ Generated: S3 bucket with encryption, versioning, block public access
+→ Stack: api-backend-stack
+→ Commit: "Add S3 bucket for uploads"
+```
+
+## Example Prompts
+
+| What You Say | What CloudAgent Does |
+|--------------|---------------------|
+| "Create a new workload for my blog backend" | Creates workload with Production security preset |
+| "Add DynamoDB to my workload" | Adds to existing stack, commits to Git |
+| "Show my workload's architecture" | Generates diagram of all resources |
+| "What security rules are applied?" | Lists active rules from your preset |
+| "Deploy to production" | Triggers CI/CD pipeline |
+
+## Progressive Tutorials
+
+Start simple, then level up:
+
+1. **[Deploy AWS from Cursor](/cookbooks/deploy-aws-cursor)** — Your first workload
+2. **[Connect Git Repository](/cookbooks/git-integration)** — Version control your infrastructure
+3. **[Cursor + MCP Integration](/cookbooks/cursor-mcp)** — Develop with guardrails
+
+## Keyboard Shortcuts
+
+| Action | Shortcut |
+|--------|----------|
+| Open AI Chat | `Cmd/Ctrl + L` |
+| Open Composer | `Cmd/Ctrl + I` |
+| Accept suggestion | `Tab` |
+
+## Troubleshooting
+
+**"No workload selected"**
+- Ask CloudAgent to list your workloads: `"Show my workloads"`
+- Or create one: `"Create a workload called my-app"`
+
+**MCP not connecting?**
+- Verify URL is `https://api.cloudagent.io/mcp`
+- Restart Cursor after config changes
+
+## Next Steps
+
+- [Deploy AWS from Cursor](/cookbooks/deploy-aws-cursor) — Complete tutorial
+- [Workloads Guide](/guide/workloads-governance/workloads) — Deep dive on workload management
+- [Security Rules & Baselines](/guide/workloads-governance/security-baselines) — Understand security presets
+
+# VS Code
+
+# VS Code Integration
+
+Connect VS Code to CloudAgent via MCP and deploy infrastructure using natural language alongside your code.
+
+## Why VS Code + CloudAgent?
+
+- **Familiar environment** — stay in the world's most popular editor
+- **Extension ecosystem** — works alongside your existing tools
+- **GitHub Copilot compatible** — use both AI assistants
+
+## Setup Options
+
+VS Code supports MCP through extensions. Choose your approach:
+
+### Option 1: Copilot Extension (Recommended)
+
+If you use GitHub Copilot:
+
+1. Install the **MCP for Copilot** extension from VS Code marketplace
+2. Add CloudAgent MCP server config to `settings.json`:
+
+```json
+{
+  "mcp.servers": {
+    "cloudagent": {
+      "url": "https://api.cloudagent.io/mcp"
+    }
+  }
+}
+```
+
+3. Restart VS Code
+4. Authenticate when prompted
+
+### Option 2: Continue Extension
+
+If you use Continue:
+
+1. Install **Continue** extension
+2. Edit `~/.continue/config.json`:
+
+```json
+{
+  "mcpServers": {
+    "cloudagent": {
+      "url": "https://api.cloudagent.io/mcp"
+    }
+  }
+}
+```
+
+3. Restart VS Code
+
+> **Note:** 
+Get your exact configuration from [Dashboard → MCP Extension](https://cloudagent.io/dashboard/mcp).
+
+## Test Your Connection
+
+Open the AI chat panel and ask:
+
+```
+"List my CloudAgent workloads"
+```
+
+## Example Prompts
+
+| What You Say | What CloudAgent Does |
+|--------------|---------------------|
+| "Create an RDS PostgreSQL database" | Creates encrypted RDS with backups |
+| "Deploy a VPC with public/private subnets" | Creates VPC with NAT gateway |
+| "Set up CloudFront for my S3 bucket" | Creates distribution with HTTPS |
+
+## Troubleshooting
+
+**Extension not detecting MCP server?**
+- Check the config file path is correct
+- Ensure JSON syntax is valid
+- Restart VS Code completely
+
+## Next Steps
+
+- [Deploy AWS Infrastructure](/cookbooks/deploy-aws-cursor) — tutorial (works for any IDE)
+- [MCP Reference](/guide/mcp) — technical documentation
+
+# Claude Desktop
+
+# Claude Desktop Integration
+
+Connect Claude Desktop to CloudAgent and deploy AWS infrastructure through conversation.
+
+## Why Claude Desktop + CloudAgent?
+
+- **Native MCP support** — Claude Desktop has built-in MCP
+- **Long context** — describe complex architectures in detail
+- **Artifacts** — see CloudFormation previews inline
+
+## Quick Setup (2 minutes)
+
+### Step 1: Locate Config File
+
+Find your Claude Desktop config:
+
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+### Step 2: Add CloudAgent MCP Server
+
+Edit the config file and add:
+
+```json
+{
+  "mcpServers": {
+    "cloudagent": {
+      "url": "https://api.cloudagent.io/mcp",
+      "enabled": true
+    }
+  }
+}
+```
+
+> **Note:** 
+Copy your exact config from [Dashboard → MCP Extension](https://cloudagent.io/dashboard/mcp) → **Claude** tab.
+
+### Step 3: Restart Claude Desktop
+
+Quit and reopen Claude Desktop to load the new configuration.
+
+### Step 4: Authenticate
+
+Start a conversation and ask Claude to connect to CloudAgent. You'll be prompted to authenticate via OAuth.
+
+## Test Your Connection
+
+```
+"What CloudAgent workloads do I have access to?"
+```
+
+## Example Conversation
+
+**You**: I need to deploy a serverless API that processes images and stores them in S3.
+
+**Claude**: I'll help you set up that infrastructure. Let me create:
+- S3 bucket for image storage (encrypted, private)
+- Lambda function for image processing
+- API Gateway endpoint to trigger the Lambda
+
+Here's the CloudFormation preview...
+
+[Approve to deploy]
+
+## Tips for Best Results
+
+1. **Be specific about requirements** — mention compliance needs upfront
+2. **Use workload context** — "Deploy to the staging workload"
+3. **Ask for previews** — "Show me the CloudFormation before deploying"
+
+## Next Steps
+
+- [Deploy AWS Infrastructure](/cookbooks/deploy-aws-cursor) — step-by-step tutorial
+- [Security Rules & Baselines](/guide/workloads-governance/security-baselines) — understand auto-applied rules
+
+# ChatGPT
+
+# ChatGPT Integration
+
+Connect ChatGPT to CloudAgent and deploy AWS infrastructure using natural language in the ChatGPT interface.
+
+## Why ChatGPT + CloudAgent?
+
+- **Familiar interface** — use ChatGPT's conversational UX
+- **GPT-4 reasoning** — leverage advanced problem-solving
+- **Accessible anywhere** — deploy from web or mobile
+
+## Setup (3 minutes)
+
+### Step 1: Get Your MCP Config
+
+Go to [Dashboard → MCP Extension](https://cloudagent.io/dashboard/mcp) and select the **ChatGPT** tab.
+
+### Step 2: Configure MCP in ChatGPT
+
+1. Open ChatGPT → **Settings** → **Beta features**
+2. Enable **MCP Servers** (if available)
+3. Add new server with URL: `https://api.cloudagent.io/mcp`
+4. Authenticate via OAuth when prompted
+
+> **Note:** 
+MCP support in ChatGPT may be in beta. Check [OpenAI docs](https://platform.openai.com/docs) for current availability.
+
+### Step 3: Test Connection
+
+Start a new chat and ask:
+
+```
+"Connect to CloudAgent and list my workloads"
+```
+
+## Example Prompts
+
+| What You Say | What CloudAgent Does |
+|--------------|---------------------|
+| "Create a DynamoDB table for sessions" | Creates table with encryption, TTL |
+| "Set up an SQS queue for order processing" | Creates queue with DLQ |
+| "Deploy an EC2 instance for dev testing" | Creates instance in private subnet |
+
+## Alternative: Use CloudAgent Web UI
+
+If ChatGPT MCP is unavailable, use the [CloudAgent Assistant](/guide/automation/assistant) in our web dashboard for the same natural language experience.
+
+## Next Steps
+
+- [CloudAgent Assistant](/guide/automation/assistant) — web-based AI interface
+- [Deploy AWS Infrastructure](/cookbooks/deploy-aws-cursor) — tutorial
+
+# JetBrains IDEs
+
+# JetBrains IDEs Integration
+
+Connect IntelliJ IDEA, PyCharm, WebStorm, or any JetBrains IDE to CloudAgent using the built-in MCP support.
+
+## Why JetBrains + CloudAgent?
+
+- **Built-in MCP** — JetBrains 2025.2+ has native MCP support
+- **Enterprise-ready** — integrates with existing JetBrains workflows
+- **Multi-language** — works across all JetBrains IDEs
+
+## Supported IDEs
+
+- IntelliJ IDEA (Ultimate & Community)
+- PyCharm (Professional & Community)
+- WebStorm
+- GoLand
+- Rider
+- PhpStorm
+- RubyMine
+- CLion
+
+> **Note:** 
+Requires JetBrains IDE version **2025.2 or later** for built-in MCP support.
+
+## Quick Setup (3 minutes)
+
+### Step 1: Enable AI Assistant
+
+1. Open your JetBrains IDE
+2. Go to **Settings** → **Plugins**
+3. Ensure **AI Assistant** is installed and enabled
+
+### Step 2: Add CloudAgent MCP Server
+
+1. Go to **Settings** → **Tools** → **AI Assistant** → **MCP Servers**
+2. Click **Add Server**
+3. Enter:
+   - **Name**: `CloudAgent`
+   - **URL**: `https://api.cloudagent.io/mcp`
+4. Click **OK**
+
+### Step 3: Authenticate
+
+When you first interact with CloudAgent, you'll be prompted to authenticate via OAuth.
+
+### Step 4: Test Connection
+
+Open AI Assistant panel (`Alt+Enter` or `Cmd+Enter`) and ask:
+
+```
+"List my CloudAgent environments"
+```
+
+## Example Prompts
+
+| What You Say | What CloudAgent Does |
+|--------------|---------------------|
+| "Create an RDS MySQL database for my app" | Creates encrypted RDS with backups |
+| "Deploy a Lambda for this Python function" | Creates Lambda with proper runtime |
+| "Set up ECS Fargate for my Docker container" | Creates cluster with task definition |
+
+## IntelliJ-Specific Tips
+
+1. **Use with Database Tools** — deploy RDS, then connect via IntelliJ's database browser
+2. **Combine with AWS Toolkit** — CloudAgent deploys, AWS Toolkit manages
+3. **Terminal integration** — view deployment logs in built-in terminal
+
+## Troubleshooting
+
+**MCP option not visible?**
+- Update to JetBrains 2025.2 or later
+- Ensure AI Assistant plugin is enabled
+
+**Authentication failing?**
+- Clear IDE cache: **File** → **Invalidate Caches**
+- Re-add the MCP server
+
+## Next Steps
+
+- [Deploy AWS Infrastructure](/cookbooks/deploy-aws-cursor) — step-by-step tutorial
+- [MCP Reference](/guide/mcp) — technical documentation
 
 # Cookbooks
 
@@ -834,84 +2584,536 @@ A: The consolidated documentation for AI agents is available at `/public/llms.tx
 
 # Cookbooks
 
-Welcome to the CloudAgent Cookbooks! Here you will find step-by-step guides and recipes for common tasks and advanced configurations.
+Step-by-step guides for deploying infrastructure and automating cloud operations with CloudAgent.
 
-## Available Cookbooks
+## Getting Started
+
+*   [**Deploy AWS Infrastructure from Cursor IDE**](/cookbooks/deploy-aws-cursor)
+    *   Build production-ready AWS infrastructure in 10 minutes using natural language. Create workloads with S3, Lambda, API Gateway, and DynamoDB.
+
+## Intermediate
+
+*   [**Connect Your Workload to Git**](/cookbooks/git-integration)
+    *   Version control your infrastructure with GitHub. Review infrastructure changes in PRs before they're merged.
+
+## Enterprise
 
 *   [**Developing in the Corporate Cloud with Guardrails**](/cookbooks/cursor-mcp)
-    *   Enable developers to build AWS infrastructure from Cursor IDE while security and platform teams maintain governance through CloudAgent's MCP integration.
+    *   Enable developers to build AWS infrastructure from Cursor IDE while security and platform teams maintain governance.
 
 *   [**Automating Remediation**](/cookbooks/remediation)
-    *   Learn how to identify security issues, remediate them with blueprints, and verify the fix in a full-circle workflow.
+    *   Identify security issues, remediate them with blueprints, and verify the fix in a full-circle workflow.
 
-# Automating Remediation
+# Deploy AWS from Cursor
 
-# Automating Security Remediation from Discovery to Fix
+# Deploy AWS Infrastructure from Cursor IDE
 
-This cookbook guides you through a complete workflow: identifying a security issue, fixing it with a blueprint, and verifying the resolution.
+Create a complete workload with S3, Lambda, API Gateway, and DynamoDB — managed as a single CloudFormation stack with security rules automatically applied.
 
-## Objective
-Protect sensitive data by preventing accidental public exposure of S3 buckets. 
+## What You'll Build
 
-In this guide, we will use CloudAgent's recommendation engine to identify the risk and the blueprint builder to remediate it automatically.
+A **file processing API** workload containing:
+- S3 bucket for uploads
+- Lambda function for processing
+- API Gateway endpoint
+- DynamoDB for metadata
 
-## Step 1: Assessment
+**Time:** 10 minutes | **Security:** Production preset (23 rules)
 
-Start by reviewing the **Recommendations** page to identify security findings.
+## Prerequisites
 
-1.  Navigate to **Recommendations** in the sidebar.
-2.  Review the recommendation categories at the top (Critical Security, Cost Savings, Resource Cleanup, etc.).
-3.  Look for recommendations in the **Critical Security** category.
-4.  Locate the recommendation: **"Enable S3 Block Public Access at Account Level"**.
+- [Cursor IDE](https://cursor.sh) with [MCP configured](/integrations/cursor)
+- [CloudAgent account](https://cloudagent.io) with AWS connected
+- Basic familiarity with AWS services
 
-> **Tip**: Click on a category card to filter the list by that category.
+---
 
-![Recommendations Page](/images/recommendation_click_guide.png)
+## Step 1: Create a Workload
 
-> **Note:** 
-  Public S3 buckets can expose sensitive data. Remediate this promptly unless public access is intentionally required.
+Open Cursor AI chat (`Cmd+L` / `Ctrl+L`) and create your workload:
 
-## Step 2: Remediation
-
-CloudAgent allows you to generate a remediation blueprint directly from the recommendation.
-
-1.  Find the recommendation in the list.
-2.  Click **Run Blueprint** or **Generate Blueprint** in the Automatic Remediation column.
-3.  This opens the **Blueprint Builder** with a pre-configured template.
-4.  Review the generated CloudFormation template.
-5.  Click **Execute** to apply the fix.
-
-### Example Snippet
-The blueprint will configure S3 Block Public Access at the account level:
-
-```yaml
-Type: AWS::S3::AccountPublicAccessBlock
-Properties:
-  AccountId: !Ref AWS::AccountId
-  PublicAccessBlockConfiguration:
-    BlockPublicAcls: true
-    BlockPublicPolicy: true
-    IgnorePublicAcls: true
-    RestrictPublicBuckets: true
+```
+You: "Create a new workload called file-processor for a file upload API"
 ```
 
-## Step 3: Validation
+CloudAgent responds:
+```
+Created workload: file-processor
+Environment: Sandbox (616241259270)
+Security Preset: Development Environments (14 rules)
+Deployment Method: CloudFormation
 
-Once the deployment is complete, verify that the issue is resolved.
-
-1.  Go back to the **Recommendations** page.
-2.  Check that the recommendation status has changed or the item is no longer listed.
-3.  Optionally, run a compliance report to confirm the fix.
+Ready to add resources. What would you like to deploy?
+```
 
 > **Note:** 
-  You have successfully identified, remediated, and verified a security finding using CloudAgent.
+**What just happened?** CloudAgent created a workload entity that will group all your infrastructure. Changes deploy as a single CloudFormation stack.
+
+---
+
+## Step 2: Add S3 Storage
+
+```
+You: "Add an S3 bucket for storing uploaded files"
+```
+
+CloudAgent generates and shows preview:
+```yaml
+# Adding to workload: file-processor
+# Security rules applied: 14
+
+Resources:
+  UploadsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: file-processor-uploads-${AWS::AccountId}
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+      VersioningConfiguration:
+        Status: Enabled
+      LoggingConfiguration:
+        DestinationBucketName: !Ref LogsBucket
+```
+
+```
+You: "Deploy it"
+```
+
+**Result:** S3 bucket created with encryption, versioning, access logging — all from your security preset.
+
+---
+
+## Step 3: Add Lambda Processing
+
+```
+You: "Add a Lambda function that processes files when uploaded to the bucket"
+```
+
+CloudAgent adds to the same stack:
+```yaml
+# Adding to workload: file-processor
+# Stack now contains: S3 bucket + Lambda
+
+Resources:
+  ProcessorFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: file-processor-handler
+      Runtime: python3.11
+      Handler: index.handler
+      Role: !GetAtt ProcessorRole.Arn
+      Environment:
+        Variables:
+          BUCKET_NAME: !Ref UploadsBucket
+      VpcConfig:  # Added by security preset
+        SecurityGroupIds: [!Ref LambdaSG]
+        SubnetIds: !Ref PrivateSubnets
+
+  UploadTrigger:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref ProcessorFunction
+      Principal: s3.amazonaws.com
+      SourceArn: !GetAtt UploadsBucket.Arn
+```
+
+```
+You: "Yes, deploy"
+```
+
+---
+
+## Step 4: Add API Gateway
+
+```
+You: "Add an API Gateway endpoint to trigger uploads via HTTP"
+```
+
+```yaml
+# Adding to workload: file-processor
+# Stack now contains: S3 + Lambda + API Gateway
+
+Resources:
+  UploadApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: file-processor-api
+
+  UploadEndpoint:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      HttpMethod: POST
+      ResourceId: !Ref UploadResource
+      RestApiId: !Ref UploadApi
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub arn:aws:apigateway:${AWS::Region}:lambda:path/...
+```
+
+```
+You: "Deploy"
+```
+
+---
+
+## Step 5: Add DynamoDB for Metadata
+
+```
+You: "Add a DynamoDB table to store file metadata with fileId as the partition key"
+```
+
+```yaml
+# Adding to workload: file-processor
+# Stack now contains: S3 + Lambda + API Gateway + DynamoDB
+
+Resources:
+  MetadataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: file-processor-metadata
+      AttributeDefinitions:
+        - AttributeName: fileId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: fileId
+          KeyType: HASH
+      BillingMode: PAY_PER_REQUEST
+      PointInTimeRecoverySpecification:  # Added by security preset
+        PointInTimeRecoveryEnabled: true
+      SSESpecification:  # Added by security preset
+        SSEEnabled: true
+```
+
+```
+You: "Deploy"
+```
+
+---
+
+## Step 6: Review Your Workload
+
+```
+You: "Show me the architecture diagram for file-processor"
+```
+
+CloudAgent generates a visual diagram showing all resources and their connections.
+
+```
+You: "What's the API endpoint URL?"
+```
+
+```
+API Gateway Endpoint: https://abc123.execute-api.us-east-1.amazonaws.com/prod/upload
+S3 Bucket: file-processor-uploads-123456789
+DynamoDB Table: file-processor-metadata
+Lambda Function: file-processor-handler
+```
+
+---
+
+## What CloudAgent Applied Automatically
+
+| Resource | Security Rules Applied |
+|----------|----------------------|
+| S3 | Encryption, block public access, versioning, access logging |
+| Lambda | VPC deployment, minimal IAM, environment encryption |
+| API Gateway | HTTPS only, throttling, request validation |
+| DynamoDB | Encryption at rest, point-in-time recovery |
+
+**Total:** 14 rules from Development Environments preset
+
+---
+
+## Progressive Learning Path
+
+| Level | Tutorial | What You Learn |
+|-------|----------|----------------|
+| ✅ **Beginner** | This tutorial | Create workload, add resources |
+| 🔜 **Intermediate** | [Git Integration](/cookbooks/git-integration) | Version control infrastructure |
+| 🔜 **Advanced** | [Cursor + MCP Integration](/cookbooks/cursor-mcp) | Develop with guardrails |
+
+---
+
+## Troubleshooting
+
+**"Workload not found"**
+- List workloads: `"Show my workloads"`
+- Create one: `"Create a workload called my-app"`
+
+**Deployment failed**
+- Check CloudFormation console for detailed error
+- Ask: `"Why did the deployment fail?"`
+
+**Security rule blocking resource**
+- Ask: `"What security rules are blocking this?"`
+- Request exception or adjust configuration
+
+## Related
+
+- [Cursor Integration](/integrations/cursor) — Setup guide
+- [Workloads](/guide/workloads-governance/workloads) — Full workload documentation
+- [Security Rules & Baselines](/guide/workloads-governance/security-baselines) — Available presets
+
+# Git Integration
+
+# Connect Your Workload to Git
+
+Version control your infrastructure by connecting CloudAgent workloads to GitHub. Every deployment creates a pull request with your CloudFormation changes — giving you full history, code review, and GitOps workflows.
+
+## What You'll Learn
+
+- Connect a GitHub repository to your workload via the dashboard
+- How CloudAgent proposes infrastructure changes via pull requests
+- Review infrastructure diffs before they're merged
+
+**Prerequisites:** Complete [Deploy AWS from Cursor](/cookbooks/deploy-aws-cursor) first.
+
+---
+
+## Why Git Integration?
+
+| Without Git | With Git |
+|-------------|----------|
+| Infrastructure changes are ephemeral | Full history of every change |
+| "Who changed what?" is unknown | Git blame shows who and when |
+| No code review for infra | PRs enable infra review |
+| Changes happen immediately | Review and approve before merge |
+
+---
+
+## How Git Integration Works
+
+> **Note:** 
+**Important:** Git setup must be done through the CloudAgent dashboard UI. OAuth authentication is required to connect your GitHub account, which cannot be done through chat.
+
+CloudAgent's git integration follows a **PR-only model** for security:
+
+- **All changes go through pull requests** — CloudAgent never commits directly to your main branch
+- **You control the merge** — Review, approve, and merge PRs through your normal GitHub workflow
+- **CloudAgent has no write access to main** — This is intentional for security
+
+This design ensures your infrastructure changes always go through code review before being applied.
+
+---
+
+## Step 1: Connect GitHub to CloudAgent
+
+Link your GitHub account to CloudAgent via the dashboard:
+
+1. Go to [Dashboard → Integrations](https://cloudagent.io/dashboard/integrations)
+2. Click **Connect GitHub**
+3. Complete the OAuth authorization flow in GitHub
+4. Select which repositories CloudAgent can access
+
+> **Note:** 
+CloudAgent requests permission to create branches and pull requests in your repository. It does not have direct write access to your main branch.
+
+---
+
+## Step 2: Link Repository to Workload
+
+Configure git for your workload through the dashboard:
+
+1. Go to [Dashboard → Workloads](https://cloudagent.io/dashboard/workloads)
+2. Select your workload
+3. Click **Settings and Deployment** tab
+4. Under **Source code**, select **GitHub repository**
+5. Choose:
+   - **GitHub Connection**: Your linked account
+   - **Repository**: Target repo
+   - **Base Branch**: `main` or `master` (the branch PRs will target)
+6. Click **Save Changes**
+
+> **Note:** 
+Git configuration cannot be done via chat due to OAuth requirements. Always use the dashboard UI to set up and modify git connections.
+
+---
+
+## Step 3: Deploy with Pull Requests
+
+When you deploy with git integration enabled, CloudAgent creates a pull request:
+
+```
+You: "Add an SQS queue for async processing"
+```
+
+CloudAgent generates the resource and shows:
+```
+Adding to workload: file-processor
+Repository: myorg/file-processor-infra
+
+Changes:
++ AWS::SQS::Queue (ProcessingQueue)
++ AWS::SQS::QueuePolicy
+
+This will create a pull request for review.
+
+Proceed?
+```
+
+```
+You: "Yes"
+```
+
+**Result:**
+- CloudAgent creates a new branch with your changes
+- A pull request is opened against your base branch
+- You receive a link to review: `https://github.com/myorg/file-processor-infra/pull/42`
+
+> **Note:** 
+CloudAgent deploys to AWS when you confirm the action. The pull request captures the CloudFormation changes for your git history. You control when to merge the PR.
+
+---
+
+## Step 4: Review Changes in GitHub
+
+After deployment, review the pull request in GitHub:
+
+### PR Contents
+
+Your PR includes:
+- CloudFormation diff showing exactly what changed
+- Resources being added, modified, or deleted
+- Security rules that were applied
+- Estimated cost impact (if enabled)
+
+### Repository Structure
+
+Once merged, your repository contains:
+
+```
+myorg/file-processor-infra/
+├── cloudformation/
+│   └── file-processor.yaml    ← Full CloudFormation template
+├── README.md
+└── .cloudagent/
+    └── workload.json          ← Workload metadata
+```
+
+Your CloudFormation template contains all resources:
+```yaml
+# cloudformation/file-processor.yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Description: file-processor workload managed by CloudAgent
+
+Resources:
+  UploadsBucket:
+    Type: AWS::S3::Bucket
+    # ... full configuration
+
+  ProcessorFunction:
+    Type: AWS::Lambda::Function
+    # ... full configuration
+
+  ProcessingQueue:          # ← New resource
+    Type: AWS::SQS::Queue
+    # ... full configuration
+```
+
+---
+
+## Rollbacks and Reverts
+
+> **Note:** 
+**CloudAgent does not perform rollbacks.** Since CloudAgent only has permission to create branches and PRs (not write to main), rollbacks are handled through your standard git workflow.
+
+To revert infrastructure changes:
+
+1. **Use git revert** — Create a revert commit in your repository
+2. **Merge the revert** — Follow your normal PR/merge process
+3. **Redeploy via CloudAgent** — Ask CloudAgent to sync the workload with the reverted template
+
+```bash
+# In your repository
+git revert <commit-hash>
+git push origin main
+```
+
+Then in Cursor:
+```
+You: "Sync file-processor with the latest template from git"
+```
+
+This design ensures:
+- The main branch owner controls what gets merged
+- All changes (including reverts) go through code review
+- CloudAgent cannot accidentally overwrite your main branch
+
+---
+
+## Git Configuration Options
+
+| Setting | Description | Default |
+|---------|-------------|---------|
+| **Base Branch** | The branch PRs will target | main |
+| **Template Path** | Where CloudFormation templates are stored | /cloudformation/ |
+| **PR Title Template** | Custom template for PR titles | Auto-generated |
+| **Include Metadata** | Store workload metadata in .cloudagent/ | Enabled |
+
+Configure in **Dashboard → Workloads → Settings and Deployment → Git Repository**.
+
+> **Note:** 
+There is no option for direct commits. All changes go through pull requests for security reasons.
+
+---
+
+## Troubleshooting
+
+**"Repository not found"**
+- Ensure CloudAgent has access: [Dashboard → Integrations](https://cloudagent.io/dashboard/integrations)
+- Check repository name is correct
+- Verify the OAuth connection is still valid
+
+**"Permission denied"**
+- Re-authorize the GitHub connection in the dashboard
+- Ensure the repository allows CloudAgent to create branches and PRs
+
+**PRs not appearing**
+- Check the configured base branch exists
+- Verify deployment succeeded in CloudFormation console
+- Check GitHub for any branch protection rules blocking PR creation
+
+**"Can't configure git via chat"**
+- Git setup requires OAuth authentication
+- Use the [Dashboard → Integrations](https://cloudagent.io/dashboard/integrations) page to connect GitHub
+
+---
+
+## Security Design
+
+CloudAgent's git integration is designed with security in mind:
+
+| Design Choice | Reason |
+|---------------|--------|
+| **PR-only** | All changes are reviewable before merge |
+| **No main branch access** | Prevents accidental overwrites or unauthorized changes |
+| **No chat-based setup** | OAuth requires browser-based authentication |
+| **No rollback capability** | Rollbacks are a git operation controlled by branch owners |
+
+This ensures that CloudAgent enhances your workflow without compromising your repository's security model.
+
+---
 
 ## Next Steps
 
-- **[Recommendations](/guide/recommendations)**: Learn how to filter, prioritize, and act on all recommendation types
-- **[Blueprints and Agents](/guide/blueprints)**: Create custom blueprints for your organization's common remediation patterns
-- **[My Workflows](/guide/workflows)**: Automate recurring remediation tasks with scheduled workflows
-- **[Reports](/guide/reports)**: Run compliance reports to track your security posture over time
+| Tutorial | What You'll Learn |
+|----------|-------------------|
+| ← [Deploy AWS from Cursor](/cookbooks/deploy-aws-cursor) | Create your first workload |
+| → [Cursor + MCP Integration](/cookbooks/cursor-mcp) | Develop with guardrails |
+
+---
+
+## Related
+
+- [Managing Workloads](/guide/workloads-governance/workloads) — Full workload configuration options
+- [Integrations](/integrations) — Connect GitHub, GitLab, Bitbucket
 
 # Cursor + MCP Integration
 
@@ -1064,7 +3266,7 @@ naming_pattern: "{environment}-{workload_name}-{resource_type}"
 
 ### For Developers: Connect Your IDE
 
-1. Get your MCP configuration from CloudAgent (**My Account** → **MCP Extension**).
+1. Get your MCP configuration from CloudAgent (**Setup** → **MCP Extension**).
 2. Open Cursor IDE → **Settings** → **MCP Config**.
 3. Paste the configuration and restart Cursor.
 4. Authenticate via OAuth when prompted on first use.
@@ -1187,8 +3389,77 @@ The developer can either accept the compliant alternative or escalate through pr
 ## Next Steps
 
 - **[Set up MCP Integration](/guide/mcp)**: Technical guide to connect Cursor to CloudAgent
-- **[Managing Workloads](/guide/workloads)**: Configure security baselines and governance
-- **[CloudAgent Assistant](/guide/assistant)**: Use AI for cloud operations in the web UI
+- **[Managing Workloads](/guide/workloads-governance/workloads)**: Configure security baselines and governance
+- **[CloudAgent Assistant](/guide/automation/assistant)**: Use AI for cloud operations in the web UI
 
 > **Note:** 
   **Ready to enable governed self-service for your team?** [Contact us](https://cloudagent.io/contact) for a demo of the MCP integration.
+
+# Automating Remediation
+
+# Automating Security Remediation from Discovery to Fix
+
+This cookbook guides you through a complete workflow: identifying a security issue, fixing it with a blueprint, and verifying the resolution.
+
+## Objective
+Protect sensitive data by preventing accidental public exposure of S3 buckets. 
+
+In this guide, we will use CloudAgent's recommendation engine to identify the risk and the blueprint builder to remediate it automatically.
+
+## Step 1: Assessment
+
+Start by reviewing the **Recommendations** page to identify security findings.
+
+1.  Navigate to **Recommendations** in the sidebar.
+2.  Review the recommendation categories at the top (Critical Security, Cost Savings, Resource Cleanup, etc.).
+3.  Look for recommendations in the **Critical Security** category.
+4.  Locate the recommendation: **"Enable S3 Block Public Access at Account Level"**.
+
+> **Tip**: Click on a category card to filter the list by that category.
+
+![Recommendations Page](/images/recommendation_click_guide.png)
+
+> **Note:** 
+  Public S3 buckets can expose sensitive data. Remediate this promptly unless public access is intentionally required.
+
+## Step 2: Remediation
+
+CloudAgent allows you to generate a remediation blueprint directly from the recommendation.
+
+1.  Find the recommendation in the list.
+2.  Click **Run Blueprint** or **Generate Blueprint** in the Automatic Remediation column.
+3.  This opens the **Blueprint Builder** with a pre-configured template.
+4.  Review the generated CloudFormation template.
+5.  Click **Execute** to apply the fix.
+
+### Example Snippet
+The blueprint will configure S3 Block Public Access at the account level:
+
+```yaml
+Type: AWS::S3::AccountPublicAccessBlock
+Properties:
+  AccountId: !Ref AWS::AccountId
+  PublicAccessBlockConfiguration:
+    BlockPublicAcls: true
+    BlockPublicPolicy: true
+    IgnorePublicAcls: true
+    RestrictPublicBuckets: true
+```
+
+## Step 3: Validation
+
+Once the deployment is complete, verify that the issue is resolved.
+
+1.  Go back to the **Recommendations** page.
+2.  Check that the recommendation status has changed or the item is no longer listed.
+3.  Optionally, run a compliance report to confirm the fix.
+
+> **Note:** 
+  You have successfully identified, remediated, and verified a security finding using CloudAgent.
+
+## Next Steps
+
+- **[Recommendations](/guide/reports-insights/recommendations)**: Learn how to filter, prioritize, and act on all recommendation types
+- **[Blueprints & Agents](/guide/automation/blueprints)**: Create custom blueprints for your organization's common remediation patterns
+- **[My Workflows](/guide/automation/workflows)**: Automate recurring remediation tasks with scheduled workflows
+- **[Reports](/guide/reports-insights/reports)**: Run compliance reports to track your security posture over time

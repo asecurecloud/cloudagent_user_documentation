@@ -1,0 +1,170 @@
+import { Callout } from 'nextra/components'
+
+# Governance & Architecture
+
+## What Is Governance in CloudAgent?
+
+Governance in CloudAgent provides organizational controls for how infrastructure is deployed and managed. While [Security Rules](/guide/workloads-governance/security-baselines) enforce technical compliance (encryption, public access, etc.), governance controls enforce operational standards — change approvals, tagging policies, architecture preferences, and deployment methods.
+
+These settings are configured per workload and are applied automatically when developers request infrastructure through CloudAgent's MCP integration or blueprint system.
+
+## Accessing Governance Settings
+
+Navigate to any workload and you'll find governance settings across three tabs:
+
+1. **Governance** — Change approvals and required tags
+2. **Architecture** — Infrastructure preferences and patterns
+3. **Deployment Settings** — IaC method, CI/CD, and networking
+
+## Change Approvals
+
+Control whether infrastructure changes are deployed immediately or require review.
+
+### Deployment Modes
+
+| Mode | Behavior |
+|------|----------|
+| Deploy immediately | Changes are applied to AWS without a review step (default) |
+| Create change set for review | A CloudFormation change set is created and held for manual approval |
+
+When change set mode is enabled, you can configure notifications:
+
+- **Email notifications**: Add one or more email addresses (comma-separated) to receive alerts when a change set is ready for review
+- **Slack notifications**: Coming soon
+
+<Callout type="info">
+  **Tip**: Use change set mode for production workloads so that all infrastructure changes go through a review step before reaching AWS.
+</Callout>
+
+## Required Resource Tags
+
+Enforce consistent tagging standards across all resources deployed under a workload. Tags are automatically injected into generated templates.
+
+For each required tag, configure:
+
+| Field | Description |
+|-------|-------------|
+| Key | The tag name (e.g., "Environment", "CostCenter", "Owner") |
+| Value | An optional fixed value — if set, this exact value is applied to all resources |
+| Notes | Optional context for your team (e.g., "Required for EC2 instances") |
+
+Common tagging patterns include environment labels ("prod", "staging", "dev"), cost center codes for chargeback, team ownership, and project identifiers.
+
+## Architecture Preferences
+
+Architecture preferences guide CloudAgent when generating infrastructure blueprints. These are soft preferences (not hard constraints) — they tell the system which cloud services and patterns to prefer when there are multiple valid options. The options below currently apply to AWS deployments.
+
+### Compute
+
+| Setting | Options |
+|---------|---------|
+| Instance Size | No Preference, Small, Large |
+
+### Databases
+
+| Setting | Options |
+|---------|---------|
+| SQL Database | No Preference, Aurora, MySQL, Postgres |
+| NoSQL Database | No Preference, DynamoDB, RDS MongoDB |
+
+### Website Hosting
+
+| Setting | Options |
+|---------|---------|
+| Static Websites | No Preference, CloudFront + S3, Amplify |
+| Dynamic Websites | No Preference, ECS + ALB, EC2 + ALB |
+
+### Architecture Presets
+
+For quick setup, apply a preset:
+
+- **Production App/Environment**: Selects highly available patterns (Aurora, ECS + ALB, larger instances)
+- **Sandbox/Testing**: Selects cost-efficient patterns (smaller instances, simpler hosting)
+
+<Callout type="info">
+  Architecture preferences are applied when developers request infrastructure through MCP or when an agent generates a blueprint. The agent uses these preferences to select appropriate resource types and configurations.
+</Callout>
+
+## Deployment Settings
+
+Configure how infrastructure is deployed to your cloud provider. The options below apply to AWS deployments; additional provider-specific methods will be available as CloudAgent expands its multi-cloud deployment support.
+
+### Deployment Method
+
+| Method | Description |
+|--------|-------------|
+| CloudFormation | AWS-native Infrastructure as Code (default) |
+| Terraform | HashiCorp's cross-cloud IaC tool |
+| OpenTofu | Open-source Terraform alternative |
+| AWS CLI | Direct API calls for simple operations |
+
+### Source Code Integration
+
+Connect a GitHub repository to store and version your infrastructure code:
+
+1. Select a GitHub connection (configured in [Integrations](/integrations))
+2. Choose the repository and branch
+3. Infrastructure templates are committed to the repo on each deployment
+
+If you prefer not to use source control, select "No source code" — templates are managed within CloudAgent.
+
+### Deployment Flow
+
+| Flow | Behavior |
+|------|----------|
+| Manual | Developer initiates each deployment through CloudAgent |
+| GitHub Actions | Deployment triggers automatically on code push |
+| CodePipeline/CodeBuild | AWS-native CI/CD pipeline handles deployment |
+
+For automated flows, you can configure:
+
+- **Automatic deployment**: Deploy when changes land on the configured branch
+- **Require approval step**: Pause the pipeline for manual review before deployment
+- **Branch selection**: Choose which branch triggers deployments
+
+### Terraform State Management
+
+When using Terraform or OpenTofu, configure where state is stored:
+
+- **Not set**: State managed locally (not recommended for teams)
+- **S3 bucket**: Specify a bucket name for remote state storage
+
+### Networking
+
+- **Use existing VPCs**: Enable this to deploy into your existing VPC infrastructure instead of creating new VPCs. Specify VPC IDs or use the "Fetch VPCs" button to discover available VPCs in your account.
+
+### Resource Type Controls
+
+Restrict which AWS resource types can be deployed under this workload:
+
+- **Allow All Resources**: Any resource type can be created
+- **Allowed Resources List**: Only specified resource types are permitted
+
+## How Governance Applies During Deployment
+
+When a developer requests infrastructure through MCP or a blueprint, CloudAgent applies governance in this order:
+
+1. **Architecture preferences** guide resource selection (e.g., Aurora over MySQL)
+2. **Required tags** are injected into the generated template
+3. **Security rules** validate the template for compliance
+4. **Deployment method** determines how the template reaches AWS
+5. **Change approval** controls whether deployment proceeds immediately or waits for review
+
+If any step fails validation, the developer receives a clear explanation of what was blocked and why, along with a suggested fix.
+
+## Troubleshooting
+
+**Changes deploying without review**: Check that the Governance tab is set to "Create change set for review" rather than "Deploy immediately."
+
+**Tags not appearing on resources**: Verify that required tags are saved in the Governance tab. Tags are applied at template generation time — existing resources won't retroactively receive tags.
+
+**Architecture preferences not reflected**: Preferences are guidance, not constraints. If a specific resource type is explicitly requested, it may override the preference. Check the generated template to see what was applied.
+
+**Cannot connect GitHub repository**: Ensure you have a GitHub integration configured in your account settings. The repository selector only shows repos from connected GitHub accounts.
+
+## Next Steps
+
+- [Security Rules & Baselines](/guide/workloads-governance/security-baselines) — Configure security compliance rules for your workload
+- [Managing Workloads](/guide/workloads-governance/workloads) — Create and manage workload definitions
+- [Blueprints & Agents](/guide/automation/blueprints) — Use agents to generate governed infrastructure
+- [MCP Integration](/guide/mcp) — Connect your IDE for developer-driven infrastructure requests

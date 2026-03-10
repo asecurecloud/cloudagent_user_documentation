@@ -1,24 +1,153 @@
+import { Callout } from 'nextra/components'
+
 # FAQ
 
-## Objective
-Find answers to common questions about account management and platform usage.
+Find answers to common questions about CloudAgent, organized by topic.
+
+---
+
+## Getting Started & Onboarding
+
+**Q: What cloud providers does CloudAgent support?**
+
+A: CloudAgent currently supports AWS and Azure, with Google Workspace available for specific integrations. AWS has the most mature feature set. Azure support is in early access — see [Azure Onboarding](/guide/cloud-setup/azure).
+
+**Q: What AWS permissions does CloudAgent need?**
+
+A: At minimum, the AWS managed `ReadOnlyAccess` policy. This is enough for dashboards, reports, recommendations, and health checks. Write-level access is only needed for deployment and remediation features. See [Permissions & Access Control](/guide/cloud-setup/permissions).
+
+**Q: How do I connect my first AWS account?**
+
+A: Navigate to **Cloud Setup** in the sidebar, click **+ Add Cloud Environment**, select AWS, and follow the 3-step wizard. CloudAgent generates a CloudFormation template that creates an IAM role in your account. See [Account Onboarding](/guide/cloud-setup/aws).
+
+**Q: Can I connect multiple AWS accounts?**
+
+A: Yes. Each AWS account is added as a separate cloud environment. There's no limit to the number of accounts you can connect. Use the environment selector in dashboards to switch between them.
+
+**Q: Do I need to enable AWS Cost Explorer, GuardDuty, or other services before using CloudAgent?**
+
+A: No — CloudAgent works with whatever AWS services you have enabled. The more you enable, the richer the data. For example, the Cost Dashboard shows spend data when Cost Explorer is active, and CloudAgent's own assessment engine provides recommendations regardless. Each dashboard section indicates what's available and what needs to be enabled.
+
+---
+
+## Reports & Compliance
+
+**Q: What compliance frameworks does CloudAgent support?**
+
+A: CloudAgent supports 20+ compliance report types including SOC2, PCI DSS 3.2.1, HIPAA, CIS AWS Foundations Benchmark v3.0, NIST 800-53, NIST 800-171, NIST CSF, ISO 27001, GDPR, FedRAMP (Low and Moderate), Canada GC, CMMC 2.0 (Level 1 and 2), and RBI Cyber Security Framework. See [Reports](/guide/reports-insights/reports) for the full list.
+
+**Q: How long does a compliance report take to generate?**
+
+A: Typically 5–15 minutes, depending on the size of your environment and the number of resources being evaluated.
+
+**Q: Can I schedule reports to run automatically?**
+
+A: Yes. Create a workflow in [My Workflows](/guide/automation/workflows) that triggers the report on a schedule (daily, weekly, or monthly). You can also configure email notifications to receive results automatically.
+
+**Q: How do I export a report for auditors?**
+
+A: Open any completed report and use the export option to download it as a PDF. You can also reference report history as part of your audit evidence trail — see [Audit Logs](/guide/reports-insights/audit-logs).
+
+---
+
+## Workloads & Resources
+
+**Q: What is a workload in CloudAgent?**
+
+A: A workload is a logical grouping of cloud resources that represent an application or service. Workloads let you apply security rules, governance settings, and architecture preferences to a set of related resources. See [Managing Workloads](/guide/workloads-governance/workloads).
+
+**Q: Can a workload span multiple cloud accounts?**
+
+A: Yes. When creating a workload, you can select resources from multiple connected environments. This is useful for applications that span production and staging accounts, or for multi-cloud setups.
+
+**Q: How do I add resources to a workload?**
+
+A: In the workload editor, use the resource picker to search and add resources from your connected environments. Resources are tracked automatically once added.
+
+---
+
+## Workflows & Automation
+
+**Q: What can I automate with workflows?**
+
+A: Workflows can automate compliance report generation, remediation actions, email notifications, and multi-step sequences. For example, you can schedule a weekly SOC2 report that emails results to your compliance team. See [My Workflows](/guide/automation/workflows).
+
+**Q: What's the difference between a workflow and a blueprint?**
+
+A: A blueprint is a single agent task (e.g., "deploy an S3 bucket with encryption"). A workflow orchestrates one or more actions on a schedule or trigger (e.g., "run a compliance report every Monday and email the results"). Blueprints can be triggered as steps within workflows.
+
+**Q: Do agents make changes automatically, or do I need to approve them?**
+
+A: Agents include a human-in-the-loop checkpoint — they pause before making state-changing operations in your cloud account and wait for your approval. You can review what the agent plans to do before it proceeds. See [Blueprints & Agents](/guide/automation/blueprints).
+
+---
+
+## MCP & IDE Integrations
+
+**Q: What IDEs does CloudAgent's MCP integration support?**
+
+A: CloudAgent provides an MCP server that works with any MCP-compatible IDE, including Cursor, VS Code (with the Continue extension), Windsurf, and other editors that support the Model Context Protocol. See [MCP Integration](/guide/mcp).
+
+**Q: How do I set up MCP in my IDE?**
+
+A: Navigate to **MCP Extension** in the CloudAgent sidebar to get your connection configuration. Copy the server URL and API key into your IDE's MCP settings. The exact steps vary by IDE — the MCP page includes instructions for each supported editor.
+
+**Q: What can I do through MCP?**
+
+A: Through MCP, you can ask your IDE's AI assistant to interact with CloudAgent — for example, deploying infrastructure, running compliance checks, listing resources, or generating reports. The AI uses CloudAgent's agent tools to execute these requests in your connected cloud accounts.
+
+**Q: Does MCP require write permissions?**
+
+A: MCP works with read-only access for queries and reports. Write-level permissions are only needed if you want the AI to deploy infrastructure or run remediation through your IDE.
+
+---
+
+## Security & Permissions
+
+**Q: Can CloudAgent read my data (S3 objects, secrets, etc.)?**
+
+A: No. Every IAM role created by CloudAgent includes an explicit deny policy for `s3:GetObject`, `s3:GetObjectVersion`, and `secretsmanager:GetSecretValue`. CloudAgent can see your infrastructure configuration but cannot access your actual data or secrets.
+
+**Q: Is my data encrypted?**
+
+A: Yes. All credentials (AWS role external IDs, Azure client secrets) are encrypted before storage. Communication between CloudAgent and your cloud accounts uses TLS encryption in transit.
+
+**Q: How do I revoke CloudAgent's access to my AWS account?**
+
+A: Delete the CloudFormation stack that created the IAM role in your AWS account, or delete the IAM role directly. Then remove the environment from CloudAgent's Cloud Setup page.
+
+---
+
+## Credits & Billing
+
+**Q: Where can I see my available credits?**
+
+A: Your credit balance is displayed in the top navigation bar. For more details, navigate to **My Account** → **Credits & Subscriptions**.
+
+**Q: What uses credits?**
+
+A: Credits are consumed when CloudAgent performs actions on your behalf — running reports, executing agents, and processing workflows. The exact credit cost depends on the complexity and duration of the action.
+
+**Q: What happens when I run out of credits?**
+
+A: Services will pause until credits are replenished. You can purchase additional credits or configure your account settings to handle overages.
+
+---
+
+## Account Management
 
 **Q: How do I change my password?**
 
-A: Navigate to **My Account** in the top navigation and click **Change Password** in the Password section. See the full guide: [User Settings](/guide/account).
+A: Navigate to **My Account** in the top navigation and click **Change Password** in the Password section. See [User Settings](/guide/account).
 
 **Q: How do I enable Two-Factor Authentication (2FA)?**
 
-A: Go to **My Account** in the top navigation and click **Enable 2FA** in the Two-Factor Authentication section. See the full guide: [User Settings](/guide/account).
+A: Go to **My Account** and click **Enable 2FA** in the Two-Factor Authentication section. Scan the QR code with your authenticator app (Google Authenticator, Authy, etc.) and enter the verification code to confirm.
 
 **Q: How do I reset my password if I forgot it?**
 
 A: On the login page, click the "Forgot password" link to initiate the password reset process via email.
 
-**Q: Where can I see my available credits?**
-
-A: Your available credits are displayed in the top navigation bar. You can manage credits in **My Account** → **Credits & Subscriptions**.
-
 **Q: How do I access the LLM-friendly documentation?**
 
-A: The consolidated documentation for AI agents is available at `/public/llms.txt` in the repository.
+A: The consolidated documentation for AI agents is available at [`/llms.txt`](/llms.txt). You can also find it via the **LLM Docs** link in the top navigation. This is useful for feeding CloudAgent's documentation into other AI tools.

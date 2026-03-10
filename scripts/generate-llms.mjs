@@ -19,6 +19,8 @@ generated_at: ${new Date().toISOString()}
 This is a consolidated version of the CloudAgent documentation.
 It includes the User Guide, Cookbooks, and other resources.
 
+For product overview, use cases, and personas see: https://cloudagent.io/llms-full.txt
+
 ---
 
 `;

@@ -1,0 +1,101 @@
+import { Callout } from 'nextra/components'
+
+# Audit Logs & Activity
+
+## Overview
+
+CloudAgent tracks the execution history of all automated actions — agent runs, workflow executions, report scans, and blueprint deployments. This activity trail serves as an audit log for understanding what CloudAgent has done in your environments, when it happened, and what the results were.
+
+## Where to Find Activity History
+
+Activity history is spread across three views, each accessible from the sidebar:
+
+| View | What It Shows | Navigate To |
+|------|-------------|------------|
+| Agent History | All agent and blueprint executions with detailed logs | **Blueprints & Agents** → Agent History tab |
+| Workflow History | All workflow runs with status and results | **My Workflows** → History |
+| Report History | All compliance report and scan executions | **Reports** → My Reports |
+
+## Agent History
+
+The Agent History tab (under Blueprints & Agents) is the most comprehensive activity view. Every time an agent runs — whether triggered by a blueprint, a workflow, or a direct user action — it's logged here.
+
+### What's Recorded
+
+Each agent execution record includes:
+
+| Field | Description |
+|-------|-------------|
+| Name | The agent or blueprint name |
+| Environment | Which cloud account the agent operated on |
+| Workflow | Link to the parent workflow, if the agent was triggered by one |
+| Status | Current state: Running, Waiting on User, Completed, or Failed |
+| Summary | AI-generated summary of what the agent did and found |
+| Timestamp | When the execution started and last updated |
+
+### Execution Details
+
+Click any agent record to view the full execution log, which includes:
+
+- **Step-by-step timeline**: Each action the agent took in sequence
+- **Detailed logs**: Output from each operation
+- **Resources modified**: What was created, updated, or deleted in your cloud account
+- **Errors**: Any issues encountered during execution
+
+### Search and Filter
+
+Use the search bar to filter agent history by name, status, environment, or summary content. Results are sorted by most recent first, with the ability to load additional months of history.
+
+<Callout type="info">
+  Agent executions include a human-in-the-loop checkpoint — agents pause before making state-changing operations in your cloud account, giving you a chance to review and approve before proceeding.
+</Callout>
+
+## Workflow History
+
+The Workflow History view shows all workflow executions:
+
+- **Workflow title** and configuration
+- **Status**: Completed, Failed, Running
+- **Last update** timestamp
+- **Execution details**: Click to see the full workflow definition and results
+
+Search and sort by title, status, or date. Load older history in 3-month increments.
+
+## Report History
+
+The Report History (My Reports) view tracks all compliance report and scan executions:
+
+- **Report name** and type (e.g., SOC2, CIS Benchmark, HIPAA)
+- **Cloud Environment** the report was run against
+- **Parent workflow** if the report was triggered by a scheduled workflow
+- **Status**: Complete, In Progress, or Failed
+- **Actions**: View the full report, or open an AI chat to analyze findings
+
+## Using Activity Data for Audits
+
+CloudAgent's execution history provides evidence for compliance audits:
+
+**What you can demonstrate:**
+- When compliance reports were generated and what they found
+- Which remediation actions were taken and by whom (user-initiated vs. automated)
+- That human approval was required before state-changing operations
+- The timeline of security improvements across your environment
+
+**How to export evidence:**
+- Open any completed report and export it as PDF for auditor review
+- Screenshot agent execution timelines showing the sequence of actions taken
+- Reference workflow schedules to demonstrate ongoing compliance monitoring cadence
+
+<Callout type="info">
+  Schedule regular compliance reports (weekly or monthly) using [My Workflows](/guide/automation/workflows). This creates a consistent audit trail of compliance posture over time.
+</Callout>
+
+## Data Retention
+
+Execution history is retained and available through the time-window pagination in each view. Load older records in 3-month increments to access historical data.
+
+## Next Steps
+
+- [Blueprints & Agents](/guide/automation/blueprints) — Understand how agents execute and generate logs
+- [Reports](/guide/reports-insights/reports) — Run compliance reports that feed into your audit trail
+- [My Workflows](/guide/automation/workflows) — Schedule automated checks for continuous compliance evidence

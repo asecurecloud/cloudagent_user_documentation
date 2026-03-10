@@ -1,14 +1,15 @@
+import { Callout } from 'nextra/components'
+
 # Dashboard Overview
 
 ## Objective
+
 Gain a comprehensive view of your cloud resources, security posture, and agent activities.
 
 Once logged in, you will see the **Dashboard Overview**. This is your central hub for managing your cloud workforce.
 
-import { Callout } from 'nextra/components'
-
 <Callout type="info">
-  **Prerequisite**: The dashboard will appear empty until you connect a cloud account. Please complete the [Account Onboarding](/guide/onboarding) step first.
+  **Prerequisite**: The dashboard will appear empty until you connect a cloud account. Please complete the [Account Onboarding](/guide/cloud-setup/aws) step first.
 </Callout>
 
 ![Dashboard Overview](/images/dashboard_overview.png)
@@ -47,7 +48,9 @@ A real-time feed of what your agents are doing:
 ### 5. Reports
 CloudAgent creates detailed security reports for your cloud account, including **cost** and **compliance** reports (such as **SOC 2** and **HIPAA**).
 
-> Get the full list of available reports at [cloudagent.io/libraries/all-reports](https://cloudagent.io/libraries/all-reports).
+<Callout type="info">
+  Get the full list of available reports at [cloudagent.io/libraries/all-reports](https://cloudagent.io/libraries/all-reports).
+</Callout>
 
 ![CloudAgent Report Example](/images/cloudagent-report.gif)
 
@@ -60,3 +63,9 @@ CloudAgent creates detailed security reports for your cloud account, including *
 *   **Blueprints & Agents**: Create and manage infrastructure blueprints.
 *   **Reports**: Generate and view compliance reports.
 *   **My Account**: Manage your profile and settings.
+
+## Next Steps
+
+- [Cost Dashboard](/guide/dashboards/cost) — Analyze your cloud spending and savings opportunities
+- [Health Dashboard](/guide/dashboards/health) — Monitor resource health across your environments
+- [Recommendations](/guide/reports-insights/recommendations) — Act on prioritized findings

@@ -1,0 +1,140 @@
+import { Callout } from 'nextra/components'
+
+# Security Rules & Baselines
+
+## What Are Security Baselines?
+
+Security baselines are collections of predefined compliance checks that validate your cloud infrastructure against security best practices. When applied to a workload, these rules are enforced at deployment time — blocking any infrastructure that violates your selected standards before it reaches your cloud account.
+
+For AWS environments, CloudAgent includes **192 security rules** covering 42 AWS services across 11 security categories. Rules are enforced using AWS CloudFormation Guard, which validates your CloudFormation or Terraform templates against enabled rules during blueprint generation. Additional provider-specific rules will be added as CloudAgent expands its multi-cloud support.
+
+## Available Presets
+
+To get started quickly, CloudAgent provides five security presets that enable progressively stricter rule sets:
+
+| Preset | Rules Enabled | Best For |
+|--------|:------------:|----------|
+| None | 0 | Unrestricted deployments (not recommended) |
+| Relaxed Sandbox | 4 | Quick experiments and proof-of-concept work |
+| Basic Security | 8 | Environments with minimal compliance needs |
+| Development | 12 | Dev/staging environments with standard protections |
+| Production | 21 | Production workloads requiring comprehensive controls |
+| All Best Practices | 192 | Maximum security posture across all services |
+
+<Callout type="info">
+  Presets are starting points. After selecting one, you can enable or disable individual rules to match your organization's specific requirements.
+</Callout>
+
+### What Each Preset Covers
+
+**Relaxed Sandbox (4 rules)**: EC2 detailed monitoring, CloudTrail enabled, and RDS public access restrictions. The minimum to maintain basic visibility.
+
+**Basic Security (8 rules)**: Adds security group requirements, S3 public access blocks, and RDS/Redshift public access restrictions. Covers the most common misconfiguration risks.
+
+**Development (12 rules)**: Adds CloudTrail file validation, S3 bucket logging, VPC Flow Logs, and HTTPS/TLS enforcement. Ensures logging and encryption-in-transit are in place.
+
+**Production (21 rules)**: Adds encryption at rest (EBS, RDS, S3), database backups, multi-AZ support, auto-scaling, and cross-region replication. Comprehensive coverage for workloads handling real data.
+
+**All Best Practices (192 rules)**: Every available rule across all 42 supported services. Best for high-compliance environments like healthcare, finance, or government.
+
+## Rule Categories
+
+Rules are organized into 11 categories:
+
+| Category | Description | Example Rules |
+|----------|-------------|---------------|
+| Encryption | At-rest encryption for storage and databases | EBS volume encryption, RDS encryption, S3 default encryption |
+| Encryption In-Transit | TLS/SSL enforcement for data in motion | ALB HTTPS redirect, CloudFront TLS, API Gateway TLS |
+| Public Access | Prevent unintended public exposure | S3 block public access, RDS no public access, Redshift no public access |
+| Network Access Control | Security group and network configuration | Restricted SSH/RDP, VPC Flow Logs, no unrestricted ingress |
+| Identity & Access Management | IAM policies and access patterns | MFA enforcement, access key rotation, least-privilege policies |
+| Logging | Audit trail and monitoring configuration | CloudTrail enabled, S3 access logging, VPC Flow Logs |
+| Backup | Data protection and recovery | RDS automated backups, cross-region replication, delete protection |
+| Resiliency | High availability and fault tolerance | Multi-AZ deployments, auto-scaling, load balancing |
+| Cost & Billing | Cost governance controls | EBS optimization, instance rightsizing |
+| No Plain Text Passwords | Secrets management | No hardcoded credentials in templates or parameters |
+| Other Best Practices | General operational excellence | Detailed monitoring, tagging standards |
+
+## How Rules Are Applied
+
+Security rules are enforced during the deployment pipeline:
+
+1. **Configure**: Select a preset or customize individual rules in the workload's **Security Rules** tab
+2. **Save**: Rule configuration is stored with the workload definition
+3. **Deploy**: When you create infrastructure via a blueprint, CloudAgent generates a CloudFormation or Terraform template
+4. **Validate**: CloudFormation Guard checks the template against all enabled rules
+5. **Block or Proceed**: If violations are found, deployment is blocked with a detailed explanation. If all checks pass, deployment proceeds
+
+<Callout type="warning">
+  Security rules are preventive — they block non-compliant deployments before resources are created. They do not retroactively scan existing infrastructure. Use [Reports](/guide/reports-insights/reports) for post-deployment compliance scanning.
+</Callout>
+
+## Configuring Security Rules
+
+### Selecting a Preset
+
+1. Navigate to your workload and open the **Security Rules** tab
+2. Choose a preset from the dropdown (e.g., "Production")
+3. The corresponding rules are automatically enabled
+4. Click **Save** to apply
+
+### Customizing Individual Rules
+
+After selecting a preset, you can fine-tune:
+
+- **Group by Category or Service**: Toggle the view to see rules organized by security category (e.g., Encryption, Logging) or by AWS service (e.g., S3, EC2, RDS)
+- **Toggle individual rules**: Use the switch next to each rule to enable or disable it
+- **Enable/disable entire categories**: Use the category-level toggle to enable or disable all rules in a group
+- **Enable All / Disable All**: Use the global toggle to quickly enable or disable every rule
+
+### Understanding Rule Details
+
+Each rule displays:
+
+- **Title**: A descriptive name (e.g., "EBS Volume Encryption Key Rule")
+- **Description**: What the rule checks and why it matters
+- **Service**: The AWS service this rule applies to
+- **Category**: The security category (Encryption, Logging, etc.)
+
+<Callout type="info">
+  Rule definitions are maintained by CloudAgent and cannot be modified. You can only enable or disable rules — this ensures consistent compliance standards across your organization.
+</Callout>
+
+## Viewing Compliance Against Rules
+
+When a deployment is blocked by a security rule violation, the preview shows:
+
+- Which rule was violated
+- Which resource in the template caused the violation
+- The reason for the failure
+- A suggested fix
+
+After addressing violations, resubmit the deployment for re-validation.
+
+For ongoing compliance monitoring of existing resources, use the [Reports](/guide/reports-insights/reports) page to generate compliance reports (CIS Benchmark, SOC2, HIPAA, etc.) that assess your deployed infrastructure against industry frameworks.
+
+## Integration with Other Features
+
+Security rules work alongside other CloudAgent capabilities:
+
+- **Reports**: Compliance reports assess your deployed resources against similar standards. Security rules prevent new violations; reports catch existing ones.
+- **Recommendations**: CloudAgent recommends enabling security services (GuardDuty, Security Hub) that complement your baseline rules.
+- **Blueprints**: When agents generate infrastructure, security rules are applied automatically to the output template.
+- **Governance**: Required tags and change approvals complement security rules — together they form a complete compliance framework.
+
+## Troubleshooting
+
+**Deployment blocked unexpectedly**: Check which rule failed in the deployment preview. If the rule doesn't apply to your use case, disable it in the workload's Security Rules tab and redeploy.
+
+**Too many rules enabled**: Start with a preset that matches your environment (e.g., "Development" for staging) and add rules incrementally rather than starting with "All Best Practices."
+
+**Rule changes not taking effect**: Ensure you clicked Save after modifying rules. Rule changes are stored with the workload and apply to the next deployment.
+
+**Cannot find a specific rule**: Use the "Group by Service" view and expand the relevant AWS service to locate rules for that service.
+
+## Next Steps
+
+- [Governance & Architecture](/guide/workloads-governance/governance) — Configure change approvals, required tags, and architecture preferences
+- [Managing Workloads](/guide/workloads-governance/workloads) — Set up workloads and assign security baselines
+- [Reports](/guide/reports-insights/reports) — Run compliance reports to assess existing infrastructure
+- [Recommendations](/guide/reports-insights/recommendations) — Review security recommendations across your environment
