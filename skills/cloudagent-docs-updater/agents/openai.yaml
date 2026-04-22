@@ -1,0 +1,3 @@
+display_name: CloudAgent Docs Updater
+short_description: Plan and apply CloudAgent user-doc updates from product diffs.
+default_prompt: Use the CloudAgent docs updater skill. Generate a docs update plan from the current product repos, do not edit files until I approve the plan, and clearly list proposed docs and screenshots.
