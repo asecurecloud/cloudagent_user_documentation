@@ -1,0 +1,22 @@
+{
+  "description": "Last product commits reviewed for user documentation updates. Update these only after docs have been checked against the corresponding repo revisions.",
+  "updatedAt": "2026-04-22T00:00:00.000Z",
+  "repos": {
+    "cloudagent_frontend": {
+      "path": "../cloudagent_frontend",
+      "lastReviewedCommit": "f36829a8748791596c5c1d6f85bd684288fc1498"
+    },
+    "cloudagent_backend": {
+      "path": "../cloudagent_backend",
+      "lastReviewedCommit": "7ac45df33170b053a5897410b947f7641b3d85b9"
+    },
+    "cloudagent_apps": {
+      "path": "../cloudagent_apps",
+      "lastReviewedCommit": "b5c1bdaa5484b3be3e0fc40c86f1eda25c58af46"
+    },
+    "cloudagent_userdocs": {
+      "path": ".",
+      "lastReviewedCommit": "94d2c28a575ed1f315791139dcfbdc2eae479734"
+    }
+  }
+}

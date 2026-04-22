@@ -10,7 +10,13 @@
     "lint": "next lint",
     "generate-llms": "node scripts/generate-llms.mjs",
     "generate-sitemap": "node scripts/generate-sitemap.mjs",
-    "generate-all": "node scripts/generate-llms.mjs && node scripts/generate-sitemap.mjs"
+    "generate-all": "node scripts/generate-llms.mjs && node scripts/generate-sitemap.mjs",
+    "docs:update": "node scripts/docs-update-check.mjs --pull",
+    "docs:diff": "node scripts/docs-update-check.mjs",
+    "docs:plan": "node scripts/docs-update-check.mjs --pull --plan",
+    "docs:update:mark-reviewed": "node scripts/docs-update-check.mjs --mark-reviewed",
+    "screenshots:capture": "node scripts/capture-screenshots.mjs --capture",
+    "screenshots:clean": "node scripts/capture-screenshots.mjs --clean"
   },
   "keywords": [],
   "author": "",

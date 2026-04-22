@@ -1,5 +1,19 @@
 # AI Agent Instructions
 
+## Product Documentation Update Workflow
+
+For product-driven documentation updates, read `.agent/DOCS_UPDATE_AGENT.md` first.
+
+For automation, run from clean checkouts and treat the remote default branches as the source of truth.
+
+Start with a plan:
+
+```bash
+npm run docs:plan
+```
+
+This checks the frontend, backend, apps, and userdocs repos, refuses to pull over dirty worktrees, pulls latest changes when clean, reports the diff since the last reviewed documentation baseline, and prints a proposed documentation plan without editing files.
+
 ## Before Committing Documentation Changes
 
 Whenever you make changes to the documentation in the `pages/` directory, you **MUST** run the following command before committing:

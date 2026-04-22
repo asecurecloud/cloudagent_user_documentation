@@ -12,6 +12,3 @@ dist
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Contains hardcoded credentials — never commit
-scripts/capture-screenshots.mjs
