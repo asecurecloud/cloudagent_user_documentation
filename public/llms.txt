@@ -1,7 +1,7 @@
 ---
 title: CloudAgent Documentation
 description: Consolidated documentation for CloudAgent, optimized for LLM consumption.
-generated_at: 2026-03-10T16:37:26.909Z
+generated_at: 2026-04-26T03:48:07.178Z
 ---
 
 # CloudAgent Documentation
@@ -259,6 +259,8 @@ When you connect an AWS account, CloudAgent generates a CloudFormation template 
 
 At minimum, the role uses the **AWS managed `ReadOnlyAccess` policy**. This is enough to power dashboards, reports, recommendations, and health checks — no additional per-service permissions are required to get started.
 
+Health, cost, inventory, and threat analysis run through background scanner tasks. For AWS, `ReadOnlyAccess` includes the read APIs CloudAgent needs for Cost Explorer, CloudWatch metrics and logs, CloudFormation stack and drift status, and supported database health checks.
+
 ### Deployment Options
 
 You can deploy the IAM role using:
@@ -367,6 +369,8 @@ If you need to update the IAM role:
 
 **"Access Denied" errors during scans or reports**: This usually means the IAM role is missing or misconfigured. The AWS managed `ReadOnlyAccess` policy covers all read operations CloudAgent needs. If you see access errors on write operations (remediation, deployment), upgrade to Limited Write or Full Admin.
 
+**Scanner result is pending**: Background scanner tasks may take a few minutes to write health, cost, inventory, or threat artifacts. Refresh the dashboard or report after the task completes.
+
 **Cannot see resources from a connected account**: Ensure the permission profile is validated (green checkmark) in Cloud Environments. If the checkmark is missing, click Edit and re-run the validation step.
 
 **Multiple accounts showing the same data**: Each permission profile should point to a different AWS Account ID. Check your Cloud Environments list to ensure accounts aren't duplicated.
@@ -374,6 +378,7 @@ If you need to update the IAM role:
 ## Next Steps
 
 - [Account Onboarding](/guide/cloud-setup/aws) — Step-by-step guide for your first AWS account connection
+- [Artifact Analysis](/guide/reports-insights/artifact-analysis) — Understand how scanner tasks produce health, cost, inventory, and threat artifacts
 - [Security Rules & Baselines](/guide/workloads-governance/security-baselines) — Configure compliance rules for connected accounts
 - [Governance & Architecture](/guide/workloads-governance/governance) — Set up deployment controls and architecture preferences
 - [Managing Workloads](/guide/workloads-governance/workloads) — Create workloads that span your connected accounts
@@ -394,7 +399,7 @@ Once logged in, you will see the **Dashboard Overview**. This is your central hu
 > **Note:** 
   **Prerequisite**: The dashboard will appear empty until you connect a cloud account. Please complete the [Account Onboarding](/guide/cloud-setup/aws) step first.
 
-![Dashboard Overview](/images/dashboard_overview.png)
+![Dashboard Overview](/images/dashboard_overview_cc.png)
 
 ## Key Features
 
@@ -450,6 +455,118 @@ CloudAgent creates detailed security reports for your cloud account, including *
 - [Cost Dashboard](/guide/dashboards/cost) — Analyze your cloud spending and savings opportunities
 - [Health Dashboard](/guide/dashboards/health) — Monitor resource health across your environments
 - [Recommendations](/guide/reports-insights/recommendations) — Act on prioritized findings
+
+# Command Center
+
+# Command Center
+
+## Objective
+
+Use Command Center to work with CloudAgent conversationally while keeping live product context in scope. Command Center is where you combine environments, workloads, reports, recommendations, and executive summaries into one guided operating surface.
+
+## Accessing Command Center
+
+Navigate to **Command Center** in the sidebar, or go directly to `/dashboard/cloudagent`.
+
+![Command Center](/images/command_center_cc.png)
+
+Command Center supports two main paths:
+
+| Path | Use It For |
+|------|------------|
+| Recommended By CloudAgent | Start from personalized recommendation cards and guided next actions |
+| Type a question or task | Ask for infrastructure help, investigation, review, or action in your own words |
+
+## Scope and Context
+
+Before sending a prompt, you can add product context so CloudAgent works against the right objects.
+
+Supported scope types include:
+
+| Scope Type | Typical Use |
+|------------|-------------|
+| Environments | Review health, cost, security posture, and account-level findings |
+| Workloads | Focus on one application or stack and the resources tied to it |
+| Reports | Ground the conversation in an existing compliance or analysis report |
+
+Command Center enforces scope limits so the conversation stays focused. If too much is selected, narrow the scope before continuing.
+
+## What You Can Review Inline
+
+Command Center can load and preview several product artifacts without forcing you to navigate away first:
+
+- recommendations and suggested follow-up actions
+- report previews and summaries
+- executive summary previews for environments and workloads
+- health findings and resource-level issues
+- cost analysis results and optimization signals
+
+This is especially useful when a user needs to compare multiple sources before deciding whether to run a blueprint, start a workflow, or request approval.
+
+## Working from Recommendations
+
+When you open Command Center from a recommendation or choose **Recommended By CloudAgent**, the experience is tuned for triage:
+
+1. review the recommendation and its priority
+2. inspect affected resources or supporting context
+3. preview linked reports or executive summaries when available
+4. decide whether to dismiss, investigate further, or remediate
+
+Some recommendations open directly into a remediation or blueprint flow. Others are better handled as a question to Command Center with the relevant environment or workload already in scope.
+
+## Report and Executive Summary Previews
+
+Command Center can preview:
+
+- report summaries
+- executive summaries for environments
+- executive summaries for workloads
+
+Use report previews when you need evidence from a specific scan or compliance result. Use executive summary previews when you need a faster roll-up for stakeholder communication or decision support.
+
+## Waiting on User and Approval States
+
+Command Center also surfaces long-running and human-in-the-loop states. Common examples include:
+
+- a workflow or blueprint is waiting for approval
+- a background scan is still processing
+- a report or summary has not finished loading
+- a follow-up question is required before a state-changing action can proceed
+
+If a task is paused for approval, review the proposed action and supporting context before continuing. This is the right place to stop an automated flow before it changes production infrastructure.
+
+> **Note:** 
+  Command Center is strongest when you add only the environments, workloads, and reports needed for the decision at hand. Treat it as an operating surface, not a catch-all chat window.
+
+## Common Use Cases
+
+### Investigate an environment
+
+Add one environment to scope, review health or cost context, and ask CloudAgent to summarize current issues and next actions.
+
+### Review a workload before remediation
+
+Add the workload and any related report, then ask CloudAgent to explain the current findings, likely impact, and safest remediation path.
+
+### Prepare for an approval decision
+
+Open the waiting task, inspect the recommendation, report preview, or executive summary, then decide whether to continue, pause, or cancel.
+
+## Troubleshooting
+
+**Context feels incomplete**: Add the workload, environment, or report explicitly instead of relying on a generic question.
+
+**A report preview is missing**: Confirm the report has completed and that it is in the current scope.
+
+**An executive summary does not appear**: Generate or refresh the executive summary first, then reopen the preview.
+
+**A task is still pending**: The backing workflow, report, or scanner may still be running. Wait for the product artifact to finish and refresh the page.
+
+## Next Steps
+
+- [Executive Summaries](/guide/reports-insights/executive-summaries) — Understand environment and workload summaries used in Command Center
+- [Recommendations](/guide/reports-insights/recommendations) — Review the recommendation flows that often start Command Center sessions
+- [My Workflows](/guide/automation/workflows) — Automate the follow-up actions you commonly take after review
 
 # Cost Dashboard
 
@@ -516,6 +633,8 @@ You can adjust the dashboard view using these controls:
 - **Refresh**: Force a fresh data pull from your cloud provider's APIs. The dashboard caches data to reduce API calls, so use this when you need the latest numbers.
 - **Lookback Period**: The default analysis window is 90 days. This determines how far back the trend chart and calculations extend.
 
+Cost analysis runs as an asynchronous scanner task. After you click **Refresh**, CloudAgent stores the generated cost artifact and the dashboard loads that stored result. If the artifact is still being created, the dashboard may show a pending state until the scan completes.
+
 ## Anomaly Detection
 
 When AWS Cost Anomaly Detection is configured in your account, the dashboard surfaces unusual spending patterns automatically. Each anomaly shows:
@@ -580,12 +699,15 @@ Once you identify cost optimization opportunities:
 
 **Missing cost data for an account**: Verify the permission profile is validated on the [Cloud Setup](/guide/cloud-setup/aws) page — the AWS managed `ReadOnlyAccess` policy covers all the permissions CloudAgent needs for cost data. Also try clicking **Refresh** to force a fresh data pull.
 
+**Cost analysis is not ready yet**: A new cost scan may still be running. Wait a few minutes, then refresh the dashboard or rerun the analysis for the selected environment.
+
 **No recommendations showing**: AWS services like Compute Optimizer and Cost Optimization Hub need 14+ days of usage data before generating recommendations. If you haven't enabled these services yet, only CloudAgent's own assessment engine recommendations will appear.
 
 **Anomalies section not visible**: This section only appears when AWS Cost Anomaly Detection is both configured in your account and has detected anomalies. If you haven't set up Cost Anomaly Detection monitors yet, enable them in the AWS Billing console.
 
 ## Next Steps
 
+- [Artifact Analysis](/guide/reports-insights/artifact-analysis) — Understand how stored cost artifacts and pending states work
 - [Recommendations](/guide/reports-insights/recommendations) — View and act on prioritized optimization findings
 - [My Workflows](/guide/automation/workflows) — Schedule automated cost reports and remediation
 - [Reports](/guide/reports-insights/reports) — Generate formal compliance and cost reports for stakeholders
@@ -645,7 +767,22 @@ Click any resource in the table to expand its details. Each resource shows:
   - Timestamp of when the check was last evaluated
 
 > **Note:** 
-  Health checks cover multiple categories: availability (is the resource running?), errors (are there failures in logs?), configuration (is the setup correct?), and capacity (is the resource under pressure?).
+  Health checks cover multiple categories: availability (is the resource running?), errors (are there failures in logs?), configuration (is the setup correct?), capacity (is the resource under pressure?), and runtime lifecycle.
+
+## Health Check Coverage
+
+CloudAgent health checks include common AWS compute, storage, database, and delivery services. Coverage continues to expand, and unsupported resource types appear as **Skipped** instead of reducing the health score.
+
+Recent AWS coverage includes:
+
+| Area | Examples of Checks |
+|------|--------------------|
+| CloudFormation | Failed stack status, recent failed stack events, stack drift status |
+| RDS | DB instance and cluster status, free storage headroom, replica lag, deadlocks, exported log errors |
+| Amazon DocumentDB | Cluster and instance status, global replication lag, connection headroom, low-memory throttling, replica status, exported log errors |
+| Amazon Neptune | Cluster and instance status, global replication lag, main request queue pressure, replica status, exported log errors |
+
+CloudFormation drift checks reuse a drift result from the last 24 hours when one is available. If no recent result exists, CloudAgent starts drift detection and reports the final status when the AWS drift operation completes.
 
 ## Filtering Resources
 
@@ -685,6 +822,10 @@ Click the data freshness indicator to see when each workload and environment was
 
 Data is considered fresh if generated within the last 24 hours. Sources showing "Never checked" need an initial health check run.
 
+## Pending Results
+
+Health analysis runs asynchronously. While a new scanner task is still writing its results, the dashboard may show a pending or not-ready state for the selected workload or environment. Refresh again after the scan completes to load the stored health artifact.
+
 ## Taking Action on Health Issues
 
 When the dashboard surfaces resources with issues:
@@ -702,10 +843,13 @@ When the dashboard surfaces resources with issues:
 
 **Health data not updating**: Verify that the permission profile for the environment is validated and uses at least the AWS managed `ReadOnlyAccess` policy, which covers the CloudWatch permissions health checks require. Also check that force refresh is enabled if you're seeing stale data.
 
+**CloudFormation drift stays pending or unknown**: Drift detection can take time in AWS and only runs for supported stack statuses. If another drift operation is already in progress, CloudAgent reuses the latest available stack drift status until the operation completes.
+
 **Checks showing "Skipped"**: Some resource types don't have health checks available yet. CloudAgent continuously expands its check coverage.
 
 ## Next Steps
 
+- [Artifact Analysis](/guide/reports-insights/artifact-analysis) — Understand how stored health artifacts and pending states work
 - [Recommendations](/guide/reports-insights/recommendations) — Act on health-related findings with prioritized remediation steps
 - [Managing Workloads](/guide/workloads-governance/workloads) — Configure which resources are tracked and monitored
 - [My Workflows](/guide/automation/workflows) — Schedule periodic health checks as automated workflows
@@ -724,6 +868,8 @@ Threat Management in CloudAgent brings together cloud-native security services t
 ## Current Threat Detection Capabilities
 
 CloudAgent currently supports threat detection through its **Recommendations** and **Reports** systems. The platform evaluates your environments against threat detection best practices and flags gaps in your security posture.
+
+Threat analysis uses stored scanner artifacts for each connected AWS environment. When you refresh threat data, CloudAgent starts a scanner task and loads the stored result after it is available. Until then, the environment may show a pending or not-ready state.
 
 ### Supported AWS Security Services
 
@@ -745,6 +891,8 @@ For AWS accounts, CloudAgent integrates with the following threat detection serv
    - **SOC2** reports evaluate security monitoring and incident response readiness
 
 3. **Automated Remediation**: When CloudAgent identifies that a threat detection service is not enabled, you can use a blueprint or workflow to automatically enable it. Each recommendation includes a remediation blueprint that can be executed directly.
+
+4. **Artifact Analysis in Workflows**: Workflows can analyze existing threat artifacts alongside cost, health, and inventory data. This is useful when you want a recurring workflow to summarize current threat findings without running a new report blueprint first.
 
 ## Planned Capabilities
 
@@ -771,6 +919,7 @@ Even before the full dashboard launches, you can set up a strong threat detectio
 
 ## Next Steps
 
+- [Artifact Analysis](/guide/reports-insights/artifact-analysis) — Understand how stored threat artifacts and pending states work
 - [Recommendations](/guide/reports-insights/recommendations) — Review and act on threat detection recommendations
 - [Reports](/guide/reports-insights/reports) — Run compliance reports that include threat monitoring controls
 - [Blueprints & Agents](/guide/automation/blueprints) — Use remediation blueprints to enable security services
@@ -794,7 +943,7 @@ To view your workloads:
 1.  Navigate to **Cloud Setup & Workloads** in the sidebar.
 2.  You will see a list of all connected cloud environments and deployed workloads.
 
-![Workload List](/images/workload_list.png)
+![Workloads](/images/workloads_cc.png)
 
 ## Workload Details
 
@@ -811,6 +960,8 @@ Click on any workload in the list to view its details. The details view provides
 *   **Architecture Preferences**: Settings related to the architectural design of the workload.
 *   **Security Rules**: Security configurations and firewall rules.
 
+The workload detail view is where CloudAgent ties together topology, tracked resources, recommendations, reports, and environment context. It is the main place to understand what the workload contains and which cloud environments back it.
+
 ### Diagram Preview
 
 The **Diagram Preview** panel provides a visual representation of your workload's architecture. It displays all the AWS resources and their relationships in an easy-to-understand diagram.
@@ -823,6 +974,26 @@ The **Diagram Preview** panel provides a visual representation of your workload'
 > **Note:** 
   **Tip**: Use the expanded diagram view during architecture reviews or when onboarding new team members to quickly understand the infrastructure layout.
 
+Because the diagram is generated from tracked resources, it becomes more useful as workload discovery improves. If the diagram looks incomplete, review the tracked resources list first.
+
+### Resource Environment Context
+
+Tracked resources can include the AWS account ID and permission profile that owns the resource. This helps CloudAgent connect workload resources back to the right environment for health checks, cost context, recommendations, reports, and workflows.
+
+When CloudAgent discovers resources from CloudFormation stacks, it keeps stack-derived resources linked to the selected environment. This is especially important for workloads that span multiple accounts or regions.
+
+## Tracked Resources
+
+Tracked resources are the foundation for workload-level analysis. This table is where CloudAgent decides which resources belong to the workload for:
+
+- health checks
+- recommendations
+- architecture diagrams
+- reports
+- workflow targeting
+
+Tracked resources can include compute, storage, networking, IAM, database, and CloudFormation-managed resources. If a resource is missing here, it will usually be missing from downstream health, recommendation, and diagram views too.
+
 ### Recommendations and Reports
 
 The workload details page also includes:
@@ -830,10 +1001,53 @@ The workload details page also includes:
 *   **Top 5 Environment Recommendations**: Priority-ranked suggestions specific to this workload's environment.
 *   **Reports**: Compliance reports (PCI DSS, CIS Benchmarks) with status indicators and quick access to view details.
 
+The reports table shows workload-relevant scans by environment, status, and update time. Use **Run New Report** to start a fresh report from the library, or **View Report** to open an existing completed result.
+
+## Recommendations in Workloads
+
+The workload details page can show both:
+
+- **Workload recommendations** tied directly to tracked workload resources
+- **Top 5 environment recommendations** inherited from the backing cloud environment
+
+Use workload recommendations when you want findings tightly scoped to the application or stack. Use environment recommendations when the issue is broader and affects the account, region, or shared platform around the workload.
+
+Each recommendation row includes:
+
+| Field | Description |
+|-------|-------------|
+| Recommendation | The finding title or suggested improvement |
+| Priority | Critical, High, Medium, or Low |
+| Resources | How many resources are affected |
+| Updated | When the finding was last refreshed |
+| Remediation | Direct action into the recommendation flow or blueprint run |
+
+## Multi-Environment Workloads
+
+A workload can span multiple environments, accounts, or regions. In that model:
+
+- tracked resources remain linked back to their source environment
+- health and cost context can be reviewed by environment and by workload
+- reports may be run against one or more workload environments
+- workflows can use the workload as an organizing layer while still executing per environment
+
+This separation matters when a workload contains shared services, regional replicas, or production and non-production environments under one application boundary.
+
+## Common Troubleshooting
+
+**A workload has no recommendations**: Confirm the tracked resources list is populated and the backing environment has current recommendation or scanner data.
+
+**A workload report table is empty**: Reports appear after they are run for the workload's environments. Use **Run New Report** from the workload page or the main reports library.
+
+**The diagram is missing services**: Review tracked resources and CloudFormation-linked discovery first. The diagram only reflects what CloudAgent currently associates with the workload.
+
+**The wrong account context is shown**: Check the permission profile and environment linkage for the workload resources. Multi-account workloads depend on correct environment association.
+
 ## Next Steps
 
 - [Security Rules & Baselines](/guide/workloads-governance/security-baselines) — Configure compliance rules for your workloads
 - [Governance & Architecture](/guide/workloads-governance/governance) — Set deployment controls and architecture preferences
+- [Artifact Analysis](/guide/reports-insights/artifact-analysis) — Understand how workload reports and findings are generated from stored artifacts
 - [Recommendations](/guide/reports-insights/recommendations) — View findings across your workloads
 
 # Security Rules & Baselines
@@ -1160,7 +1374,7 @@ The **Recommendations** page provides a centralized view of all findings and sug
 1. Navigate to **Recommendations** in the sidebar.
 2. You will see a comprehensive list of all recommendations organized by category and priority.
 
-![Recommendations Page](/images/recommendations.png)
+![Recommendations Page](/images/recommendations_cc.png)
 
 > **Note:** 
   **Quick Access**: You can also access category-specific recommendations directly from the Dashboard's Smart Recommendations widget.
@@ -1203,6 +1417,13 @@ Suggestions to maximize your use of CloudAgent:
 - Untracked resources
 - Missing environment labels
 
+### Operational Health
+Findings from health analysis that point to availability, capacity, configuration, or runtime lifecycle issues:
+- Failed or rolled-back CloudFormation stacks
+- CloudFormation stack drift
+- Database capacity pressure, replication lag, deadlocks, or log errors
+- Runtime versions that are deprecated or nearing end of support
+
 ## Recommendation Details
 
 Each recommendation includes:
@@ -1226,6 +1447,8 @@ For each recommendation, you can:
 > **Note:** 
   **Tip**: Address Critical and High priority recommendations within 24-48 hours to maintain a strong security posture.
 
+Recommendations can be generated from stored scanner artifacts. If a health, cost, threat, or inventory scan is still running, related recommendations may update after the artifact becomes available.
+
 ## Filtering and Search
 
 Use the filtering options to focus on specific findings:
@@ -1236,6 +1459,7 @@ Use the filtering options to focus on specific findings:
 
 ## Next Steps
 
+- [Artifact Analysis](/guide/reports-insights/artifact-analysis) — Understand how recommendations depend on stored scanner artifacts
 - [Reports](/guide/reports-insights/reports) — Generate compliance reports based on recommendation findings
 - [My Workflows](/guide/automation/workflows) — Automate remediation actions for recurring recommendations
 - [Blueprints & Agents](/guide/automation/blueprints) — Use agents to execute remediation blueprints
@@ -1257,7 +1481,7 @@ Reports can be accessed from multiple locations:
 2. **Workload Details**: Reports specific to a workload in the Reports section
 3. **Reports Page**: Navigate to **Reports** in the sidebar for the full report library
 
-![Reports Page](/images/reports.png)
+![Reports Page](/images/reports_cc.png)
 
 ## Available Reports
 
@@ -1350,6 +1574,220 @@ All generated reports are stored in your report history:
 - [My Workflows](/guide/automation/workflows) — Schedule automated report generation
 - [Audit Logs](/guide/reports-insights/audit-logs) — Use report history as part of your audit trail
 - [Recommendations](/guide/reports-insights/recommendations) — Act on findings surfaced in reports
+
+# Executive Summaries
+
+# Executive Summaries
+
+## Objective
+
+Generate concise, stakeholder-friendly summaries for cloud environments and workloads. Executive Summaries help teams understand current posture, key findings, and likely next actions without reading every underlying report.
+
+## Accessing Executive Summaries
+
+Navigate to **Executive Summaries** in the sidebar, or go directly to `/dashboard/executive-summaries`.
+
+![Executive Summaries](/images/executive_summaries_cc.png)
+
+The page is split into two sections:
+
+| Section | What It Covers |
+|---------|----------------|
+| Cloud Environments | Account- or environment-level summaries |
+| Workloads | Application- or stack-level summaries |
+
+## Environment vs Workload Summaries
+
+### Environment Summaries
+
+Environment summaries are best when you want an account-level view across recommendations, reports, and scanner results tied to one connected cloud environment.
+
+Use them for:
+
+- account health reviews
+- leadership updates by environment
+- compliance and operations check-ins
+- pre-change or pre-remediation context
+
+### Workload Summaries
+
+Workload summaries focus on one application, platform, or stack and the resources CloudAgent tracks for it.
+
+Use them for:
+
+- service ownership reviews
+- architecture and workload posture discussions
+- release readiness or remediation planning
+- sharing a concise status update with delivery teams
+
+## What Data Feeds a Summary
+
+Executive summaries are generated from the data CloudAgent already has for the selected environment or workload. Depending on what is available, a summary can draw from:
+
+- reports and report summaries
+- recommendations
+- health analysis
+- cost analysis
+- workload context and tracked resources
+
+The exact depth of the summary depends on how much current product data exists. A well-scoped environment or workload with recent reports and findings will produce a stronger summary than one with little recent activity.
+
+## Viewing and Refreshing Summaries
+
+Each card shows whether a summary already exists.
+
+Typical actions:
+
+1. open the summary to review it in detail
+2. refresh the summary when the underlying product data changes
+3. drill into the workload or supporting report for deeper evidence
+
+If a summary is missing, generate it from the page before using it in stakeholder communication.
+
+## Relationship to Reports and Recommendations
+
+Executive summaries are not a replacement for reports or recommendations.
+
+| Feature | Best For |
+|---------|----------|
+| Executive Summary | Fast briefing and decision support |
+| Report | Detailed findings, framework mapping, and evidence |
+| Recommendation | Actionable remediation or optimization items |
+
+In practice:
+
+- use a report when you need detailed controls or affected resources
+- use recommendations when you need prioritized actions
+- use an executive summary when you need the narrative roll-up
+
+## Using Executive Summaries from Command Center
+
+Command Center can preview executive summaries for environments and workloads. This is useful when:
+
+- a user asks for a quick current-state briefing
+- a recommendation needs business context before remediation
+- an approval decision needs a concise summary rather than a full report review
+
+When used in Command Center, keep the scope tight so the preview reflects the right environment, workload, or report context.
+
+> **Note:** 
+  Refresh an executive summary after major report runs, new recommendation cycles, or significant workload changes. Otherwise the summary may lag behind the current product state.
+
+## Troubleshooting
+
+**No summary is available**: Generate one from the page first.
+
+**A summary feels outdated**: Refresh it after new reports, findings, or workload changes.
+
+**A workload summary lacks detail**: Check whether the workload has recent reports, recommendations, and tracked resources.
+
+**A summary mentions reports you cannot find**: Open the underlying workload or reports page to inspect the supporting source data.
+
+## Next Steps
+
+- [Command Center](/guide/dashboards/command-center) — Use executive summaries as part of guided review and approval flows
+- [Reports](/guide/reports-insights/reports) — Inspect the underlying report evidence behind a summary
+- [Managing Workloads](/guide/workloads-governance/workloads) — Improve workload context so summaries stay useful
+
+# Artifact Analysis
+
+# Artifact Analysis
+
+## Objective
+
+Understand how CloudAgent stores and reuses scanner results for health, cost, inventory, and threat analysis. This page explains why some dashboards show pending states and how workflows can analyze existing artifacts instead of starting a new report run every time.
+
+## What an Artifact Is
+
+When CloudAgent runs a scanner task, it writes the result as a stored artifact. That artifact becomes the source for downstream product views and automation.
+
+Common artifact types include:
+
+| Artifact Type | Used By |
+|---------------|---------|
+| Health | Health Dashboard, recommendations, workflows |
+| Cost | Cost Dashboard, recommendations, workflows |
+| Inventory | workload context, resource review, workflows |
+| Threat | Threat analysis, recommendations, workflows |
+
+This model lets CloudAgent reuse one scanner result in multiple places instead of repeating the same cloud API calls for every view.
+
+## Why Results Can Be Pending
+
+Scanner tasks run asynchronously. After a refresh or workflow step starts, there is often a delay before the artifact is available to load.
+
+During that window, you may see:
+
+- pending
+- not ready
+- running
+- waiting for scanner output
+
+This is normal. The product is waiting for the stored artifact to finish writing.
+
+> **Note:** 
+  A pending state does not always mean a failure. It often means the scanner task is still running or the artifact has not been indexed yet.
+
+## Refresh Behavior
+
+Most dashboards and workflows follow the same pattern:
+
+1. start or request a scan
+2. wait for the background task to write the artifact
+3. load the stored artifact into the UI or workflow step
+
+Depending on the feature, CloudAgent may reuse a recent artifact instead of generating a new one immediately. This reduces repeated cloud API calls and speeds up the user experience.
+
+## How Artifacts Feed Dashboards
+
+Stored artifacts are reused across product surfaces:
+
+- **Health Dashboard** loads health artifacts for workloads and environments
+- **Cost Dashboard** loads stored cost analysis after a refresh completes
+- **Threat Management** uses stored threat artifacts where available
+- **Recommendations** can update when new health, cost, inventory, or threat artifacts arrive
+
+If a dashboard looks stale, confirm whether you are viewing a recent stored artifact or still waiting on a new scan to finish.
+
+## How Artifacts Feed Recommendations
+
+Recommendations can be generated or refreshed from the latest stored artifact. This is why recommendation changes may appear after a dashboard refresh completes instead of instantly.
+
+Examples:
+
+- a new health artifact can generate operational health recommendations
+- a new cost artifact can update savings and cleanup findings
+- a threat artifact can update threat posture recommendations
+
+## How Workflows Use Existing Artifacts
+
+Workflows can analyze stored artifacts without running a fresh report blueprint every time.
+
+This is most visible in report tasks that use:
+
+| Mode | Behavior |
+|------|----------|
+| `run_report` | Creates a new report or scan run |
+| `analyze_existing` | Reads the latest stored artifact and summarizes it |
+
+Use `analyze_existing` when you want a recurring workflow to summarize current posture or findings quickly. Use `run_report` when the workflow must generate new evidence first.
+
+## Troubleshooting Pending or Missing Results
+
+**A dashboard still says pending**: Wait for the background scan to complete, then refresh the page.
+
+**Recommendations did not update yet**: The source artifact may still be running or may not have been refreshed yet.
+
+**A workflow step did not continue**: Check whether it is waiting on a multi-environment scan or stored artifact before the next node can run.
+
+**The wrong environment data is showing**: Confirm the selected permission profile or workload context. Artifact loading depends on the correct environment association.
+
+## Next Steps
+
+- [Health Dashboard](/guide/dashboards/health) — Review how health artifacts surface in the dashboard
+- [Cost Dashboard](/guide/dashboards/cost) — Understand stored cost analysis and refresh behavior
+- [Recommendations](/guide/reports-insights/recommendations) — See how artifact-backed findings appear as actions
+- [My Workflows](/guide/automation/workflows) — Use `analyze_existing` in recurring workflows
 
 # Audit Logs
 
@@ -1467,7 +1905,7 @@ Create, manage, and monitor automated workflows that execute recurring cloud ope
 
 Navigate to **My Workflows** in the sidebar to view and manage your automated tasks.
 
-![My Workflows Page](/images/workflows.png)
+![My Workflows Page](/images/workflows_cc.png)
 
 ## Understanding Workflows
 
@@ -1496,6 +1934,20 @@ Triggered by specific conditions:
 - New resource detection
 - Security finding alerts
 - Threshold breaches
+
+## Building a Workflow
+
+CloudAgent workflows are built from connected nodes. A workflow can combine discovery, analysis, report generation, approvals, and remediation in one execution path.
+
+### Common Node Types
+
+| Node Type | Purpose | Typical Use |
+|-----------|---------|-------------|
+| Trigger | Starts the workflow manually or on a schedule | Weekly checks, monthly reports, on-demand runs |
+| `cloudTask` | Runs an infrastructure or cloud action against one or more environments | Enable a service, run a scan, gather context |
+| `reportTask` | Generates a report or analyzes existing stored artifacts | Compliance reports, cost summaries, health reviews |
+| Approval / Decision | Pauses for review before continuing | Production changes, high-risk remediation |
+| Notification / Follow-up | Sends results or continues with downstream actions | Notify a team, hand off to a blueprint, branch on outcome |
 
 ## Creating a Workflow
 
@@ -1556,6 +2008,40 @@ Common actions available in workflows:
 - **Check Reserved Instance Coverage**: Optimize RI utilization
 - **Generate Cost Report**: Create spending analysis
 
+### Artifact Analysis
+- **Analyze Existing Cost Data**: Summarize spend trends from the latest cost artifact
+- **Analyze Health Findings**: Group active health issues by service, region, severity, or workload
+- **Analyze Inventory**: Count resources by service and region or identify risky resource concentrations
+- **Analyze Threat Findings**: Summarize current threat findings and prioritize follow-up actions
+
+Artifact analysis uses existing scanner results for cost, health, inventory, or threat data. Use it when you want a workflow to review data CloudAgent has already collected instead of running a new report blueprint first.
+
+## Report Tasks
+
+CloudAgent supports two common report-task modes:
+
+| Mode | What It Does | Use When |
+|------|--------------|----------|
+| `run_report` | Runs a report blueprint and waits for the new result | You need a fresh compliance, security, or inventory report |
+| `analyze_existing` | Reads a stored cost, health, inventory, or threat artifact and summarizes it | You want to review data CloudAgent already collected |
+
+Use `run_report` when the workflow needs a new scan or formal report output. Use `analyze_existing` when the workflow should act on the latest available artifact without waiting for a new report blueprint to finish.
+
+For more on how stored artifacts behave, see [Artifact Analysis](/guide/reports-insights/artifact-analysis).
+
+## Multi-Environment Tasks
+
+Workflow tasks can run against one environment or multiple selected environments. For multi-environment cloud and report tasks, CloudAgent controls how the next workflow step advances:
+
+| Advance Mode | Behavior | Use When |
+|--------------|----------|----------|
+| Each | Downstream steps run separately as each environment finishes | You want per-environment branching, notifications, approvals, or follow-up actions |
+| All | Downstream steps wait until every environment finishes | You want one combined summary, comparison, or decision after all environments complete |
+
+For large environment selections, CloudAgent may split scanner work into multiple background tasks. The workflow still tracks the overall result and waits according to the selected advance mode.
+
+This matters most when downstream steps depend on aggregated results. Use **Each** when a workflow should branch, notify, or request approval per environment. Use **All** when you need one roll-up view after every selected environment finishes.
+
 ## Human-in-the-Loop
 
 For sensitive operations, workflows can pause and wait for approval:
@@ -1568,6 +2054,13 @@ For sensitive operations, workflows can pause and wait for approval:
 > **Note:** 
   **Tip**: Enable approval steps for any workflow that modifies production resources.
 
+Approval steps are also useful for workflows that combine findings from multiple sources. A common pattern is:
+
+1. Analyze health, cost, or threat artifacts
+2. Generate a recommendation or report summary
+3. Pause for approval
+4. Run a remediation blueprint only after review
+
 ## Viewing Workflow History
 
 Click on any workflow to see:
@@ -1576,6 +2069,13 @@ Click on any workflow to see:
 - **Logs**: Detailed output from each action
 - **Errors**: Any issues encountered during execution
 
+Execution history is where you confirm whether a workflow is:
+
+- waiting for user approval
+- still processing a background scan
+- blocked on an environment-specific branch
+- complete for some environments but still running for others
+
 ## Integration with Blueprints
 
 Workflows can execute blueprints as part of their steps:
@@ -1583,10 +2083,23 @@ Workflows can execute blueprints as part of their steps:
 2. Add a "Run Blueprint" step to your workflow.
 3. The blueprint deploys automatically when the workflow runs.
 
+When a blueprint step follows another workflow step, CloudAgent can pass concrete upstream context into the blueprint run, such as resource IDs, ARNs, regions, or investigation targets. This helps downstream blueprint runs act on the exact resources found earlier in the workflow.
+
+## Troubleshooting
+
+**A workflow is stuck in pending or running**: Check whether the current step is waiting on a background scanner task to finish writing an artifact. Cost, health, inventory, and threat analysis can stay pending until the stored result is available.
+
+**Downstream steps are not starting**: Confirm the selected advance mode. With `all`, downstream steps wait for every selected environment to finish.
+
+**A report task did not produce a new report**: Make sure the task mode is correct. `analyze_existing` summarizes an existing artifact; it does not create a new report run.
+
+**A remediation step does not have the right resource context**: Review the upstream step output and blueprint inputs. CloudAgent can pass resource IDs, ARNs, regions, and account context into later blueprint runs, but the blueprint still needs matching input fields or instructions.
+
 ## Next Steps
 
 - [Blueprints & Agents](/guide/automation/blueprints) — Create reusable infrastructure templates
 - [Reports](/guide/reports-insights/reports) — Generate compliance reports to use in workflows
+- [Artifact Analysis](/guide/reports-insights/artifact-analysis) — Understand stored scan artifacts and pending states
 - [Recommendations](/guide/reports-insights/recommendations) — View findings that can trigger workflow actions
 
 # Blueprints & Agents
@@ -1638,6 +2151,20 @@ To execute an existing blueprint:
 
 > **Note:** 
   **Tip**: You can also run blueprints directly from recommendations by clicking the "Remediate" button.
+
+## Running Blueprints in Workflows
+
+When a workflow runs a blueprint after another step, CloudAgent includes the workflow context in the blueprint run. For example, a workflow can find unhealthy resources, then pass the affected resource IDs, ARNs, regions, or account context into a remediation blueprint.
+
+Blueprint runtime inputs can include:
+
+| Input Type | Use For |
+|------------|---------|
+| Default values | Structured fields such as resource IDs, ARNs, names, regions, dates, and account identifiers |
+| Additional instructions | Narrative guidance, investigation scope, required lists, or constraints that do not map to a single blueprint field |
+| Target environment | The selected permission profile and account for the run |
+
+This context passing is most useful for follow-up, investigation, and remediation blueprints that should act on the exact objects found by earlier workflow steps.
 
 ## Agent History
 

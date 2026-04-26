@@ -1,5 +1,7 @@
 {
     "recommendations": "Recommendations",
     "reports": "Reports",
+    "executive-summaries": "Executive Summaries",
+    "artifact-analysis": "Artifact Analysis",
     "audit-logs": "Audit Logs"
 }

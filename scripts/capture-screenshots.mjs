@@ -2,6 +2,8 @@
  * CloudAgent Documentation Screenshot Automation
  *
  * Usage:  node scripts/capture-screenshots.mjs
+ *         node scripts/capture-screenshots.mjs --only command_center_cc,reports_cc
+ *         node scripts/capture-screenshots.mjs --workload-path /dashboard/workloads/<workload-id> --only workload_details_cc
  * Clean:  node scripts/capture-screenshots.mjs --clean  (removes all _cc screenshots)
  *
  * Prerequisites: npx playwright install chromium
@@ -47,29 +49,71 @@ const rootEnv = parseEnvFile(ROOT_ENV_FILE);
 const BASE_URL = process.env.CLOUDAGENT_BASE_URL || rootEnv.CLOUDAGENT_BASE_URL || 'https://cloudagent.io';
 const USERNAME = process.env.CLOUDAGENT_USERNAME || rootEnv.CLOUDAGENT_USERNAME || rootEnv.username;
 const PASSWORD = process.env.CLOUDAGENT_PASSWORD || rootEnv.CLOUDAGENT_PASSWORD || rootEnv.password;
+const WORKLOAD_DETAIL_PATH = process.env.CLOUDAGENT_WORKLOAD_DETAIL_PATH || rootEnv.CLOUDAGENT_WORKLOAD_DETAIL_PATH || null;
 
 const VIEWPORT = { width: 1512, height: 805 };
 
-// Pages to capture: [filename, url path, clip height (null = full viewport)]
+function readArgValue(flagName) {
+  const index = process.argv.findIndex((arg) => arg === flagName || arg.startsWith(`${flagName}=`));
+  if (index === -1) return null;
+  const arg = process.argv[index];
+  if (arg.includes('=')) return arg.split('=').slice(1).join('=');
+  return process.argv[index + 1] || null;
+}
+
+const onlyArg = readArgValue('--only');
+const workloadPathArg = readArgValue('--workload-path');
+const requestedOnlyNames = new Set(
+  String(onlyArg || '')
+    .split(',')
+    .map((value) => value.trim())
+    .filter(Boolean)
+);
+
+// Pages to capture: { name, urlPath, clipHeight }
 const PAGES = [
-  ['dashboard_overview_cc',       '/dashboard/cloudagent',           null],
-  ['workloads_cc',                '/dashboard/workloads',            null],
-  ['cost_dashboard_cc',           '/dashboard/cost',                 null],
-  ['health_dashboard_cc',         '/dashboard/health',               null],
-  ['executive_summaries_cc',      '/dashboard/executive-summaries',  null],
-  ['recommendations_cc',          '/dashboard/recommendations',      null],
-  ['reports_cc',                  '/dashboard/reports',              null],
-  ['workflows_cc',                '/dashboard/workflow-def',         null],
-  ['blueprints_agents_cc',        '/dashboard/blueprints',           null],
-  ['cloud_setup_cc',              '/dashboard/cloud-setup',          null],
-  ['integrations_cc',             '/dashboard/integrations',         null],
-  ['mcp_cc',                      '/dashboard/mcp',                  null],
+  { name: 'dashboard_overview_cc', urlPath: '/dashboard/cloudagent', clipHeight: null },
+  { name: 'command_center_cc', urlPath: '/dashboard/cloudagent', clipHeight: null },
+  { name: 'workloads_cc', urlPath: '/dashboard/workloads', clipHeight: null },
+  { name: 'cost_dashboard_cc', urlPath: '/dashboard/cost', clipHeight: null },
+  { name: 'health_dashboard_cc', urlPath: '/dashboard/health', clipHeight: null },
+  { name: 'executive_summaries_cc', urlPath: '/dashboard/executive-summaries', clipHeight: null },
+  { name: 'recommendations_cc', urlPath: '/dashboard/recommendations', clipHeight: null },
+  { name: 'reports_cc', urlPath: '/dashboard/reports', clipHeight: null },
+  { name: 'workflows_cc', urlPath: '/dashboard/workflow-def', clipHeight: null },
+  { name: 'blueprints_agents_cc', urlPath: '/dashboard/blueprints', clipHeight: null },
+  { name: 'cloud_setup_cc', urlPath: '/dashboard/cloud-setup', clipHeight: null },
+  { name: 'integrations_cc', urlPath: '/dashboard/integrations', clipHeight: null },
+  { name: 'mcp_cc', urlPath: '/dashboard/mcp', clipHeight: null },
 ];
+
+const resolvedWorkloadDetailPath = workloadPathArg || WORKLOAD_DETAIL_PATH;
+if (resolvedWorkloadDetailPath) {
+  PAGES.push({ name: 'workload_details_cc', urlPath: resolvedWorkloadDetailPath, clipHeight: null });
+}
+
+const requestedPages = requestedOnlyNames.size
+  ? PAGES.filter((page) => requestedOnlyNames.has(page.name))
+  : PAGES;
+
+if (requestedOnlyNames.size) {
+  const knownNames = new Set(PAGES.map((page) => page.name));
+  const unknownNames = [...requestedOnlyNames].filter((name) => !knownNames.has(name));
+  if (unknownNames.length) {
+    throw new Error(
+      `Unknown screenshot target(s): ${unknownNames.join(', ')}. Valid targets: ${PAGES.map((page) => page.name).join(', ')}`
+    );
+  }
+}
 
 // --clean flag: remove all previous _cc screenshots
 if (process.argv.includes('--clean')) {
   console.log('Cleaning previous _cc screenshots...');
-  const files = fs.readdirSync(IMAGES_DIR).filter(f => f.includes('_cc.'));
+  const files = fs.readdirSync(IMAGES_DIR).filter((f) => {
+    if (!f.includes('_cc.')) return false;
+    if (!requestedOnlyNames.size) return true;
+    return requestedOnlyNames.has(path.basename(f, path.extname(f)));
+  });
   for (const f of files) {
     fs.unlinkSync(path.join(IMAGES_DIR, f));
     console.log(`  Deleted: ${f}`);
@@ -183,14 +227,99 @@ async function redactSensitiveData(page) {
         if (value) el.setAttribute(attr, replaceSensitive(value));
       }
     });
+
+    // Hide the sidebar footer/profile block entirely. It commonly exposes
+    // user-identifying labels and is not important for docs screenshots.
+    const fixedSelectors = [
+      '[data-testid="sidebar-user-profile"]',
+      '[data-testid="user-profile"]',
+      '[data-testid="profile-menu"]',
+      'aside [aria-label*="profile" i]',
+      'aside [aria-label*="account" i]',
+      'aside [aria-label*="user" i]',
+    ];
+
+    for (const selector of fixedSelectors) {
+      document.querySelectorAll(selector).forEach((el) => {
+        el.style.visibility = 'hidden';
+      });
+    }
+
+    // Fallback: hide the bottom-most sidebar block if it contains short
+    // user labels such as a name or avatar chip.
+    const sidebar = document.querySelector('aside');
+    if (sidebar) {
+      const sidebarChildren = [...sidebar.children];
+      const footerCandidate = sidebarChildren[sidebarChildren.length - 1];
+      if (footerCandidate) {
+        footerCandidate.style.visibility = 'hidden';
+      }
+    }
   });
 
   console.log('  Applied text redactions.');
 }
 
+async function prepareCommandCenter(page) {
+  const contextButton = page.getByRole('button', { name: /No context|Cloud|Workloads|Reports/i }).first();
+
+  // If Command Center opens without scope, add the first available environment.
+  try {
+    const hasNoContext = await page.getByText('No context', { exact: true }).isVisible({ timeout: 3000 });
+    if (hasNoContext) {
+      await contextButton.click();
+      await page.waitForTimeout(500);
+
+      const addEnvironmentButton = page.getByRole('button', { name: /Add environment/i }).first();
+      if (await addEnvironmentButton.isVisible({ timeout: 3000 })) {
+        await addEnvironmentButton.click();
+        await page.waitForTimeout(500);
+
+        const modalAddButton = page.getByRole('button', { name: /^Add Environment$/i }).last();
+        const firstSelectableRow = page.locator('tr').filter({ hasNot: page.getByText('(added)', { exact: false }) }).nth(1);
+
+        if (await firstSelectableRow.isVisible({ timeout: 5000 })) {
+          await firstSelectableRow.click();
+          await page.waitForTimeout(300);
+        }
+
+        if (await modalAddButton.isEnabled({ timeout: 3000 })) {
+          await modalAddButton.click();
+          await page.waitForTimeout(1500);
+          console.log('  Added one environment to Command Center context.');
+        }
+      }
+    }
+  } catch {
+    console.log('  Command Center scope setup skipped; using current visible context.');
+  }
+
+  // Let async suggestions/bootstrap finish when possible so the screenshot
+  // reflects a usable Command Center state instead of a loading placeholder.
+  try {
+    await page.waitForFunction(
+      () => {
+        const text = document.body?.innerText || '';
+        return !text.includes('Loading suggestions...') && !text.includes('No context');
+      },
+      { timeout: 15000 }
+    );
+    console.log('  Command Center suggestions and context are ready.');
+  } catch {
+    console.log('  Command Center did not fully settle after timeout; capturing current state.');
+  }
+}
+
 async function main() {
   if (!USERNAME || !PASSWORD) {
     throw new Error(`Missing CloudAgent login credentials. Set CLOUDAGENT_USERNAME and CLOUDAGENT_PASSWORD in ${ROOT_ENV_FILE} or the process environment.`);
+  }
+
+  if (requestedOnlyNames.size) {
+    console.log(`Capturing selected targets: ${[...requestedOnlyNames].join(', ')}`);
+  }
+  if (resolvedWorkloadDetailPath) {
+    console.log(`Using workload detail path: ${resolvedWorkloadDetailPath}`);
   }
 
   console.log('Launching browser...');
@@ -217,7 +346,7 @@ async function main() {
 
   // --- Capture each page ---
   const results = [];
-  for (const [name, urlPath, clipHeight] of PAGES) {
+  for (const { name, urlPath, clipHeight } of requestedPages) {
     const url = `${BASE_URL}${urlPath}`;
     console.log(`[${name}] Navigating to ${url}...`);
 
@@ -232,6 +361,10 @@ async function main() {
 
       // Dismiss modal if it reappears on navigation
       await dismissOnboardingModal(page);
+
+      if (name === 'command_center_cc' || name === 'dashboard_overview_cc') {
+        await prepareCommandCenter(page);
+      }
 
       // Redact sensitive data before capturing
       await redactSensitiveData(page);

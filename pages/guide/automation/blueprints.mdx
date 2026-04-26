@@ -49,6 +49,20 @@ To execute an existing blueprint:
   **Tip**: You can also run blueprints directly from recommendations by clicking the "Remediate" button.
 </Callout>
 
+## Running Blueprints in Workflows
+
+When a workflow runs a blueprint after another step, CloudAgent includes the workflow context in the blueprint run. For example, a workflow can find unhealthy resources, then pass the affected resource IDs, ARNs, regions, or account context into a remediation blueprint.
+
+Blueprint runtime inputs can include:
+
+| Input Type | Use For |
+|------------|---------|
+| Default values | Structured fields such as resource IDs, ARNs, names, regions, dates, and account identifiers |
+| Additional instructions | Narrative guidance, investigation scope, required lists, or constraints that do not map to a single blueprint field |
+| Target environment | The selected permission profile and account for the run |
+
+This context passing is most useful for follow-up, investigation, and remediation blueprints that should act on the exact objects found by earlier workflow steps.
+
 ## Agent History
 
 The **Agent History** tab shows the status and results of all blueprint executions and agent activities.

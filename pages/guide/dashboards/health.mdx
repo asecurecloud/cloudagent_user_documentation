@@ -53,8 +53,23 @@ Click any resource in the table to expand its details. Each resource shows:
   - Timestamp of when the check was last evaluated
 
 <Callout type="info">
-  Health checks cover multiple categories: availability (is the resource running?), errors (are there failures in logs?), configuration (is the setup correct?), and capacity (is the resource under pressure?).
+  Health checks cover multiple categories: availability (is the resource running?), errors (are there failures in logs?), configuration (is the setup correct?), capacity (is the resource under pressure?), and runtime lifecycle.
 </Callout>
+
+## Health Check Coverage
+
+CloudAgent health checks include common AWS compute, storage, database, and delivery services. Coverage continues to expand, and unsupported resource types appear as **Skipped** instead of reducing the health score.
+
+Recent AWS coverage includes:
+
+| Area | Examples of Checks |
+|------|--------------------|
+| CloudFormation | Failed stack status, recent failed stack events, stack drift status |
+| RDS | DB instance and cluster status, free storage headroom, replica lag, deadlocks, exported log errors |
+| Amazon DocumentDB | Cluster and instance status, global replication lag, connection headroom, low-memory throttling, replica status, exported log errors |
+| Amazon Neptune | Cluster and instance status, global replication lag, main request queue pressure, replica status, exported log errors |
+
+CloudFormation drift checks reuse a drift result from the last 24 hours when one is available. If no recent result exists, CloudAgent starts drift detection and reports the final status when the AWS drift operation completes.
 
 ## Filtering Resources
 
@@ -95,6 +110,10 @@ Click the data freshness indicator to see when each workload and environment was
 
 Data is considered fresh if generated within the last 24 hours. Sources showing "Never checked" need an initial health check run.
 
+## Pending Results
+
+Health analysis runs asynchronously. While a new scanner task is still writing its results, the dashboard may show a pending or not-ready state for the selected workload or environment. Refresh again after the scan completes to load the stored health artifact.
+
 ## Taking Action on Health Issues
 
 When the dashboard surfaces resources with issues:
@@ -112,10 +131,13 @@ When the dashboard surfaces resources with issues:
 
 **Health data not updating**: Verify that the permission profile for the environment is validated and uses at least the AWS managed `ReadOnlyAccess` policy, which covers the CloudWatch permissions health checks require. Also check that force refresh is enabled if you're seeing stale data.
 
+**CloudFormation drift stays pending or unknown**: Drift detection can take time in AWS and only runs for supported stack statuses. If another drift operation is already in progress, CloudAgent reuses the latest available stack drift status until the operation completes.
+
 **Checks showing "Skipped"**: Some resource types don't have health checks available yet. CloudAgent continuously expands its check coverage.
 
 ## Next Steps
 
+- [Artifact Analysis](/guide/reports-insights/artifact-analysis) — Understand how stored health artifacts and pending states work
 - [Recommendations](/guide/reports-insights/recommendations) — Act on health-related findings with prioritized remediation steps
 - [Managing Workloads](/guide/workloads-governance/workloads) — Configure which resources are tracked and monitored
 - [My Workflows](/guide/automation/workflows) — Schedule periodic health checks as automated workflows

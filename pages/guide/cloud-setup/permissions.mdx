@@ -20,6 +20,8 @@ When you connect an AWS account, CloudAgent generates a CloudFormation template 
 
 At minimum, the role uses the **AWS managed `ReadOnlyAccess` policy**. This is enough to power dashboards, reports, recommendations, and health checks — no additional per-service permissions are required to get started.
 
+Health, cost, inventory, and threat analysis run through background scanner tasks. For AWS, `ReadOnlyAccess` includes the read APIs CloudAgent needs for Cost Explorer, CloudWatch metrics and logs, CloudFormation stack and drift status, and supported database health checks.
+
 ### Deployment Options
 
 You can deploy the IAM role using:
@@ -130,6 +132,8 @@ If you need to update the IAM role:
 
 **"Access Denied" errors during scans or reports**: This usually means the IAM role is missing or misconfigured. The AWS managed `ReadOnlyAccess` policy covers all read operations CloudAgent needs. If you see access errors on write operations (remediation, deployment), upgrade to Limited Write or Full Admin.
 
+**Scanner result is pending**: Background scanner tasks may take a few minutes to write health, cost, inventory, or threat artifacts. Refresh the dashboard or report after the task completes.
+
 **Cannot see resources from a connected account**: Ensure the permission profile is validated (green checkmark) in Cloud Environments. If the checkmark is missing, click Edit and re-run the validation step.
 
 **Multiple accounts showing the same data**: Each permission profile should point to a different AWS Account ID. Check your Cloud Environments list to ensure accounts aren't duplicated.
@@ -137,6 +141,7 @@ If you need to update the IAM role:
 ## Next Steps
 
 - [Account Onboarding](/guide/cloud-setup/aws) — Step-by-step guide for your first AWS account connection
+- [Artifact Analysis](/guide/reports-insights/artifact-analysis) — Understand how scanner tasks produce health, cost, inventory, and threat artifacts
 - [Security Rules & Baselines](/guide/workloads-governance/security-baselines) — Configure compliance rules for connected accounts
 - [Governance & Architecture](/guide/workloads-governance/governance) — Set up deployment controls and architecture preferences
 - [Managing Workloads](/guide/workloads-governance/workloads) — Create workloads that span your connected accounts

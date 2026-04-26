@@ -65,6 +65,8 @@ You can adjust the dashboard view using these controls:
 - **Refresh**: Force a fresh data pull from your cloud provider's APIs. The dashboard caches data to reduce API calls, so use this when you need the latest numbers.
 - **Lookback Period**: The default analysis window is 90 days. This determines how far back the trend chart and calculations extend.
 
+Cost analysis runs as an asynchronous scanner task. After you click **Refresh**, CloudAgent stores the generated cost artifact and the dashboard loads that stored result. If the artifact is still being created, the dashboard may show a pending state until the scan completes.
+
 ## Anomaly Detection
 
 When AWS Cost Anomaly Detection is configured in your account, the dashboard surfaces unusual spending patterns automatically. Each anomaly shows:
@@ -130,12 +132,15 @@ Once you identify cost optimization opportunities:
 
 **Missing cost data for an account**: Verify the permission profile is validated on the [Cloud Setup](/guide/cloud-setup/aws) page — the AWS managed `ReadOnlyAccess` policy covers all the permissions CloudAgent needs for cost data. Also try clicking **Refresh** to force a fresh data pull.
 
+**Cost analysis is not ready yet**: A new cost scan may still be running. Wait a few minutes, then refresh the dashboard or rerun the analysis for the selected environment.
+
 **No recommendations showing**: AWS services like Compute Optimizer and Cost Optimization Hub need 14+ days of usage data before generating recommendations. If you haven't enabled these services yet, only CloudAgent's own assessment engine recommendations will appear.
 
 **Anomalies section not visible**: This section only appears when AWS Cost Anomaly Detection is both configured in your account and has detected anomalies. If you haven't set up Cost Anomaly Detection monitors yet, enable them in the AWS Billing console.
 
 ## Next Steps
 
+- [Artifact Analysis](/guide/reports-insights/artifact-analysis) — Understand how stored cost artifacts and pending states work
 - [Recommendations](/guide/reports-insights/recommendations) — View and act on prioritized optimization findings
 - [My Workflows](/guide/automation/workflows) — Schedule automated cost reports and remediation
 - [Reports](/guide/reports-insights/reports) — Generate formal compliance and cost reports for stakeholders

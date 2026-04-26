@@ -14,6 +14,8 @@ Threat Management in CloudAgent brings together cloud-native security services t
 
 CloudAgent currently supports threat detection through its **Recommendations** and **Reports** systems. The platform evaluates your environments against threat detection best practices and flags gaps in your security posture.
 
+Threat analysis uses stored scanner artifacts for each connected AWS environment. When you refresh threat data, CloudAgent starts a scanner task and loads the stored result after it is available. Until then, the environment may show a pending or not-ready state.
+
 ### Supported AWS Security Services
 
 For AWS accounts, CloudAgent integrates with the following threat detection services:
@@ -34,6 +36,8 @@ For AWS accounts, CloudAgent integrates with the following threat detection serv
    - **SOC2** reports evaluate security monitoring and incident response readiness
 
 3. **Automated Remediation**: When CloudAgent identifies that a threat detection service is not enabled, you can use a blueprint or workflow to automatically enable it. Each recommendation includes a remediation blueprint that can be executed directly.
+
+4. **Artifact Analysis in Workflows**: Workflows can analyze existing threat artifacts alongside cost, health, and inventory data. This is useful when you want a recurring workflow to summarize current threat findings without running a new report blueprint first.
 
 ## Planned Capabilities
 
@@ -61,6 +65,7 @@ Even before the full dashboard launches, you can set up a strong threat detectio
 
 ## Next Steps
 
+- [Artifact Analysis](/guide/reports-insights/artifact-analysis) — Understand how stored threat artifacts and pending states work
 - [Recommendations](/guide/reports-insights/recommendations) — Review and act on threat detection recommendations
 - [Reports](/guide/reports-insights/reports) — Run compliance reports that include threat monitoring controls
 - [Blueprints & Agents](/guide/automation/blueprints) — Use remediation blueprints to enable security services

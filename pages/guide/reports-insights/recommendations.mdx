@@ -12,7 +12,7 @@ The **Recommendations** page provides a centralized view of all findings and sug
 1. Navigate to **Recommendations** in the sidebar.
 2. You will see a comprehensive list of all recommendations organized by category and priority.
 
-![Recommendations Page](/images/recommendations.png)
+![Recommendations Page](/images/recommendations_cc.png)
 
 <Callout type="info">
   **Quick Access**: You can also access category-specific recommendations directly from the Dashboard's Smart Recommendations widget.
@@ -56,6 +56,13 @@ Suggestions to maximize your use of CloudAgent:
 - Untracked resources
 - Missing environment labels
 
+### Operational Health
+Findings from health analysis that point to availability, capacity, configuration, or runtime lifecycle issues:
+- Failed or rolled-back CloudFormation stacks
+- CloudFormation stack drift
+- Database capacity pressure, replication lag, deadlocks, or log errors
+- Runtime versions that are deprecated or nearing end of support
+
 ## Recommendation Details
 
 Each recommendation includes:
@@ -80,6 +87,8 @@ For each recommendation, you can:
   **Tip**: Address Critical and High priority recommendations within 24-48 hours to maintain a strong security posture.
 </Callout>
 
+Recommendations can be generated from stored scanner artifacts. If a health, cost, threat, or inventory scan is still running, related recommendations may update after the artifact becomes available.
+
 ## Filtering and Search
 
 Use the filtering options to focus on specific findings:
@@ -90,6 +99,7 @@ Use the filtering options to focus on specific findings:
 
 ## Next Steps
 
+- [Artifact Analysis](/guide/reports-insights/artifact-analysis) — Understand how recommendations depend on stored scanner artifacts
 - [Reports](/guide/reports-insights/reports) — Generate compliance reports based on recommendation findings
 - [My Workflows](/guide/automation/workflows) — Automate remediation actions for recurring recommendations
 - [Blueprints & Agents](/guide/automation/blueprints) — Use agents to execute remediation blueprints

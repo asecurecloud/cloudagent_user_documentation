@@ -1,0 +1,100 @@
+import { Callout } from 'nextra/components'
+
+# Artifact Analysis
+
+## Objective
+
+Understand how CloudAgent stores and reuses scanner results for health, cost, inventory, and threat analysis. This page explains why some dashboards show pending states and how workflows can analyze existing artifacts instead of starting a new report run every time.
+
+## What an Artifact Is
+
+When CloudAgent runs a scanner task, it writes the result as a stored artifact. That artifact becomes the source for downstream product views and automation.
+
+Common artifact types include:
+
+| Artifact Type | Used By |
+|---------------|---------|
+| Health | Health Dashboard, recommendations, workflows |
+| Cost | Cost Dashboard, recommendations, workflows |
+| Inventory | workload context, resource review, workflows |
+| Threat | Threat analysis, recommendations, workflows |
+
+This model lets CloudAgent reuse one scanner result in multiple places instead of repeating the same cloud API calls for every view.
+
+## Why Results Can Be Pending
+
+Scanner tasks run asynchronously. After a refresh or workflow step starts, there is often a delay before the artifact is available to load.
+
+During that window, you may see:
+
+- pending
+- not ready
+- running
+- waiting for scanner output
+
+This is normal. The product is waiting for the stored artifact to finish writing.
+
+<Callout type="info">
+  A pending state does not always mean a failure. It often means the scanner task is still running or the artifact has not been indexed yet.
+</Callout>
+
+## Refresh Behavior
+
+Most dashboards and workflows follow the same pattern:
+
+1. start or request a scan
+2. wait for the background task to write the artifact
+3. load the stored artifact into the UI or workflow step
+
+Depending on the feature, CloudAgent may reuse a recent artifact instead of generating a new one immediately. This reduces repeated cloud API calls and speeds up the user experience.
+
+## How Artifacts Feed Dashboards
+
+Stored artifacts are reused across product surfaces:
+
+- **Health Dashboard** loads health artifacts for workloads and environments
+- **Cost Dashboard** loads stored cost analysis after a refresh completes
+- **Threat Management** uses stored threat artifacts where available
+- **Recommendations** can update when new health, cost, inventory, or threat artifacts arrive
+
+If a dashboard looks stale, confirm whether you are viewing a recent stored artifact or still waiting on a new scan to finish.
+
+## How Artifacts Feed Recommendations
+
+Recommendations can be generated or refreshed from the latest stored artifact. This is why recommendation changes may appear after a dashboard refresh completes instead of instantly.
+
+Examples:
+
+- a new health artifact can generate operational health recommendations
+- a new cost artifact can update savings and cleanup findings
+- a threat artifact can update threat posture recommendations
+
+## How Workflows Use Existing Artifacts
+
+Workflows can analyze stored artifacts without running a fresh report blueprint every time.
+
+This is most visible in report tasks that use:
+
+| Mode | Behavior |
+|------|----------|
+| `run_report` | Creates a new report or scan run |
+| `analyze_existing` | Reads the latest stored artifact and summarizes it |
+
+Use `analyze_existing` when you want a recurring workflow to summarize current posture or findings quickly. Use `run_report` when the workflow must generate new evidence first.
+
+## Troubleshooting Pending or Missing Results
+
+**A dashboard still says pending**: Wait for the background scan to complete, then refresh the page.
+
+**Recommendations did not update yet**: The source artifact may still be running or may not have been refreshed yet.
+
+**A workflow step did not continue**: Check whether it is waiting on a multi-environment scan or stored artifact before the next node can run.
+
+**The wrong environment data is showing**: Confirm the selected permission profile or workload context. Artifact loading depends on the correct environment association.
+
+## Next Steps
+
+- [Health Dashboard](/guide/dashboards/health) — Review how health artifacts surface in the dashboard
+- [Cost Dashboard](/guide/dashboards/cost) — Understand stored cost analysis and refresh behavior
+- [Recommendations](/guide/reports-insights/recommendations) — See how artifact-backed findings appear as actions
+- [My Workflows](/guide/automation/workflows) — Use `analyze_existing` in recurring workflows

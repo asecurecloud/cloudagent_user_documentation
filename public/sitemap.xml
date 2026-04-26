@@ -56,13 +56,13 @@
   </url>
   <url>
     <loc>https://docs.cloudagent.io/guide/automation/blueprints</loc>
-    <lastmod>2026-03-10</lastmod>
+    <lastmod>2026-04-22</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://docs.cloudagent.io/guide/automation/workflows</loc>
-    <lastmod>2026-03-10</lastmod>
+    <lastmod>2026-04-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -80,31 +80,37 @@
   </url>
   <url>
     <loc>https://docs.cloudagent.io/guide/cloud-setup/permissions</loc>
-    <lastmod>2026-03-10</lastmod>
+    <lastmod>2026-04-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://docs.cloudagent.io/guide/dashboards</loc>
-    <lastmod>2026-03-10</lastmod>
+    <lastmod>2026-04-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://docs.cloudagent.io/guide/dashboards/command-center</loc>
+    <lastmod>2026-04-26</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://docs.cloudagent.io/guide/dashboards/cost</loc>
-    <lastmod>2026-03-10</lastmod>
+    <lastmod>2026-04-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://docs.cloudagent.io/guide/dashboards/health</loc>
-    <lastmod>2026-03-10</lastmod>
+    <lastmod>2026-04-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://docs.cloudagent.io/guide/dashboards/threat-management</loc>
-    <lastmod>2026-03-10</lastmod>
+    <lastmod>2026-04-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -127,20 +133,32 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://docs.cloudagent.io/guide/reports-insights/artifact-analysis</loc>
+    <lastmod>2026-04-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://docs.cloudagent.io/guide/reports-insights/audit-logs</loc>
     <lastmod>2026-03-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://docs.cloudagent.io/guide/reports-insights/executive-summaries</loc>
+    <lastmod>2026-04-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://docs.cloudagent.io/guide/reports-insights/recommendations</loc>
-    <lastmod>2026-03-10</lastmod>
+    <lastmod>2026-04-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://docs.cloudagent.io/guide/reports-insights/reports</loc>
-    <lastmod>2026-03-10</lastmod>
+    <lastmod>2026-04-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
@@ -158,7 +176,7 @@
   </url>
   <url>
     <loc>https://docs.cloudagent.io/guide/workloads-governance/workloads</loc>
-    <lastmod>2026-03-10</lastmod>
+    <lastmod>2026-04-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
